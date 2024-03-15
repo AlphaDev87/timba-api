@@ -5,8 +5,7 @@ import MockAdapter from "@bot-whatsapp/database/mock";
 import ProviderWS from "@bot-whatsapp/provider/baileys";
 import CONFIG from "./config";
 import { exitLog } from "./helpers";
-import { flows } from "./chatbot/flows";
-// import flows from "./chatbot/flows";
+import { createFlow } from "./chatbot/flows";
 
 export const startServer = (app: e.Application): Server => {
   const httpServer = createServer(app);
@@ -31,11 +30,8 @@ export const startServer = (app: e.Application): Server => {
 export const startWhatsappBot = async () => {
   const database = new MockAdapter();
   const provider = BotWhatsapp.createProvider(ProviderWS);
-  // const helloFlow = BotWhatsapp.addKeyword(["hola", "buenas"]).addAnswer(
-  //   "Un gusto tenerte de nuevo ¿Como puedo ayudarte el día de hoy 😀?",
-  // );
+  const flow = await createFlow();
 
-  const flow = BotWhatsapp.createFlow(flows);
   await BotWhatsapp.createBot({
     database,
     provider,
