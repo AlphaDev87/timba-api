@@ -12,12 +12,10 @@ export class JwtService {
   verifyTokenExpiration(token: string): boolean {
     try {
       const payload = this.decodePayload(token);
-      console.log("PAYLOAD", payload);
       const currentTimeInSeconds = Math.floor(Date.now() / 1000);
 
       return !(Number(payload.exp) < currentTimeInSeconds + 10);
     } catch (error) {
-      console.error(error);
       return false;
     }
   }
