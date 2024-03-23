@@ -7,6 +7,7 @@ import HttpStatus, {
 } from "http-status/lib";
 import { Prisma } from "@prisma/client";
 import { TimeOutError } from "@/helpers/error";
+import { ErrorData } from "@/types/response/error";
 
 /**
  * @description Error response middleware for 404 not found. This middleware function should be at the very bottom of the stack.
@@ -90,55 +91,6 @@ export class CustomError extends Error {
   }
 }
 
-export interface ErrorData {
-  status: number;
-  code: string;
-  description: string;
-}
-
-export const ERR: { [key: string]: ErrorData } = {
-  USER_ALREADY_EXISTS: {
-    status: 400,
-    code: "ya_existe",
-    description: "Un usuario con ese nombre ya existe",
-  },
-  INVALID_CREDENTIALS: {
-    status: 404,
-    code: "credenciales_invalidas",
-    description: "Usuario o contraseña incorrectos",
-  },
-  AGENT_LOGIN: {
-    status: 500,
-    code: "agent_login",
-    description: "Error al loguear el agente en el panel",
-  },
-  TOKEN_EXPIRED: {
-    status: 401,
-    code: "token_expirado",
-    description: "Token expirado",
-  },
-  TOKEN_INVALID: {
-    status: 401,
-    code: "token_invalido",
-    description: "Token invalido",
-  },
-  KEY_NOT_FOUND: {
-    status: 500,
-    code: "env",
-    description: "No se encontro la llave en .env",
-  },
-  AGENT_PASS_NOT_SET: {
-    status: 500,
-    code: "env",
-    description: "No se encontro la clave de agente en .env",
-  },
-  AGENT_UNSET: {
-    status: 500,
-    code: "agent_unset",
-    description: "No se encontro el agente en la BD. ¿Corriste npm run seed?",
-  },
-};
-
 function prismaErrorHandler(
   err:
     | Prisma.PrismaClientKnownRequestError
@@ -204,7 +156,8 @@ function prismaErrorHandler(
     res.send({ status, code, description });
   } else if (err instanceof Prisma.PrismaClientValidationError) {
     let description = "Error de validacion de datos ";
-    description += err.message.split("Unknown")[1];
+    // description += err.message.split("Unknown")[1];
+    description += err.message;
     res.send({
       status: 400,
       code: "error_validacion",
