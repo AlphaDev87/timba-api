@@ -7,6 +7,7 @@ import { requireUserRole } from "@/middlewares/auth";
 import {
   validateCashoutRequest,
   validateDepositRequest,
+  validateDepositId,
 } from "@/components/transactions/validators";
 
 const transactionsRouter = Router();
@@ -26,7 +27,12 @@ transactionsRouter.get(
   "/deposit/pending",
   TransactionsController.pendingDeposits,
 );
-transactionsRouter.delete("/deposit/:id", TransactionsController.deleteDeposit);
+transactionsRouter.delete(
+  "/deposit/:id",
+  validateDepositId(),
+  throwIfBadRequest,
+  TransactionsController.deleteDeposit,
+);
 transactionsRouter.post(
   "/cashout",
   validateCashoutRequest(),

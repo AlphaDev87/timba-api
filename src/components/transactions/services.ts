@@ -147,7 +147,7 @@ export class FinanceServices {
       throw new CustomError({
         code: "error_transferencia",
         status: result.status,
-        description: "Error al transferir fichas", //transfer.data
+        description: "Error al transferir fichas", //result.data
       });
 
     return result;

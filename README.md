@@ -454,9 +454,6 @@ Estado de transferencia de fichas
 - Subir la duracion del refresh token a 24 horas
 - Buscar transferencias por numero de rastreo en panel agente
 
-- **Verificar si pago está en Alquimia** con numero de rastreo y fecha
-
-
 ### Alquimia
 
 [Documentacion](https://docs.alquimiapay.com/#introduccion)
@@ -512,6 +509,3 @@ Consulta de movimientos
 - el endpoint "Consulta estatus TX `/1.0.0/v2/consulta-estatus-tx`" nos sirve para confirmar transferencias recibidas? o solo pagos salientes?
 
 
-### Flujo deposito
-
-Buscar a partir de la fecha recibida en el request
