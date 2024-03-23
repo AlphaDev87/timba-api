@@ -17,7 +17,7 @@ export class DepositsDAO {
     try {
       return prisma.deposit.create({
         data: { ...data, status: CONFIG.SD.DEPOSIT_STATUS.PENDING },
-        include: { Player: true },
+        // include: { Player: true },
       });
     } catch (error) {
       throw error;

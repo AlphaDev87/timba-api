@@ -217,6 +217,7 @@ export class FinanceServices {
       ...request,
       player_id,
     });
+    // delete deposit.Player
   }
 
   private async createPayment(
