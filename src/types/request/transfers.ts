@@ -1,5 +1,5 @@
 /** Datos que recibe nuestra API */
-export type TransferRequest = {
+export type CashoutRequest = {
   amount: number;
   currency: string;
   bank_account: number;

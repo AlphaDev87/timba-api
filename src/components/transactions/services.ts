@@ -8,7 +8,7 @@ import { UserRootDAO } from "@/db/user-root";
 import { PlainPlayerResponse } from "@/types/response/players";
 import { PaymentsDAO } from "@/db/payments";
 import {
-  TransferRequest,
+  CashoutRequest,
   TransferDetails,
   DepositRequest,
 } from "@/types/request/transfers";
@@ -56,7 +56,7 @@ export class FinanceServices {
    */
   async cashOut(
     player: PlainPlayerResponse,
-    request: TransferRequest,
+    request: CashoutRequest,
   ): Promise<CoinTransferResult> {
     await TransactionsDAO.authorizeTransaction(request.bank_account, player.id);
 
@@ -103,7 +103,7 @@ export class FinanceServices {
 
   async transfer(
     type: "deposit" | "withdrawal",
-    data: TransferRequest | Deposit,
+    data: CashoutRequest | Deposit,
     playerPanelId: number,
   ): Promise<CoinTransferResult> {
     const transferDetails = await this.generateTransferDetails(
@@ -221,7 +221,7 @@ export class FinanceServices {
 
   private async createPayment(
     player_id: number,
-    request: TransferRequest,
+    request: CashoutRequest,
   ): Promise<Payment> {
     return await PaymentsDAO.create({
       player_id,
@@ -257,31 +257,60 @@ export class FinanceServices {
   // TODO buscar hasta 30 dias atras
   private async alquimiaDepositLookup(
     tracking_number: string,
-    date: Date,
+    from: Date,
+    to?: Date,
     page = 1,
+    round = 1,
   ): Promise<AlqMovement | undefined> {
-    const endpoint = "cuenta-ahorro-cliente/120902/transaccion";
+    const accountId = CONFIG.EXTERNAL.ALQ_SAVINGS_ACCOUNT_ID;
+    const endpoint = `cuenta-ahorro-cliente/${accountId}/transaccion`;
+
     const searchParams = new URLSearchParams();
-    const startDate = date.toISOString().split("T")[0];
+    const startDate = from.toISOString().split("T")[0];
+    const endDate = to?.toISOString().split("T")[0];
     searchParams.set("fecha_inicio", startDate);
+    endDate && searchParams.set("fecha_fin", endDate);
     searchParams.set("registros", "20");
     searchParams.set("page", page.toString());
 
     const httpService = new HttpService();
-    const movements = await httpService.authedAlqApi.get(
+    const movements: AxiosResponse = await httpService.authedAlqApi.get(
       endpoint + "?" + searchParams.toString(),
     );
+
+    if (movements.data.length === 0) return;
 
     const found = (movements.data as AlqMovement[]).find(
       (movement) => movement.clave_rastreo === tracking_number,
     );
 
-    if (!found && movements.length >= 20)
-      return await this.alquimiaDepositLookup(tracking_number, date, page + 1);
+    if (!found && movements.data.length === 20)
+      return await this.alquimiaDepositLookup(
+        tracking_number,
+        from,
+        undefined,
+        page + 1,
+        round,
+      );
 
+    if (!found && movements.data.length < 20 && round === 1) {
+      const dayInMliseconds = 60 * 60 * 24 * 1000;
+      to = from;
+      from = new Date(from.getTime() - dayInMliseconds);
+      return await this.alquimiaDepositLookup(
+        tracking_number,
+        from,
+        to,
+        (page = 1),
+        (round = 2),
+      );
+    }
     return found;
   }
 
+  /**
+   * Show deposits for which the money transfer hasn't been verified
+   */
   static async showPendingDeposits(player_id: number): Promise<Deposit[]> {
     const deposits = await DepositsDAO.getPending(player_id);
     return deposits;
