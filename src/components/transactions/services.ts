@@ -252,7 +252,10 @@ export class FinanceServices {
 
     if (alqMovement) return this.markDepositAsConfirmed(deposit, alqMovement);
 
-    await DepositsDAO.update(deposit.id, { dirty: false });
+    await DepositsDAO.update(deposit.id, {
+      dirty: false,
+      status: CONFIG.SD.DEPOSIT_STATUS.REJECTED,
+    });
 
     return deposit;
   }
