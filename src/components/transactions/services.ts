@@ -1,4 +1,4 @@
-import { Deposit, Payment, Player } from "@prisma/client";
+import { AlquimiaDeposit, Deposit, Payment, Player } from "@prisma/client";
 import { AxiosResponse } from "axios";
 import { TransactionsDAO } from "@/db/transactions";
 import { CustomError } from "@/middlewares/errorHandler";
@@ -13,12 +13,13 @@ import {
   DepositRequest,
 } from "@/types/request/transfers";
 import { Transaction } from "@/types/response/transactions";
-import { parseTransferResult } from "@/utils/parser";
+import { parseAlqMovement, parseTransferResult } from "@/utils/parser";
 import { Notify } from "@/helpers/notification";
 import CONFIG from "@/config";
 import { CasinoTokenService } from "@/services/casino-token.service";
-import { AlqMovement } from "@/types/response/alquimia";
 import { CoinTransferResult } from "@/types/response/transfers";
+import { AlquimiaDepositDAO } from "@/db/alq-deposits";
+import { AlqMovementResponse } from "@/types/response/alquimia";
 
 /**
  * Services to be consumed by Player endpoints
@@ -236,26 +237,30 @@ export class FinanceServices {
 
   /**
    * Verify receipt of Player's payment.
-   * @throws CustomError if payment is not verified
    */
   public async verifyPayment(deposit: Deposit): Promise<Deposit> {
-    // let movement = await AlquimiaDepositsDAO.getByTrackingNumber(deposit.tracking_number);
+    const localDeposit = await AlquimiaDepositDAO.findByTrackingNumber(
+      deposit.tracking_number,
+    );
 
-    // if (movement) return this.markDepositAsConfirmed(deposit, movement);
+    if (localDeposit) return this.markDepositAsConfirmed(deposit, localDeposit);
 
-    const movement = await this.alquimiaDepositLookup(
+    const alqMovement = await this.alquimiaDepositLookup(
       deposit.tracking_number,
       deposit.paid_at,
     );
 
-    if (movement) return this.markDepositAsConfirmed(deposit, movement);
+    if (alqMovement) return this.markDepositAsConfirmed(deposit, alqMovement);
 
     await DepositsDAO.update(deposit.id, { dirty: false });
 
     return deposit;
   }
 
-  private markDepositAsConfirmed(deposit: Deposit, movement: AlqMovement) {
+  private markDepositAsConfirmed(
+    deposit: Deposit,
+    movement: AlquimiaDeposit | AlqMovementResponse,
+  ) {
     return DepositsDAO.update(deposit.id, {
       status: CONFIG.SD.DEPOSIT_STATUS.CONFIRMED,
       dirty: false,
@@ -263,22 +268,29 @@ export class FinanceServices {
     });
   }
 
+  /**
+   * Find a deposit in Alquimia's database by tracking number and date.
+   */
   private async alquimiaDepositLookup(
     tracking_number: string,
     from: Date,
-    to?: Date,
+    // to?: Date,
     page = 1,
     round = 1,
-  ): Promise<AlqMovement | undefined> {
+  ): Promise<AlqMovementResponse | undefined> {
     const accountId = CONFIG.EXTERNAL.ALQ_SAVINGS_ACCOUNT_ID;
     const endpoint = `cuenta-ahorro-cliente/${accountId}/transaccion`;
+    const PAGE_SIZE = 20;
+
+    const lastMovement = await AlquimiaDepositDAO.findLatest();
+    if (lastMovement) from = new Date(lastMovement.fecha_operacion);
 
     const searchParams = new URLSearchParams();
     const startDate = from.toISOString().split("T")[0];
-    const endDate = to?.toISOString().split("T")[0];
+    // const endDate = to?.toISOString().split("T")[0];
     searchParams.set("fecha_inicio", startDate);
-    endDate && searchParams.set("fecha_fin", endDate);
-    searchParams.set("registros", "20");
+    // endDate && searchParams.set("fecha_fin", endDate);
+    searchParams.set("registros", `${PAGE_SIZE}`);
     searchParams.set("page", page.toString());
 
     const httpService = new HttpService();
@@ -288,32 +300,50 @@ export class FinanceServices {
 
     if (movements.data.length === 0) return;
 
-    const found = (movements.data as AlqMovement[]).find(
+    console.log("SYNCING");
+    await this.syncMovements(movements.data);
+
+    const found = (movements.data as AlqMovementResponse[]).find(
       (movement) => movement.clave_rastreo === tracking_number,
     );
 
-    if (!found && movements.data.length === 20)
+    if (!found && movements.data.length === PAGE_SIZE)
       return await this.alquimiaDepositLookup(
         tracking_number,
         from,
-        undefined,
+        // undefined,
         page + 1,
         round,
       );
 
-    if (!found && movements.data.length < 20 && round === 1) {
-      const dayInMliseconds = 60 * 60 * 24 * 1000;
-      to = from;
-      from = new Date(from.getTime() - dayInMliseconds);
-      return await this.alquimiaDepositLookup(
-        tracking_number,
-        from,
-        to,
-        (page = 1),
-        (round = 2),
-      );
-    }
+    // if (!found && movements.data.length < 20 && round === 1) {
+    //   const dayInMliseconds = 60 * 60 * 24 * 1000;
+    //   to = from;
+    //   from = new Date(from.getTime() - dayInMliseconds);
+    //   return await this.alquimiaDepositLookup(
+    //     tracking_number,
+    //     from,
+    //     to,
+    //     (page = 1),
+    //     (round = 2),
+    //   );
+    // }
     return found;
+  }
+
+  /**
+   * Sync Alquimia data into local DB
+   */
+  private syncMovements(movements: AlqMovementResponse[]) {
+    // TODO
+    // Chequear que tipo_operacion = 1 sean depósitos
+    const deposits: AlquimiaDeposit[] = movements
+      .filter((movement) => movement.tipo_operacion === 1)
+      .map(parseAlqMovement);
+
+    if (!deposits) return;
+
+    return AlquimiaDepositDAO.createMany(deposits);
   }
 
   /**

@@ -94,12 +94,12 @@ describe("[UNIT] => TRANSACTIONS", () => {
   });
 
   describe("POST: /transactions/deposit/:id", () => {
-    it("Should confirm a deposit", async () => {
+    it("Should attempt to confirm a deposit", async () => {
       const response = await agent
-        .post(`/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[0].id}`)
-        .set("Authorization", `Bearer ${tokens[0].access}`)
+        .post(`/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}`)
+        .send(depositRequests[1])
+        .set("Authorization", `Bearer ${tokens[1].access}`)
         .set("User-Agent", USER_AGENT);
-
       expect(response.status).toBe(OK);
       expect(response.body.data.status).toBeDefined();
       expect(response.body.data.deposit).toBeDefined();
@@ -117,6 +117,7 @@ describe("[UNIT] => TRANSACTIONS", () => {
     it("Should return 403", async () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}`)
+        .send(depositRequests[1])
         .set("Authorization", `Bearer ${tokens[0].access}`)
         .set("User-Agent", USER_AGENT);
 
@@ -126,6 +127,7 @@ describe("[UNIT] => TRANSACTIONS", () => {
     it("Should return 404", async () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/transactions/deposit/-10`)
+        .send(depositRequests[1])
         .set("Authorization", `Bearer ${tokens[0].access}`)
         .set("User-Agent", USER_AGENT);
 
@@ -290,6 +292,7 @@ describe("[UNIT] => TRANSACTIONS", () => {
 async function initialize() {
   agent = await initAgent();
   prisma = new PrismaClient();
+  const TEST_DEPOSIT = "53771ALBO11032024195558814";
 
   const result = await prisma.player.findMany({
     take: 2,
@@ -302,11 +305,13 @@ async function initialize() {
 
   players = result;
 
+  await prisma.deposit.deleteMany({ where: { tracking_number: TEST_DEPOSIT } });
+
   depositRequests = [
     {
       currency: "MXN",
-      tracking_number: "test_tracking_number" + Date.now(),
-      paid_at: new Date().toISOString(),
+      tracking_number: TEST_DEPOSIT,
+      paid_at: new Date("2024-03-10").toISOString(),
     },
     {
       currency: "MXN",
@@ -340,14 +345,19 @@ async function initialize() {
 }
 
 async function cleanUp() {
-  await prisma.token.deleteMany({
-    where: { player_id: players[0].id, user_agent: USER_AGENT },
-  });
-  await prisma.token.deleteMany({
-    where: { player_id: players[1].id, user_agent: USER_AGENT },
-  });
-  await prisma.deposit.delete({ where: { id: deposits[0].id } });
-  //   await prisma.deposit.delete({ where: { id: deposits[1].id .} });
-  //   await prisma.player.delete({ where: { id: player.id } });
-  prisma.$disconnect();
+  try {
+    await prisma.token.deleteMany({
+      where: { player_id: players[0].id, user_agent: USER_AGENT },
+    });
+    await prisma.token.deleteMany({
+      where: { player_id: players[1].id, user_agent: USER_AGENT },
+    });
+    await prisma.deposit.delete({ where: { id: confirmedDeposit.id } });
+    await prisma.deposit.delete({ where: { id: deposits[0].id } });
+    // await prisma.deposit.delete({ where: { id: deposits[1].id } });
+  } catch (e) {
+    console.error(e);
+  } finally {
+    prisma.$disconnect();
+  }
 }
