@@ -20,7 +20,7 @@ export const validatePaymentIndex = () =>
   checkSchema({
     id: {
       in: ["params"],
-      isInt: true,
+      isString: true,
       isEmpty: false,
     },
   });

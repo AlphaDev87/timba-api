@@ -133,10 +133,10 @@ describe("[UNIT] => AGENT ROUTER", () => {
     });
   });
 
-  describe("PUT: /agent/payments/:id/paid", () => {
+  describe("POST: /agent/payments/:id/paid", () => {
     it("Should mark payment as paid", async () => {
       const response = await agent
-        .put(`/app/${CONFIG.APP.VER}/agent/payments/${payment.id}/paid`)
+        .post(`/app/${CONFIG.APP.VER}/agent/payments/${payment.id}/paid`)
         .set("Authorization", `Bearer ${access}`)
         .set("User-Agent", USER_AGENT);
 
@@ -155,7 +155,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
     });
 
     it("Should return 401", async () => {
-      const response = await agent.put(
+      const response = await agent.post(
         `/app/${CONFIG.APP.VER}/agent/payments/${payment.id}/paid`,
       );
 
@@ -164,7 +164,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
 
     it("Should return 403", async () => {
       const response = await agent
-        .put(`/app/${CONFIG.APP.VER}/agent/payments/${payment.id}/paid`)
+        .post(`/app/${CONFIG.APP.VER}/agent/payments/${payment.id}/paid`)
         .set("Authorization", `Bearer ${playerAccessToken}`)
         .set("User-Agent", USER_AGENT);
 
@@ -173,7 +173,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
 
     it("Should return 404", async () => {
       const response = await agent
-        .put(`/app/${CONFIG.APP.VER}/agent/payments/-1/paid`)
+        .post(`/app/${CONFIG.APP.VER}/agent/payments/-1/paid`)
         .set("Authorization", `Bearer ${access}`)
         .set("User-Agent", USER_AGENT);
 
@@ -248,10 +248,10 @@ describe("[UNIT] => AGENT ROUTER", () => {
     });
   });
 
-  describe("PUT: /agent/bank-account", () => {
+  describe("POST: /agent/bank-account", () => {
     it("Should update bank account", async () => {
       const response = await agent
-        .put(`/app/${CONFIG.APP.VER}/agent/bank-account`)
+        .post(`/app/${CONFIG.APP.VER}/agent/bank-account`)
         .set("Authorization", `Bearer ${access}`)
         .set("User-Agent", USER_AGENT)
         .send({
@@ -276,7 +276,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
 
     it("Should return 400", async () => {
       const response = await agent
-        .put(`/app/${CONFIG.APP.VER}/agent/bank-account`)
+        .post(`/app/${CONFIG.APP.VER}/agent/bank-account`)
         .set("Authorization", `Bearer ${access}`)
         .set("User-Agent", USER_AGENT)
         .send({
@@ -289,7 +289,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
 
     it("Should return 401", async () => {
       const response = await agent
-        .put(`/app/${CONFIG.APP.VER}/agent/bank-account`)
+        .post(`/app/${CONFIG.APP.VER}/agent/bank-account`)
         .send({ name: "Juancito" });
 
       expect(response.status).toBe(UNAUTHORIZED);
@@ -297,7 +297,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
 
     it("Should return 403", async () => {
       const response = await agent
-        .put(`/app/${CONFIG.APP.VER}/agent/bank-account`)
+        .post(`/app/${CONFIG.APP.VER}/agent/bank-account`)
         .send({ name: "Juancito" })
         .set("Authorization", `Bearer ${playerAccessToken}`)
         .set("User-Agent", USER_AGENT);

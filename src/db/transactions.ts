@@ -13,7 +13,7 @@ export class TransactionsDAO {
    * @param bank_account
    * @param player_id
    */
-  static async authorizeTransaction(bank_account: number, player_id: number) {
+  static async authorizeTransaction(bank_account: string, player_id: string) {
     try {
       const account = await prisma.bankAccount.findFirst({
         where: { id: bank_account },

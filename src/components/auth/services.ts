@@ -27,7 +27,7 @@ export class AuthServices extends JwtService {
    * @param sub User ID
    * @param role User role
    */
-  async tokens(sub: number, user_agent?: string): Promise<TokenResult> {
+  async tokens(sub: string, user_agent?: string): Promise<TokenResult> {
     const dbToken = await TokenDAO.create({ player_id: sub, user_agent });
     return {
       tokens: this.generateTokenPair(sub, dbToken.id, this.cypherPass),
@@ -100,7 +100,7 @@ export class AuthServices extends JwtService {
     return TokenDAO.updateById(token_id, { invalid: true });
   }
 
-  invalidateTokensByUserAgent(player_id: number, user_agent?: string) {
+  invalidateTokensByUserAgent(player_id: string, user_agent?: string) {
     return TokenDAO.update({ player_id, user_agent }, { invalid: true });
   }
 
@@ -114,7 +114,7 @@ export class AuthServices extends JwtService {
     }
   }
 
-  async logout(user_id: number, encoded: string) {
+  async logout(user_id: string, encoded: string) {
     try {
       const payload = jwt.verify(encoded, this.cypherPass) as JwtPayload;
       if (payload === undefined) return;

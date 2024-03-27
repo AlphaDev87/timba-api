@@ -8,10 +8,10 @@ import { BankAccountRequest } from "@/types/request/bank-account";
 let agent: SuperAgentTest;
 let prisma: PrismaClient;
 let playerAccess: string;
-let playerId: number;
+let playerId: string;
 let bankAccountRequest: BankAccountRequest;
-let foreignBankAccountId: number;
-let bankAccountId: number;
+let foreignBankAccountId: string;
+let bankAccountId: string;
 
 beforeAll(initialize);
 
@@ -69,7 +69,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
 
   it("Should update bank account", async () => {
     const response = await agent
-      .put(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}`)
+      .post(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}`)
       .send({ owner: "Juancete" })
       .set("Authorization", `Bearer ${playerAccess} `);
 
@@ -79,7 +79,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
 
   it("Should NOT update bank account ID", async () => {
     const response = await agent
-      .put(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}`)
+      .post(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}`)
       .send({ id: 1 })
       .set("Authorization", `Bearer ${playerAccess} `);
 
@@ -88,7 +88,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
 
   it("Should NOT update someone else's bank account", async () => {
     const response = await agent
-      .put(`/app/${CONFIG.APP.VER}/bank-account/${foreignBankAccountId}`)
+      .post(`/app/${CONFIG.APP.VER}/bank-account/${foreignBankAccountId}`)
       .send({ owner: "Carlitos" })
       .set("Authorization", `Bearer ${playerAccess} `);
 
@@ -125,7 +125,9 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
 
   it("Should NOT delete someone else's bank account", async () => {
     const response = await agent
-      .delete(`/app/${CONFIG.APP.VER}/bank-account/${foreignBankAccountId}`)
+      .post(
+        `/app/${CONFIG.APP.VER}/bank-account/${foreignBankAccountId}/delete`,
+      )
       .set("Authorization", `Bearer ${playerAccess} `);
 
     expect(response.status).toBe(FORBIDDEN);
@@ -133,7 +135,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
 
   it("Should delete bank account", async () => {
     const response = await agent
-      .delete(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}`)
+      .post(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}/delete`)
       .set("Authorization", `Bearer ${playerAccess} `);
 
     expect(response.status).toBe(OK);
@@ -156,7 +158,7 @@ async function initialize() {
 
   bankAccountRequest = {
     owner: "Test " + Date.now(),
-    owner_id: playerId,
+    owner_id: 33333333,
     bankName: "Test Bank " + Date.now(),
     bankNumber: `${Date.now()}`,
     bankAlias: `${Date.now()}`,
@@ -167,7 +169,7 @@ async function initialize() {
       NOT: { player_id: playerId },
     },
   });
-  foreignBankAccountId = bankAccount?.id || 0;
+  foreignBankAccountId = bankAccount?.id || "0";
 }
 
 async function cleanUp() {

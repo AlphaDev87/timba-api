@@ -43,7 +43,7 @@ export class PaymentsDAO {
     }
   }
 
-  static async update(id: number, data: PaymentUpdatableProps) {
+  static async update(id: string, data: PaymentUpdatableProps) {
     try {
       const payment = await prisma.payment.update({
         where: { id },

@@ -33,21 +33,29 @@ export class AlquimiaTokenService
   }
 
   async getAuth(): Promise<string[] | null> {
-    const apiManagerToken = await this._cachedApiManagerToken();
-    const alquimiaToken = await this._cachedAlquimiaToken();
-    if (!apiManagerToken || !alquimiaToken) {
+    try {
+      const apiManagerToken = await this._cachedApiManagerToken();
+      const alquimiaToken = await this._cachedAlquimiaToken();
+      if (!apiManagerToken || !alquimiaToken) {
+        return null;
+      }
+      return [apiManagerToken, alquimiaToken];
+    } catch (e) {
       return null;
     }
-    return [apiManagerToken, alquimiaToken];
   }
 
   async authenticate(): Promise<string[] | null> {
-    const apiManagerToken = await this._fetchApiManagerToken();
-    const alquimiaToken = await this._alquimiaToken();
-    if (!apiManagerToken || !alquimiaToken) {
+    try {
+      const apiManagerToken = await this._fetchApiManagerToken();
+      const alquimiaToken = await this._alquimiaToken();
+      if (!apiManagerToken || !alquimiaToken) {
+        return null;
+      }
+      return [apiManagerToken, alquimiaToken];
+    } catch (e) {
       return null;
     }
-    return [apiManagerToken, alquimiaToken];
   }
 
   private async _cachedApiManagerToken(): Promise<string | null> {

@@ -46,7 +46,7 @@ export class AgentServices {
   /**
    * Mark a pending payment as paid
    */
-  static async markAsPaid(payment_id: number): Promise<Payment> {
+  static async markAsPaid(payment_id: string): Promise<Payment> {
     const payment = PaymentsDAO.update(payment_id, {
       paid: new Date().toISOString(),
     });
@@ -92,6 +92,7 @@ export class AgentServices {
     const deposits = await DepositsDAO.getPendingCoinTransfers();
     const financeServices = new FinanceServices();
     for (const deposit of deposits) {
+      if (deposit.status !== CONFIG.SD.DEPOSIT_STATUS.CONFIRMED) continue;
       const result = await financeServices.transfer(
         "deposit",
         deposit,

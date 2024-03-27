@@ -9,6 +9,7 @@ import {
   validateDepositRequest,
   validateDepositId,
 } from "@/components/transactions/validators";
+import { AgentController } from "@/components/agent";
 
 const transactionsRouter = Router();
 
@@ -27,8 +28,8 @@ transactionsRouter.get(
   "/deposit/pending",
   TransactionsController.pendingDeposits,
 );
-transactionsRouter.delete(
-  "/deposit/:id",
+transactionsRouter.post(
+  "/deposit/:id/delete",
   validateDepositId(),
   throwIfBadRequest,
   TransactionsController.deleteDeposit,
@@ -40,5 +41,6 @@ transactionsRouter.post(
   throwIfBadRequest,
   TransactionsController.cashout,
 );
+transactionsRouter.get("/bank-details", AgentController.getBankAccount);
 
 export default transactionsRouter;

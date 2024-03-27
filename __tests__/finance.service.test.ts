@@ -10,14 +10,14 @@ beforeAll(async () => {
     where: { tracking_number: "53771ALBO11032024195558814" },
   })) as Deposit;
 
-  if (!deposit) throw new Error("Deposit not found");
-
   service = new FinanceServices();
 });
 
 describe("FinanceService", () => {
   describe("verifyPayment", () => {
     it("Should verify a payment", async () => {
+      if (!deposit) fail("Deposit not found");
+
       const verified = await service.verifyPayment(deposit);
 
       expect(verified.amount).toBeTruthy();

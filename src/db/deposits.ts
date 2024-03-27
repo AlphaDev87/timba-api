@@ -52,7 +52,7 @@ export class DepositsDAO {
     }
   }
 
-  static getById(id: number) {
+  static getById(id: string) {
     try {
       return prisma.deposit.findUnique({
         where: { id },
@@ -65,8 +65,20 @@ export class DepositsDAO {
     }
   }
 
+  static getByTrackingNumber(tracking_number: string) {
+    try {
+      return prisma.deposit.findUnique({
+        where: { tracking_number },
+      });
+    } catch (error) {
+      throw error;
+    } finally {
+      prisma.$disconnect();
+    }
+  }
+
   // TODO test
-  static getPending(player_id: number) {
+  static getPending(player_id: string) {
     try {
       return prisma.deposit.findMany({
         where: {
@@ -86,10 +98,17 @@ export class DepositsDAO {
     }
   }
 
+  /**
+   * Get deposits where the money has been confirmed to have arrived at
+   * Alquimia but coins haven't been transfered yet.
+   */
   static getPendingCoinTransfers() {
     try {
       return prisma.deposit.findMany({
-        where: { coins_transfered: null },
+        where: {
+          coins_transfered: null,
+          status: CONFIG.SD.DEPOSIT_STATUS.CONFIRMED,
+        },
         include: { Player: true },
       });
     } catch (error) {
@@ -99,7 +118,7 @@ export class DepositsDAO {
     }
   }
 
-  static update(id: number, data: DepositUpdatableProps) {
+  static update(id: string, data: DepositUpdatableProps) {
     try {
       return prisma.deposit.update({ where: { id }, data });
     } catch (error) {
@@ -109,7 +128,7 @@ export class DepositsDAO {
     }
   }
 
-  static delete(id: number) {
+  static delete(id: string) {
     try {
       return prisma.deposit.delete({ where: { id } });
     } catch (error) {
@@ -123,7 +142,7 @@ export class DepositsDAO {
    * Ensures deposit exists and belongs to player.
    * @throws if checks fail.
    */
-  static async authorizeTransaction(deposit_id: number, player_id: number) {
+  static async authorizeTransaction(deposit_id: string, player_id: string) {
     try {
       const deposit = await this.getById(deposit_id);
       if (!deposit) throw new NotFoundException();
@@ -148,7 +167,7 @@ export class DepositsDAO {
    * If checks pass, sets dirty flag to true (deposit is being confirmed)
    * @throws if checks fail
    */
-  static async authorizeConfirmation(deposit_id: number, player_id: number) {
+  static async authorizeConfirmation(deposit_id: string, player_id: string) {
     try {
       let deposit = await this.authorizeTransaction(deposit_id, player_id);
       if (deposit.status === CONFIG.SD.DEPOSIT_STATUS.CONFIRMED)
