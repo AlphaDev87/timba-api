@@ -14,7 +14,7 @@ export const createApp = (): express.Application => {
   const app = express();
 
   const allowedOrigin = CONFIG.APP.ENV?.includes("dev")
-    ? `http://${CONFIG.APP.HOST}:${CONFIG.APP.PORT}`
+    ? CONFIG.APP.ALLOWED_ORIGIN
     : "";
 
   allowedOrigin && app.use(cors({ origin: allowedOrigin }));
