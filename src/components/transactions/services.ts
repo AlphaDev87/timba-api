@@ -44,7 +44,7 @@ export class FinanceServices {
    */
   async confirmDeposit(
     player: PlainPlayerResponse,
-    deposit_id: number,
+    deposit_id: string,
     request: DepositRequest,
   ): Promise<CoinTransferResult & { deposit: Deposit }> {
     await DepositsDAO.authorizeConfirmation(deposit_id, player.id);
@@ -214,7 +214,7 @@ export class FinanceServices {
   }
 
   private async createDeposit(
-    player_id: number,
+    player_id: string,
     request: DepositRequest,
   ): Promise<Deposit> {
     return await DepositsDAO.create({
@@ -224,7 +224,7 @@ export class FinanceServices {
   }
 
   private async createPayment(
-    player_id: number,
+    player_id: string,
     request: CashoutRequest,
   ): Promise<Payment> {
     return await PaymentsDAO.create({
@@ -303,7 +303,6 @@ export class FinanceServices {
 
     if (movements.data.length === 0) return;
 
-    console.log("SYNCING");
     await this.syncMovements(movements.data);
 
     const found = (movements.data as AlqMovementResponse[]).find(
@@ -352,12 +351,12 @@ export class FinanceServices {
   /**
    * Show deposits for which the money transfer hasn't been verified
    */
-  static async showPendingDeposits(player_id: number): Promise<Deposit[]> {
+  static async showPendingDeposits(player_id: string): Promise<Deposit[]> {
     const deposits = await DepositsDAO.getPending(player_id);
     return deposits;
   }
 
-  static async deleteDeposit(deposit_id: number, player_id: number) {
+  static async deleteDeposit(deposit_id: string, player_id: string) {
     await DepositsDAO.authorizeDeletion(deposit_id, player_id);
     await DepositsDAO.delete(deposit_id);
   }

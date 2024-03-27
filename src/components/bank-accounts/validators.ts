@@ -4,7 +4,7 @@ export const validateBankAccountIndex = () =>
   checkSchema({
     id: {
       in: ["params"],
-      isNumeric: true,
+      isString: true,
       optional: true,
     },
   });
@@ -83,6 +83,6 @@ export const validateAccountUpdate = () =>
     id: {
       in: ["params"],
       notEmpty: true,
-      isNumeric: true,
+      isString: true,
     },
   });

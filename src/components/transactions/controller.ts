@@ -8,14 +8,14 @@ import { CoinTransferResult } from "@/types/response/transfers";
 
 export class TransactionsController {
   static deposit = async (req: AuthedReq, res: Res, next: NextFn) => {
-    const deposit_id = Number(req.params.id);
+    const deposit_id = req.params.id;
     const request: Omit<DepositRequest, "player_id"> = req.body;
     const player = req.user!;
 
     const financeServices = new FinanceServices();
     try {
       let result: CoinTransferResult;
-      if (isNaN(deposit_id)) {
+      if (!deposit_id) {
         result = await financeServices.deposit(player, request);
       } else {
         const deposit = await DepositsDAO.getById(deposit_id);
@@ -61,7 +61,7 @@ export class TransactionsController {
 
   static deleteDeposit = async (req: AuthedReq, res: Res, next: NextFn) => {
     const player = req.user!;
-    const deposit_id = Number(req.params.id);
+    const deposit_id = req.params.id;
 
     try {
       await FinanceServices.deleteDeposit(deposit_id, player.id);

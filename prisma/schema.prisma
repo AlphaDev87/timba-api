@@ -11,7 +11,7 @@ datasource db {
 }
 
 model UserRoot {
-  id                Int           @id @default(autoincrement())
+  id                String        @id @default(uuid())
   username          String        @db.VarChar(50) @unique
   password          String        @db.Text
   panel_id          Int
@@ -29,7 +29,7 @@ model UserRoot {
 }
 
 model Transactions {
-  id                Int           @id @default(autoincrement())
+  id                String        @id @default(uuid())
   sender_id         Int           // Panel ID
   recipient_id      Int           // Panel ID
   amount            Float
@@ -42,7 +42,7 @@ model Transactions {
 }
 
 model Player {
-  id                Int           @id @default(autoincrement())
+  id                String        @id @default(uuid())
   panel_id          Int           @unique
   username          String        @db.VarChar(100) @unique
   password          String        @db.Text
@@ -66,12 +66,12 @@ model Player {
 }
 
 model Payment {
-  id                Int           @id @default(autoincrement())
-  player_id         Int           
+  id                String        @id @default(uuid())
+  player_id         String           
   Player            Player        @relation(fields: [player_id], references: [id])
   amount            Float
   paid              DateTime?     
-  bank_account      Int           
+  bank_account      String           
   BankAccount       BankAccount   @relation(fields: [bank_account], references: [id])
   currency          String        @default("MXN")
   created_at        DateTime      @default(now())
@@ -81,11 +81,11 @@ model Payment {
 }
 
 model BankAccount {
-  id                Int           @id @default(autoincrement())
+  id                String        @id @default(uuid())
   owner             String        // Nombre del beneficiario
   owner_id          Int           // DNI
   Player            Player        @relation(fields: [player_id], references: [id])
-  player_id         Int           // ID de Player
+  player_id         String        // ID de Player
   bankName          String        // Nombre del banco
   bankNumber        String        @unique // CBU
   bankAlias         String?       @unique
@@ -97,8 +97,8 @@ model BankAccount {
 }
 
 model Deposit {
-  id                Int           @id @default(autoincrement())
-  player_id         Int           
+  id                String        @id @default(uuid())
+  player_id         String           
   Player            Player        @relation(fields: [player_id], references: [id])
   currency          String        @default("MXN")
   dirty             Boolean       @default(true)
@@ -117,7 +117,7 @@ model Token {
   id                String        @id @default(uuid())
   invalid           Boolean       @default(false)
   next              String?       
-  player_id         Int           
+  player_id         String           
   player            Player        @relation(fields: [player_id], references: [id])
   user_agent        String?       @db.VarChar(256)
   created_at        DateTime      @default(now())
@@ -138,7 +138,7 @@ model PushSubscription {
 }
 
 model Role {
-  id                Int           @id @default(autoincrement())
+  id                String        @id @default(uuid())
   name              String        @unique
   players           Player[]
 

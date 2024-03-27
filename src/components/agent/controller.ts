@@ -34,7 +34,7 @@ export class AgentController {
     try {
       const { id } = req.params;
 
-      const payment = await AgentServices.markAsPaid(Number(id));
+      const payment = await AgentServices.markAsPaid(id);
 
       res.status(OK).json(apiResponse(payment));
     } catch (error) {

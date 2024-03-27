@@ -262,7 +262,7 @@ Endpoints marcados con 🔒 requieren Bearer token
 ### Player
 ```typescript
 {
-  id: number
+  id: string
   panel_id: number
   username: string
   email: string?
@@ -315,10 +315,10 @@ Endpoints marcados con 🔒 requieren Bearer token
 ### BankAccount
 ```typescript
 {
-  id: number        
+  id: string        
   owner: string                       // Nombre del beneficiario
   owner_id: number                    // DNI
-  player_id: number                   // ID de Player
+  player_id: string                   // ID de Player
   bankName: string                    // Nombre del banco
   bankNumber: string                  // CBU
   bankAlias: string?       
@@ -358,7 +358,7 @@ Estado de transferencia de fichas
 ```typescript
 {
   status: "COMPLETED" | "INCOMPLETE"
-  player_balance: number?             // undefined en caso de deposito incompleto
+  player_balance: number?             // undefined en caso de deposito INCOMPLETE
   error: string?                      // En caso de error, el motivo
   deposit: Deposit
 }
@@ -367,8 +367,8 @@ Estado de transferencia de fichas
 ### Deposit
 ```typescript
 {
-  id: number
-  player_id: number
+  id: string
+  player_id: string
   currency: string
   dirty: boolean
   // Esperando confirmacion | no encontrado en alquimia | confirmado | cancelado por jugador | eliminado por agente
@@ -385,11 +385,11 @@ Estado de transferencia de fichas
 ### Payment
 ```typescript
 {
-  id: number
-  player_id: number
+  id: string
+  player_id: string
   amount: number
   paid: datetime | null               // 2024-02-23T12:35:51.017Z
-  bank_account: number
+  bank_account: string
   currency: string
   created_at: datetime                // 2024-02-23T12:35:51.017Z                  
   updated_at: datetime                // 2024-02-23T12:35:51.017Z

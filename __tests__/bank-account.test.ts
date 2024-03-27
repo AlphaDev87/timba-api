@@ -8,10 +8,10 @@ import { BankAccountRequest } from "@/types/request/bank-account";
 let agent: SuperAgentTest;
 let prisma: PrismaClient;
 let playerAccess: string;
-let playerId: number;
+let playerId: string;
 let bankAccountRequest: BankAccountRequest;
-let foreignBankAccountId: number;
-let bankAccountId: number;
+let foreignBankAccountId: string;
+let bankAccountId: string;
 
 beforeAll(initialize);
 
@@ -156,7 +156,7 @@ async function initialize() {
 
   bankAccountRequest = {
     owner: "Test " + Date.now(),
-    owner_id: playerId,
+    owner_id: 33333333,
     bankName: "Test Bank " + Date.now(),
     bankNumber: `${Date.now()}`,
     bankAlias: `${Date.now()}`,
@@ -167,7 +167,7 @@ async function initialize() {
       NOT: { player_id: playerId },
     },
   });
-  foreignBankAccountId = bankAccount?.id || 0;
+  foreignBankAccountId = bankAccount?.id || "0";
 }
 
 async function cleanUp() {

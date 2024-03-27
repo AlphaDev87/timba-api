@@ -55,7 +55,8 @@ export const validateDepositId = () =>
   checkSchema({
     id: {
       in: ["params"],
-      isInt: true,
+      isString: true,
+      isNumeric: false,
       isEmpty: false,
     },
   });

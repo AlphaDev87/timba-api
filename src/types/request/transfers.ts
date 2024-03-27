@@ -2,7 +2,7 @@
 export type CashoutRequest = {
   amount: number;
   currency: string;
-  bank_account: number;
+  bank_account: string;
 };
 
 /** Datos para API del casino */
@@ -21,11 +21,11 @@ export interface DepositRequest {
 }
 
 export interface CreateDepositProps extends DepositRequest {
-  player_id: number;
+  player_id: string;
 }
 
 export interface DepositUpdatableProps {
-  player_id?: number;
+  player_id?: string;
   dirty?: boolean;
   status?: string;
   tracking_number?: string;
@@ -35,14 +35,14 @@ export interface DepositUpdatableProps {
 }
 
 export interface PaymentRequest {
-  player_id: number;
-  bank_account: number;
+  player_id: string;
+  bank_account: string;
   amount: number;
   currency: string;
 }
 
 export interface PaymentUpdatableProps {
-  bank_account?: number;
+  bank_account?: string;
   amount?: number;
   currency?: string;
   paid?: string;

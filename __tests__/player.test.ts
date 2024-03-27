@@ -13,7 +13,7 @@ beforeAll(async () => {
 });
 
 describe("[UNIT] => PLAYERS ROUTER", () => {
-  let playerId: number;
+  let playerId: string;
   let playerAccessToken: string;
   const username = "jest_test" + Date.now();
   const email = username + "@test.com";
@@ -181,7 +181,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
   });
 });
 
-async function checkPlayerRole(player_id: number) {
+async function checkPlayerRole(player_id: string) {
   const player = await prisma.player.findUnique({
     where: { id: player_id },
     include: { roles: true },
