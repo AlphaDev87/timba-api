@@ -14,10 +14,10 @@ export const createApp = (): express.Application => {
   const app = express();
 
   const allowedOrigin = CONFIG.APP.ENV?.includes("dev")
-    ? CONFIG.APP.ALLOWED_ORIGIN
-    : "";
+    ? 'http://localhost:3000'
+    : CONFIG.APP.ALLOWED_ORIGIN;
 
-  allowedOrigin && app.use(cors({ origin: allowedOrigin }));
+  allowedOrigin !== "" && app.use(cors({ origin: allowedOrigin }));
   app.use(helmet());
   app.use(express.json());
   app.use(
