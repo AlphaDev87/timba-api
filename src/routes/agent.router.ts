@@ -24,7 +24,7 @@ agentRouter.use(
 );
 agentRouter.use(requireAgentRole);
 agentRouter.get("/payments", AgentController.showPayments);
-agentRouter.put(
+agentRouter.post(
   "/payments/:id/paid",
   validatePaymentIndex(),
   checkExact(),
@@ -34,7 +34,7 @@ agentRouter.put(
 agentRouter.get("/deposits", AgentController.showDeposits);
 agentRouter.get("/qr", AgentController.qr);
 agentRouter.get("/bank-account", AgentController.getBankAccount);
-agentRouter.put(
+agentRouter.post(
   "/bank-account",
   validateBankAccountUpdate(),
   checkExact(),

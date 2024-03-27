@@ -106,7 +106,7 @@ Devuelve    | [`BankAccount`](#bankaccount)
 
 |Endpoint| `/bank-account`|
 ---|---|
-Método      |`PUT`
+Método      |`POST`
 Body (json) | [`BankAccountRequest`](#bankaccountrequest)
 Devuelve    | [`BankAccount`](#bankaccount)
 
@@ -114,9 +114,9 @@ Devuelve    | [`BankAccount`](#bankaccount)
 
 ### Eliminar Cuenta Bancaria [🔒](#👉-🔒)
 
-|Endpoint| `/bank-account`|
+|Endpoint| `/bank-account/:id/delete`|
 ---|---|
-Método      |`DELETE`
+Método      |`POST`
 Devuelve    | 200 OK
 
 ### Cargar Fichas [🔒](#👉-🔒)
@@ -155,9 +155,9 @@ Devuelve    |[`TransferResult`](#transferresult)
 
 ### Eliminar Depósito Pendiente [🔒](#👉-🔒)
 
-|Endpoint| `/transactions/deposit/:id`|
+|Endpoint| `/transactions/deposit/:id/delete`|
 ---|---|
-Método      |`DELETE`
+Método      |`POST`
 Devuelve    | 200 OK
 
 Auth
@@ -204,7 +204,7 @@ Devuelve    |[`Payment[]`](#payment)
 
 |Endpoint| `/agent/payments/:id/paid`|
 ---|---|
-Método      |`PUT`
+Método      |`POST`
 Devuelve    |[`Payment`](#payment)
 
 ### Ver Depósitos [🔒](#👉-🔒)
@@ -232,7 +232,7 @@ Devuelve    |[`RootBankAccount`](#rootbankaccount)
 
 |Endpoint| `/agent/bank-account`|
 ---|---|
-Método      |`PUT`
+Método      |`POST`
 Body (json) |[`RootBankAccount`](#rootbankaccount)
 Devuelve    |[`RootBankAccount`](#rootbankaccount)
 

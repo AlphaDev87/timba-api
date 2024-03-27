@@ -27,8 +27,8 @@ transactionsRouter.get(
   "/deposit/pending",
   TransactionsController.pendingDeposits,
 );
-transactionsRouter.delete(
-  "/deposit/:id",
+transactionsRouter.post(
+  "/deposit/:id/delete",
   validateDepositId(),
   throwIfBadRequest,
   TransactionsController.deleteDeposit,
