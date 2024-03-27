@@ -65,6 +65,18 @@ export class DepositsDAO {
     }
   }
 
+  static getByTrackingNumber(tracking_number: string) {
+    try {
+      return prisma.deposit.findUnique({
+        where: { tracking_number },
+      });
+    } catch (error) {
+      throw error;
+    } finally {
+      prisma.$disconnect();
+    }
+  }
+
   // TODO test
   static getPending(player_id: string) {
     try {

@@ -15,7 +15,16 @@ export class TransactionsController {
     const financeServices = new FinanceServices();
     try {
       let result: CoinTransferResult;
-      if (!deposit_id) {
+      const deposit = await DepositsDAO.getByTrackingNumber(
+        request.tracking_number,
+      );
+      if (deposit && !deposit_id) {
+        result = await financeServices.confirmDeposit(
+          player,
+          deposit.id,
+          request,
+        );
+      } else if (!deposit && !deposit_id) {
         result = await financeServices.deposit(player, request);
       } else {
         const deposit = await DepositsDAO.getById(deposit_id);

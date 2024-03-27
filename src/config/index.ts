@@ -16,6 +16,7 @@ const CONFIG = {
     PORT: process.env.NODE_ENV === "test" ? 8888 : process.env.PORT || 8080,
     ENV: process.env.NODE_ENV,
     CYPHER_PASS: process.env.CYPHER_PASS,
+    ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN,
   },
   SERVER: {
     TIMEOUT: 60000, // 1m
