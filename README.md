@@ -37,6 +37,7 @@ Comes with:
 + [Ver Depósitos Pendientes](#ver-depósitos-pendientes-🔒)
 + [Confirmar Depósito Pendiente](#confirmar-depósito-pendiente-🔒)
 + [Eliminar Depósito Pendiente](#eliminar-depósito-pendiente-🔒)
++ [Ver Cuenta Bancaria de Alquimia](#ver-cuenta-alquimia-🔒)
 
 ### Agente
 + [Login de Agente](#login-agente)
@@ -60,12 +61,13 @@ Comes with:
 Jugadores
 ---------
 
-### Ver Jugador [🔒](#👉-🔒)
+### Ver Jugador 🔒
 
 |Endpoint:| `/players/`|
 ---|---|
 Método      | `GET`
 Devuelve    | [`Player & { bank_accounts: BankAccount[] }`](#player)
+Requiere rol| player
 
 ### Crear Jugador
 
@@ -83,43 +85,47 @@ Método      |`POST`
 Body (json) | [`Credenciales`](#credenciales)
 Devuelve    | [`LoginResponse`](#loginresponse)
 
-### Ver Cuentas Bancarias [🔒](#👉-🔒)
+### Ver Cuentas Bancarias 🔒
 
 |Endpoint| `/bank-account/:id?`|
 ---|---|
 Método      |`GET`
 Devuelve    | [`BankAccount[]`](#bankaccount)
+Requiere rol| player
 
 > **Nota:** Siempre devuleve un array
 
 > **Nota:** Omitir el parámetro `id` para ver todas las cuentas bancarias del usuario
 
-### Crear Cuenta Bancaria [🔒](#👉-🔒)
+### Crear Cuenta Bancaria 🔒
 
 |Endpoint| `/bank-account`|
 ---|---|
 Método      |`POST`
 Body (json) | [`BankAccountRequest`](#bankaccountrequest)
 Devuelve    | [`BankAccount`](#bankaccount)
+Requiere rol| player
 
-### Actualizar Cuenta Bancaria [🔒](#👉-🔒)
+### Actualizar Cuenta Bancaria 🔒
 
 |Endpoint| `/bank-account`|
 ---|---|
 Método      |`POST`
 Body (json) | [`BankAccountRequest`](#bankaccountrequest)
 Devuelve    | [`BankAccount`](#bankaccount)
+Requiere rol| player
 
 > **Nota:** Los campos son opcionales. Incluir los que se quiera modificar
 
-### Eliminar Cuenta Bancaria [🔒](#👉-🔒)
+### Eliminar Cuenta Bancaria 🔒
 
 |Endpoint| `/bank-account/:id/delete`|
 ---|---|
 Método      |`POST`
 Devuelve    | 200 OK
+Requiere rol| player
 
-### Cargar Fichas [🔒](#👉-🔒)
+### Cargar Fichas 🔒
 Incluir el id en la URL y omitir el body para confirmar un depósito pendiente
 Omitir el id en la URL e incluir los datos en el body para crear un depósito nuevo
 
@@ -128,37 +134,50 @@ Omitir el id en la URL e incluir los datos en el body para crear un depósito nu
 Método      |`POST`
 Body (json) |[`DepositRequest`](#depositrequest)
 Devuelve    |[`TransferResult & { deposit: Deposit }`](#transferresult)
+Requiere rol| player
 
-### Retirar Premios [🔒](#👉-🔒)
+### Retirar Premios 🔒
 
 |Endpoint| `/transactions/cashout`|
 ---|---|
 Método      |`POST`
 Body (json) |[`CashoutRequest`](#cashoutrequest)
 Devuelve    |[`TransferResult`](#transferresult)
+Requiere rol| player
 
-### Ver Depósitos Pendientes [🔒](#👉-🔒)
+### Ver Depósitos Pendientes 🔒
 
 |Endpoint| `/transactions/deposit/pending`|
 ---|---|
 Método      |`GET`
 Devuelve    |[`Deposit[]`](#deposit)
+Requiere rol| player
 
 > **Nota:** siempre devuelve un array
 
-### Confirmar Depósito Pendiente [🔒](#👉-🔒)
+### Confirmar Depósito Pendiente 🔒
 
 |Endpoint| `/transactions/deposit/:id/confirm`|
 ---|---|
 Método      |`PUT`
 Devuelve    |[`TransferResult`](#transferresult)
+Requiere rol| player
 
-### Eliminar Depósito Pendiente [🔒](#👉-🔒)
+### Eliminar Depósito Pendiente 🔒
 
 |Endpoint| `/transactions/deposit/:id/delete`|
 ---|---|
 Método      |`POST`
 Devuelve    | 200 OK
+Requiere rol| player
+
+### Ver Cuenta Alquimia 🔒
+
+|Endpoint| `/transactions/bank-details`|
+---|---|
+Método      |`GET`
+Devuelve    |[`RootBankAccount`](#rootbankaccount)
+Requiere rol| player
 
 Auth
 ----
@@ -171,7 +190,7 @@ Método      |`POST`
 Body (json) |[`RefreshRequest`](#refreshrequest)
 Devuelve    |[`Tokens`](#tokens)
 
-### Logout [🔒](#👉-🔒)
+### Logout 🔒
 
 |Endpoint| `/auth/logout`|
 ---|---|
@@ -179,6 +198,7 @@ Método      |`POST`
 Body (json) |[`RefreshRequest`](#refreshrequest)
 Devuelve    |200 OK si el token es invalidado
 Error       |403 si el token no le pertenece al usuario, 404 si el token no se encuentra
+Requiere rol| player \| agent
 
 **Nota** el token puede ser un access o refresh token. Al recibir uno, los dos serán invalidados.
 
@@ -193,69 +213,74 @@ Método      |`POST`
 Body (json) |[`Credenciales`](#credenciales)
 Devuelve    |[`Tokens`](#tokens)
 
-### Ver Pagos [🔒](#👉-🔒)
+### Ver Pagos 🔒
 
-|Endpoint| `/auth/refresh`|
+|Endpoint| `/agent/payments`|
 ---|---|
 Método      |`GET`
 Devuelve    |[`Payment[]`](#payment)
+Requiere rol| agent
 
-### Marcar Pago Como Completado [🔒](#👉-🔒)
+### Marcar Pago Como Completado 🔒
 
 |Endpoint| `/agent/payments/:id/paid`|
 ---|---|
 Método      |`POST`
 Devuelve    |[`Payment`](#payment)
+Requiere rol| agent
 
-### Ver Depósitos [🔒](#👉-🔒)
+### Ver Depósitos 🔒
 
 |Endpoint| `/agent/deposits`|
 ---|---|
 Método      |`GET`
 Devuelve    |[`Deposit[]`](#deposit )
+Requiere rol| agent
 
-### Ver QR [🔒](#👉-🔒)
+### Ver QR 🔒
 
 |Endpoint| `/agent/qr`|
 ---|---|
 Método      |`GET`
 Devuelve    |`Blob`
+Requiere rol| agent
 
-### Ver Cuenta Bancaria [🔒](#👉-🔒)
+### Ver Cuenta Bancaria 🔒
 
 |Endpoint| `/agent/bank-account`|
 ---|---|
 Método      |`GET`
 Devuelve    |[`RootBankAccount`](#rootbankaccount)
+Requiere rol| agent
 
-### Actualizar Cuenta Bancaria [🔒](#👉-🔒)
+### Actualizar Cuenta Bancaria 🔒
 
 |Endpoint| `/agent/bank-account`|
 ---|---|
 Método      |`POST`
 Body (json) |[`RootBankAccount`](#rootbankaccount)
 Devuelve    |[`RootBankAccount`](#rootbankaccount)
+Requiere rol| agent
 
 **Nota** Todos los parámetros son opcionales, incluir solo los que se quiera actualizar.
 
-### Ver Balance [🔒](#👉-🔒)
+### Ver Balance 🔒
 
 |Endpoint| `/agent/balance`|
 ---|---|
 Método      |`GET`
 Devuelve    |[`Balance`](#balance)
+Requiere rol| agent
 
-### Liberar Fichas Pendientes [🔒](#👉-🔒)
+### Liberar Fichas Pendientes 🔒
 Liberar transferencias que hayan quedado pendientes en el caso que un jugador quiera comprar mas fichas de las que tiene dispoibles el agente
 
 |Endpoint| `/agent/deposits/complete`|
 ---|---|
 Método      |`GET`
 Devuelve    |[`Deposit[]`](#deposit) - los depositos afectados
+Requiere rol| agent
 
-
-### 👉 🔒 
-Endpoints marcados con 🔒 requieren Bearer token
 
 ## Interfaces
 

@@ -22,7 +22,7 @@ export const startServer = (app: e.Application): Server => {
     process.stdout.write(`⚙️ Application Environment: ${CONFIG.APP.ENV}\n`);
     process.stdout.write(`⏱ Started on: ${Date.now()}\n`);
     process.stdout.write(
-      `Timba Api Server ready at http://localhost:${CONFIG.APP.PORT}\n`,
+      `Timba Api Server ready at http://${CONFIG.APP.HOST}:${CONFIG.APP.PORT}\n`,
     );
   });
 };
