@@ -69,7 +69,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
 
   it("Should update bank account", async () => {
     const response = await agent
-      .put(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}`)
+      .post(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}`)
       .send({ owner: "Juancete" })
       .set("Authorization", `Bearer ${playerAccess} `);
 
@@ -79,7 +79,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
 
   it("Should NOT update bank account ID", async () => {
     const response = await agent
-      .put(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}`)
+      .post(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}`)
       .send({ id: 1 })
       .set("Authorization", `Bearer ${playerAccess} `);
 
@@ -88,7 +88,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
 
   it("Should NOT update someone else's bank account", async () => {
     const response = await agent
-      .put(`/app/${CONFIG.APP.VER}/bank-account/${foreignBankAccountId}`)
+      .post(`/app/${CONFIG.APP.VER}/bank-account/${foreignBankAccountId}`)
       .send({ owner: "Carlitos" })
       .set("Authorization", `Bearer ${playerAccess} `);
 
@@ -125,7 +125,9 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
 
   it("Should NOT delete someone else's bank account", async () => {
     const response = await agent
-      .delete(`/app/${CONFIG.APP.VER}/bank-account/${foreignBankAccountId}`)
+      .post(
+        `/app/${CONFIG.APP.VER}/bank-account/${foreignBankAccountId}/delete`,
+      )
       .set("Authorization", `Bearer ${playerAccess} `);
 
     expect(response.status).toBe(FORBIDDEN);
@@ -133,7 +135,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
 
   it("Should delete bank account", async () => {
     const response = await agent
-      .delete(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}`)
+      .post(`/app/${CONFIG.APP.VER}/bank-account/${bankAccountId}/delete`)
       .set("Authorization", `Bearer ${playerAccess} `);
 
     expect(response.status).toBe(OK);

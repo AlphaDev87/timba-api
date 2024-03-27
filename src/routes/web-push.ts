@@ -23,8 +23,8 @@ webPushRouter.post(
   throwIfBadRequest,
   WebPushController.create,
 );
-webPushRouter.delete(
-  "/",
+webPushRouter.post(
+  "/delete",
   validateDeleteRequest(),
   checkExact(),
   throwIfBadRequest,

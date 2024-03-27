@@ -175,11 +175,13 @@ describe("[UNIT] => TRANSACTIONS", () => {
     });
   });
 
-  describe("DELETE: /transactions/deposit/:id", () => {
+  describe("POST: /transactions/deposit/:id/delete", () => {
     /** Attempt to delete someone else's deposit */
     it("Should return 403", async () => {
       const response = await agent
-        .delete(`/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}`)
+        .post(
+          `/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}/delete`,
+        )
         .set("Authorization", `Bearer ${tokens[0].access}`)
         .set("User-Agent", USER_AGENT);
 
@@ -188,7 +190,9 @@ describe("[UNIT] => TRANSACTIONS", () => {
 
     it("Should delete a deposit", async () => {
       const response = await agent
-        .delete(`/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}`)
+        .post(
+          `/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}/delete`,
+        )
         .set("Authorization", `Bearer ${tokens[1].access}`)
         .set("User-Agent", USER_AGENT);
 
@@ -205,8 +209,8 @@ describe("[UNIT] => TRANSACTIONS", () => {
     // });
 
     it("Should return 401", async () => {
-      const response = await agent.delete(
-        `/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[0].id}`,
+      const response = await agent.post(
+        `/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[0].id}/delete`,
       );
 
       expect(response.status).toBe(UNAUTHORIZED);
@@ -215,8 +219,8 @@ describe("[UNIT] => TRANSACTIONS", () => {
     /** Attempt to delete a confirmed deposit */
     it("Should return 403 [deposit confirmed]", async () => {
       const response = await agent
-        .delete(
-          `/app/${CONFIG.APP.VER}/transactions/deposit/${confirmedDeposit.id}`,
+        .post(
+          `/app/${CONFIG.APP.VER}/transactions/deposit/${confirmedDeposit.id}/delete`,
         )
         .set("Authorization", `Bearer ${tokens[0].access}`)
         .set("User-Agent", USER_AGENT);
@@ -226,7 +230,7 @@ describe("[UNIT] => TRANSACTIONS", () => {
 
     it("Should return 404", async () => {
       const response = await agent
-        .delete(`/app/${CONFIG.APP.VER}/transactions/deposit/-10`)
+        .post(`/app/${CONFIG.APP.VER}/transactions/deposit/-10/delete`)
         .set("Authorization", `Bearer ${tokens[0].access}`)
         .set("User-Agent", USER_AGENT);
 

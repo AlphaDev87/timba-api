@@ -105,10 +105,10 @@ describe("[UNIT] => WEB PUSH", () => {
     });
   });
 
-  describe("DELETE: /web-push", () => {
+  describe("POST: /web-push/delete", () => {
     it("Should delete a subscription", async () => {
       const response = await agent
-        .delete(`/app/${CONFIG.APP.VER}/web-push`)
+        .post(`/app/${CONFIG.APP.VER}/web-push/delete`)
         .send({ endpoint: pushSubscription.endpoint })
         .set("Authorization", `Bearer ${auth.access}`)
         .set("User-Agent", USER_AGENT);
@@ -118,7 +118,7 @@ describe("[UNIT] => WEB PUSH", () => {
 
     it("Shloud return 400 missing endpoint", async () => {
       const response = await agent
-        .delete(`/app/${CONFIG.APP.VER}/web-push`)
+        .post(`/app/${CONFIG.APP.VER}/web-push/delete`)
         .set("Authorization", `Bearer ${auth.access}`)
         .set("User-Agent", USER_AGENT);
 
@@ -129,7 +129,7 @@ describe("[UNIT] => WEB PUSH", () => {
 
     it("Should return 400 unknown fields", async () => {
       const response = await agent
-        .delete(`/app/${CONFIG.APP.VER}/web-push`)
+        .post(`/app/${CONFIG.APP.VER}/web-push/delete`)
         .send({ endpoint: pushSubscription.endpoint, unknown_field: "unknown" })
         .set("Authorization", `Bearer ${auth.access}`)
         .set("User-Agent", USER_AGENT);
@@ -140,7 +140,7 @@ describe("[UNIT] => WEB PUSH", () => {
 
     it("Should return 401", async () => {
       const response = await agent
-        .delete(`/app/${CONFIG.APP.VER}/web-push`)
+        .post(`/app/${CONFIG.APP.VER}/web-push/delete`)
         .send({ endpoint: pushSubscription.endpoint });
 
       expect(response.status).toBe(UNAUTHORIZED);
@@ -148,7 +148,7 @@ describe("[UNIT] => WEB PUSH", () => {
 
     it("Should return 404", async () => {
       const response = await agent
-        .delete(`/app/${CONFIG.APP.VER}/web-push`)
+        .post(`/app/${CONFIG.APP.VER}/web-push/delete`)
         .send({ endpoint: "unknown_endpoint" })
         .set("Authorization", `Bearer ${auth.access}`)
         .set("User-Agent", USER_AGENT);
