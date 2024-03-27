@@ -245,12 +245,12 @@ export class FinanceServices {
 
     if (localDeposit) return this.markDepositAsConfirmed(deposit, localDeposit);
 
-    const alqMovement = await this.alquimiaDepositLookup(
+    const alqDeposit = await this.alquimiaDepositLookup(
       deposit.tracking_number,
       deposit.paid_at,
     );
 
-    if (alqMovement) return this.markDepositAsConfirmed(deposit, alqMovement);
+    if (alqDeposit) return this.markDepositAsConfirmed(deposit, alqDeposit);
 
     await DepositsDAO.update(deposit.id, {
       dirty: false,
