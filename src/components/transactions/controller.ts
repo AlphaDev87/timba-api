@@ -3,8 +3,7 @@ import { FinanceServices } from "./services";
 import { CashoutRequest, DepositRequest } from "@/types/request/transfers";
 import { apiResponse } from "@/helpers/apiResponse";
 import { DepositsDAO } from "@/db/deposits";
-import { NotFoundException } from "@/helpers/error";
-import { CoinTransferResult } from "@/types/response/transfers";
+import { DepositResult } from "@/types/response/transfers";
 
 export class TransactionsController {
   static deposit = async (req: AuthedReq, res: Res, next: NextFn) => {
@@ -14,7 +13,7 @@ export class TransactionsController {
 
     const financeServices = new FinanceServices();
     try {
-      let result: CoinTransferResult;
+      let result: DepositResult;
       const deposit = await DepositsDAO.getByTrackingNumber(
         request.tracking_number,
       );
@@ -27,8 +26,8 @@ export class TransactionsController {
       } else if (!deposit && !deposit_id) {
         result = await financeServices.deposit(player, request);
       } else {
-        const deposit = await DepositsDAO.getById(deposit_id);
-        if (!deposit) throw new NotFoundException();
+        // const deposit = await DepositsDAO.getById(deposit_id);
+        // if (!deposit) throw new NotFoundException();
 
         result = await financeServices.confirmDeposit(
           player,

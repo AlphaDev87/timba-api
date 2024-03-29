@@ -71,6 +71,9 @@ async function main() {
     },
   });
 
+  // TODO
+  // CasinoTokenService.login()
+
   console.log("Agente creado 👍");
   console.log();
 }

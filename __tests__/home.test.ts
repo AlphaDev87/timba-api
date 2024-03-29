@@ -24,6 +24,7 @@ describe("[UNIT] => HOME", () => {
         "PORT",
         "ENV",
         "CYPHER_PASS",
+        "ALLOWED_ORIGIN",
       ]);
     });
 

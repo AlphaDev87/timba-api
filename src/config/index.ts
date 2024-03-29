@@ -69,20 +69,16 @@ const CONFIG = {
     INSUFICIENT_BALANCE: "Saldo insuficiente",
     INSUFICIENT_CREDITS: "FichasInsuficientes",
     DEPOSIT_STATUS: {
-      /** Created by user, pending confirmation at alquimia */
+      /** Created by user, awaiting confirmation at alquimia */
       PENDING: "pending",
-      /** Not found at alquimia */
-      REJECTED: "rejected",
-      /** Allisgood */
+      /** Found and verified at alquimia. Coins not sent yet */
+      VERIFIED: "verified",
+      /** Payment verified and coins sent to player. Not yet logged into DB */
       CONFIRMED: "confirmed",
-      /** Cancelled by user */
-      CANCELED: "cancelled",
+      /** Allisgood */
+      COMPLETED: "completed",
       /** Deleted by agent */
       DELETED: "deleted",
-    },
-    COIN_TRANSFER_STATUS: {
-      COMPLETED: "COMPLETED",
-      INCOMPLETE: "INCOMPLETE",
     },
   },
 } as const;

@@ -34,7 +34,7 @@ model Transactions {
   recipient_id      Int           // Panel ID
   amount            Float
   date              DateTime
-  status            String        @db.VarChar(100)
+  ok                Boolean
   created_at        DateTime      @default(now())
   updated_at        DateTime      @updatedAt
 
@@ -53,7 +53,7 @@ model Player {
   movile_number     String?       @db.VarChar(50)
   country           String?       @db.VarChar(50)
   BankAccounts      BankAccount[]  
-  balance_currency  String?       @db.VarChar(10) @default("MXN")
+  balance_currency  String       @db.VarChar(10) @default("MXN")
   status            String?       @db.VarChar(20) @default("ACTIVO")
   Payments          Payment[]       
   Deposits          Deposit[]
@@ -105,8 +105,6 @@ model Deposit {
   status            String
   tracking_number   String        @unique
   amount            Float?         
-  coins_transfered  DateTime?    
-  paid_at           DateTime
   created_at        DateTime      @default(now())
   updated_at        DateTime      @updatedAt    
 

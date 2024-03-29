@@ -1,7 +1,6 @@
 /** Datos que recibe nuestra API */
 export type CashoutRequest = {
   amount: number;
-  currency: string;
   bank_account: string;
 };
 
@@ -11,13 +10,11 @@ export type TransferDetails = {
   sender_id: number;
   amount: number;
   currency: string;
-  type: "deposit" | "withdrawal";
+  type: "deposit" | "cashout";
 };
 
 export interface DepositRequest {
-  currency: string;
   tracking_number: string;
-  paid_at: string;
 }
 
 export interface CreateDepositProps extends DepositRequest {
@@ -25,12 +22,9 @@ export interface CreateDepositProps extends DepositRequest {
 }
 
 export interface DepositUpdatableProps {
-  player_id?: string;
   dirty?: boolean;
   status?: string;
   tracking_number?: string;
-  coins_transfered?: string;
-  paid_at?: string;
   amount?: number;
 }
 

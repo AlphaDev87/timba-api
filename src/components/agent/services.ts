@@ -10,7 +10,6 @@ import { AgentBankAccount, BalanceResponse } from "@/types/response/agent";
 import { UserRootDAO } from "@/db/user-root";
 import { TokenPair } from "@/types/response/jwt";
 import { HttpService } from "@/services/http.service";
-import { hidePassword } from "@/utils/auth";
 import { NotFoundException, UnauthorizedError } from "@/helpers/error";
 import { PlayersDAO } from "@/db/players";
 import CONFIG from "@/config";
@@ -88,21 +87,20 @@ export class AgentServices {
     };
   }
 
-  static async completePendingDeposits(): Promise<Deposit[]> {
+  static async freePendingCoinTransfers(): Promise<Deposit[]> {
     const deposits = await DepositsDAO.getPendingCoinTransfers();
+    const response: Deposit[] = [];
     const financeServices = new FinanceServices();
     for (const deposit of deposits) {
-      if (deposit.status !== CONFIG.SD.DEPOSIT_STATUS.CONFIRMED) continue;
-      const result = await financeServices.transfer(
-        "deposit",
-        deposit,
-        deposit.Player.panel_id,
+      if (deposit.status !== CONFIG.SD.DEPOSIT_STATUS.VERIFIED) continue;
+      const result = await financeServices.confirmDeposit(
+        deposit.Player,
+        deposit.id,
+        { tracking_number: deposit.tracking_number },
       );
-      if (result.status === CONFIG.SD.COIN_TRANSFER_STATUS.COMPLETED)
-        deposit.coins_transfered = new Date();
-      deposit.Player = hidePassword(deposit.Player);
+      response.push(result.deposit);
     }
 
-    return deposits;
+    return response;
   }
 }

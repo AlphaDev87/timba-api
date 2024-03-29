@@ -30,7 +30,7 @@ export class TransactionsDAO {
     }
   }
 
-  static async logTransaction(data: Transaction) {
+  static async create(data: Transaction) {
     try {
       const transaction = await prisma.transactions.create({ data });
 

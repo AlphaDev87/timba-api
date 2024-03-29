@@ -7,7 +7,6 @@ import { requireUserRole } from "@/middlewares/auth";
 import {
   validateCashoutRequest,
   validateDepositRequest,
-  validateDepositId,
 } from "@/components/transactions/validators";
 import { AgentController } from "@/components/agent";
 
@@ -17,6 +16,7 @@ transactionsRouter.use(
   passport.authenticate("jwt", { session: false, failWithError: true }),
 );
 transactionsRouter.use(requireUserRole);
+// TODO throttle by Tracking number
 transactionsRouter.post(
   "/deposit/:id?",
   validateDepositRequest(),
@@ -27,12 +27,6 @@ transactionsRouter.post(
 transactionsRouter.get(
   "/deposit/pending",
   TransactionsController.pendingDeposits,
-);
-transactionsRouter.post(
-  "/deposit/:id/delete",
-  validateDepositId(),
-  throwIfBadRequest,
-  TransactionsController.deleteDeposit,
 );
 transactionsRouter.post(
   "/cashout",

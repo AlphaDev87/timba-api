@@ -18,9 +18,9 @@ describe("FinanceService", () => {
     it("Should verify a payment", async () => {
       if (!deposit) fail("Deposit not found");
 
-      const verified = await service.verifyPayment(deposit);
+      const amount = await service.verifyPayment(deposit);
 
-      expect(verified.amount).toBeTruthy();
+      expect(amount).toBeTruthy();
     });
   });
 });

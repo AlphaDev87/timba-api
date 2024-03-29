@@ -1,25 +1,19 @@
 import { AlquimiaDeposit, Deposit, Payment, Player } from "@prisma/client";
 import { AxiosResponse } from "axios";
 import { TransactionsDAO } from "@/db/transactions";
-import { CustomError } from "@/middlewares/errorHandler";
 import { DepositsDAO } from "@/db/deposits";
 import { HttpService } from "@/services/http.service";
-import { UserRootDAO } from "@/db/user-root";
 import { PlainPlayerResponse } from "@/types/response/players";
 import { PaymentsDAO } from "@/db/payments";
-import {
-  CashoutRequest,
-  TransferDetails,
-  DepositRequest,
-} from "@/types/request/transfers";
-import { Transaction } from "@/types/response/transactions";
-import { parseAlqMovement, parseTransferResult } from "@/utils/parser";
-import { Notify } from "@/helpers/notification";
+import { CashoutRequest, DepositRequest } from "@/types/request/transfers";
+import { parseAlqMovement } from "@/utils/parser";
 import CONFIG from "@/config";
-import { CasinoTokenService } from "@/services/casino-token.service";
-import { CoinTransferResult } from "@/types/response/transfers";
+import { CoinTransferResult, DepositResult } from "@/types/response/transfers";
 import { AlquimiaDepositDAO } from "@/db/alq-deposits";
 import { AlqMovementResponse } from "@/types/response/alquimia";
+import { CasinoCoinsService } from "@/services/casino-coins.service";
+import { CustomError } from "@/middlewares/errorHandler";
+import { ERR } from "@/config/errors";
 
 /**
  * Services to be consumed by Player endpoints
@@ -31,12 +25,12 @@ export class FinanceServices {
   async deposit(
     player: PlainPlayerResponse,
     request: DepositRequest,
-  ): Promise<CoinTransferResult> {
+  ): Promise<DepositResult> {
     await DepositsDAO.authorizeCreation(request);
 
     const deposit = await this.createDeposit(player.id, request);
 
-    return await this.finalizeTransfer(deposit, player);
+    return await this.finalizeDeposit(deposit, player);
   }
 
   /**
@@ -46,12 +40,12 @@ export class FinanceServices {
     player: PlainPlayerResponse,
     deposit_id: string,
     request: DepositRequest,
-  ): Promise<CoinTransferResult & { deposit: Deposit }> {
+  ): Promise<DepositResult> {
     await DepositsDAO.authorizeConfirmation(deposit_id, player.id);
 
     const deposit = (await DepositsDAO.update(deposit_id, request))!;
 
-    return await this.finalizeTransfer(deposit, player);
+    return await this.finalizeDeposit(deposit, player);
   }
 
   /**
@@ -64,153 +58,85 @@ export class FinanceServices {
   ): Promise<CoinTransferResult> {
     await TransactionsDAO.authorizeTransaction(request.bank_account, player.id);
 
-    const transferResult = await this.transfer(
-      "withdrawal",
+    const casinoCoinsService = new CasinoCoinsService();
+
+    const transferResult = await casinoCoinsService.playerToAgent(
       request,
-      player.panel_id,
+      player,
     );
 
-    if (transferResult.status === CONFIG.SD.COIN_TRANSFER_STATUS.COMPLETED)
-      this.createPayment(player.id, request);
+    if (transferResult.ok) this.createPayment(player, request);
 
     return transferResult;
   }
 
-  private async finalizeTransfer(
+  /**
+   * Verify a deposit and send coins to player if deposit confirmed
+   */
+  private async finalizeDeposit(
     deposit: Deposit,
     player: Player,
-  ): Promise<CoinTransferResult & { deposit: Deposit }> {
-    const verifiedDeposit = await this.verifyPayment(deposit);
+  ): Promise<DepositResult> {
+    const amount = await this.verifyPayment(deposit);
 
-    if (verifiedDeposit.status !== CONFIG.SD.DEPOSIT_STATUS.CONFIRMED) {
-      const result: CoinTransferResult = {
-        status: CONFIG.SD.COIN_TRANSFER_STATUS.INCOMPLETE,
-        error: "Deposito no confirmado",
-      };
+    if (!amount) {
       return {
-        ...result,
-        deposit: verifiedDeposit,
+        error: "Deposito no confirmado",
+        deposit: await this.markDepositAsPending(deposit),
       };
     }
-
-    const coinTransferResult = await this.transfer(
-      "deposit",
-      verifiedDeposit,
-      player.panel_id,
-    );
+    deposit = await this.markDepositAsCompleted(deposit, amount);
+    let coinTransferResult: CoinTransferResult = { ok: false };
+    try {
+      const casinoCoinsService = new CasinoCoinsService();
+      coinTransferResult = await casinoCoinsService.agentToPlayer(
+        deposit,
+        player,
+      );
+      if (!coinTransferResult.ok)
+        deposit = await this.markDepositAsVerified(deposit);
+    } catch (e) {
+      if (CONFIG.LOG.LEVEL === "debug") console.error(e);
+      if (e instanceof CustomError && e.code === ERR.TRANSACTION_LOG.code)
+        deposit = await this.markDepositAsConfirmed(deposit);
+      else deposit = await this.markDepositAsVerified(deposit);
+    }
 
     return {
-      ...coinTransferResult,
-      deposit: verifiedDeposit,
+      player_balance: coinTransferResult?.player_balance,
+      error: coinTransferResult?.error,
+      deposit,
     };
-  }
-
-  async transfer(
-    type: "deposit" | "withdrawal",
-    data: CashoutRequest | Deposit,
-    playerPanelId: number,
-  ): Promise<CoinTransferResult> {
-    const transferDetails = await this.generateTransferDetails(
-      type,
-      playerPanelId,
-      data.amount!,
-      data.currency,
-    );
-
-    const result = await this.panelTransfer(transferDetails);
-    if (result.status === 201 && type === "deposit")
-      await DepositsDAO.update((data as Deposit).id, {
-        coins_transfered: new Date().toISOString(),
-      });
-
-    if (
-      transferDetails.type === "deposit" &&
-      result.data.code == "insuficient_balance"
-    ) {
-      const difference =
-        transferDetails.amount - result.data.variables.balance_amount;
-      await Notify.agent({
-        title: "Fichas insuficientes",
-        body: `Necesitas recargar ${difference} fichas para completar transferencias pendientes.`,
-        tag: CONFIG.SD.INSUFICIENT_CREDITS,
-      });
-    }
-
-    await this.logTransaction(result, transferDetails);
-    return parseTransferResult(result, transferDetails.type);
-  }
-
-  private async panelTransfer(
-    transferDetails: TransferDetails,
-  ): Promise<AxiosResponse> {
-    const { authedAgentApi } = new HttpService();
-    const url = "/backoffice/transactions/";
-    const result = await authedAgentApi.post(url, transferDetails);
-
-    if (result.status !== 201 && result.status !== 400)
-      throw new CustomError({
-        code: "error_transferencia",
-        status: result.status,
-        description: "Error al transferir fichas", //result.data
-      });
-
-    return result;
   }
 
   /**
-   * Log into Transaction History table
+   * Verify receipt of Player's payment.
    */
-  private async logTransaction(
-    transfer: any,
-    transferDetails: TransferDetails,
-  ) {
-    const transaction: Transaction = {
-      sender_id: transferDetails.sender_id,
-      recipient_id: transferDetails.recipient_id,
-      amount: transferDetails.amount,
-      date: new Date().toISOString(),
-      status: CONFIG.SD.COIN_TRANSFER_STATUS.INCOMPLETE,
-    };
-    if (transfer.status === 201) {
-      transaction.status = CONFIG.SD.COIN_TRANSFER_STATUS.COMPLETED;
+  public async verifyPayment(deposit: Deposit): Promise<number | undefined> {
+    if (
+      deposit.status === CONFIG.SD.DEPOSIT_STATUS.VERIFIED ||
+      deposit.status === CONFIG.SD.DEPOSIT_STATUS.CONFIRMED
+    )
+      return deposit.amount!;
+
+    try {
+      const localDeposit = await AlquimiaDepositDAO.findByTrackingNumber(
+        deposit.tracking_number,
+      );
+
+      if (localDeposit) return localDeposit.valor_real;
+
+      const alqDeposit = await this.alquimiaDepositLookup(
+        deposit.tracking_number,
+      );
+
+      if (alqDeposit) return alqDeposit.valor_real;
+
+      return;
+    } catch (e) {
+      if (CONFIG.LOG.LEVEL === "debug") console.error(e);
+      return;
     }
-    await TransactionsDAO.logTransaction(transaction);
-  }
-
-  private async generateTransferDetails(
-    type: "deposit" | "withdrawal",
-    playerPanelId: number,
-    amount: number,
-    currency: string,
-  ): Promise<TransferDetails> {
-    let agent = await UserRootDAO.getAgent();
-
-    if (!agent) {
-      const casinoTokenService = new CasinoTokenService();
-      await casinoTokenService.login();
-      agent = await UserRootDAO.getAgent();
-    }
-
-    let recipient_id, sender_id;
-
-    switch (type) {
-      case "deposit":
-        recipient_id = playerPanelId;
-        sender_id = agent!.panel_id;
-        break;
-      case "withdrawal":
-        recipient_id = agent!.panel_id;
-        sender_id = playerPanelId;
-        break;
-    }
-
-    return {
-      recipient_id,
-      sender_id,
-      amount: amount,
-      currency: currency,
-      type,
-    };
   }
 
   private async createDeposit(
@@ -224,62 +150,56 @@ export class FinanceServices {
   }
 
   private async createPayment(
-    player_id: string,
+    player: Player,
     request: CashoutRequest,
   ): Promise<Payment> {
     return await PaymentsDAO.create({
-      player_id,
+      player_id: player.id,
       amount: request.amount,
       bank_account: request.bank_account,
-      currency: request.currency,
+      currency: player.balance_currency,
     });
   }
 
-  /**
-   * Verify receipt of Player's payment.
-   */
-  public async verifyPayment(deposit: Deposit): Promise<Deposit> {
-    const localDeposit = await AlquimiaDepositDAO.findByTrackingNumber(
-      deposit.tracking_number,
-    );
-
-    if (localDeposit) return this.markDepositAsConfirmed(deposit, localDeposit);
-
-    const alqDeposit = await this.alquimiaDepositLookup(
-      deposit.tracking_number,
-      deposit.paid_at,
-    );
-
-    if (alqDeposit) return this.markDepositAsConfirmed(deposit, alqDeposit);
-
-    await DepositsDAO.update(deposit.id, {
-      dirty: false,
-      status: CONFIG.SD.DEPOSIT_STATUS.REJECTED,
-    });
-
-    return deposit;
-  }
-
-  private markDepositAsConfirmed(
-    deposit: Deposit,
-    movement: AlquimiaDeposit | AlqMovementResponse,
-  ) {
+  private markDepositAsPending(deposit: Deposit): Promise<Deposit> {
     return DepositsDAO.update(deposit.id, {
-      status: CONFIG.SD.DEPOSIT_STATUS.CONFIRMED,
       dirty: false,
-      amount: movement.valor_real,
+      status: CONFIG.SD.DEPOSIT_STATUS.PENDING,
+    });
+  }
+
+  private markDepositAsVerified(deposit: Deposit): Promise<Deposit> {
+    return DepositsDAO.update(deposit.id, {
+      dirty: false,
+      status: CONFIG.SD.DEPOSIT_STATUS.VERIFIED,
+    });
+  }
+
+  private markDepositAsConfirmed(deposit: Deposit): Promise<Deposit> {
+    return DepositsDAO.update(deposit.id, {
+      dirty: false,
+      status: CONFIG.SD.DEPOSIT_STATUS.CONFIRMED,
+    });
+  }
+
+  private markDepositAsCompleted(
+    deposit: Deposit,
+    amount: number,
+  ): Promise<Deposit> {
+    return DepositsDAO.update(deposit.id, {
+      dirty: false,
+      status: CONFIG.SD.DEPOSIT_STATUS.COMPLETED,
+      amount,
     });
   }
 
   /**
-   * Find a deposit in Alquimia's database by tracking number and date.
+   * Find a deposit in Alquimia's database by tracking number
    */
   private async alquimiaDepositLookup(
     tracking_number: string,
-    from: Date,
-    // to?: Date,
+    from?: Date,
     page = 1,
-    round = 1,
   ): Promise<AlqMovementResponse | undefined> {
     const accountId = CONFIG.EXTERNAL.ALQ_SAVINGS_ACCOUNT_ID;
     const endpoint = `cuenta-ahorro-cliente/${accountId}/transaccion`;
@@ -289,10 +209,8 @@ export class FinanceServices {
     if (lastMovement) from = new Date(lastMovement.fecha_operacion);
 
     const searchParams = new URLSearchParams();
-    const startDate = from.toISOString().split("T")[0];
-    // const endDate = to?.toISOString().split("T")[0];
-    searchParams.set("fecha_inicio", startDate);
-    // endDate && searchParams.set("fecha_fin", endDate);
+    const startDate = from ? from.toISOString().split("T")[0] : "";
+    startDate && searchParams.set("fecha_inicio", startDate);
     searchParams.set("registros", `${PAGE_SIZE}`);
     searchParams.set("page", page.toString());
 
@@ -310,26 +228,8 @@ export class FinanceServices {
     );
 
     if (!found && movements.data.length === PAGE_SIZE)
-      return await this.alquimiaDepositLookup(
-        tracking_number,
-        from,
-        // undefined,
-        page + 1,
-        round,
-      );
+      return await this.alquimiaDepositLookup(tracking_number, from, page + 1);
 
-    // if (!found && movements.data.length < 20 && round === 1) {
-    //   const dayInMliseconds = 60 * 60 * 24 * 1000;
-    //   to = from;
-    //   from = new Date(from.getTime() - dayInMliseconds);
-    //   return await this.alquimiaDepositLookup(
-    //     tracking_number,
-    //     from,
-    //     to,
-    //     (page = 1),
-    //     (round = 2),
-    //   );
-    // }
     return found;
   }
 
@@ -349,7 +249,7 @@ export class FinanceServices {
   }
 
   /**
-   * Show deposits for which the money transfer hasn't been verified
+   * Show deposits which have pending actions
    */
   static async showPendingDeposits(player_id: string): Promise<Deposit[]> {
     const deposits = await DepositsDAO.getPending(player_id);
