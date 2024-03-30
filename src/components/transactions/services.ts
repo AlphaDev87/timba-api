@@ -205,8 +205,10 @@ export class FinanceServices {
     const endpoint = `cuenta-ahorro-cliente/${accountId}/transaccion`;
     const PAGE_SIZE = 20;
 
-    const lastMovement = await AlquimiaDepositDAO.findLatest();
-    if (lastMovement) from = new Date(lastMovement.fecha_operacion);
+    if (page === 1) {
+      const lastMovement = await AlquimiaDepositDAO.findLatest();
+      if (lastMovement) from = new Date(lastMovement.fecha_operacion);
+    }
 
     const searchParams = new URLSearchParams();
     const startDate = from ? from.toISOString().split("T")[0] : "";
