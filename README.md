@@ -133,7 +133,7 @@ Omitir el id en la URL e incluir los datos en el body para crear un depósito nu
 ---|---|
 Método      |`POST`
 Body (json) |[`DepositRequest`](#depositrequest)
-Devuelve    |[`TransferResult & { deposit: Deposit }`](#transferresult)
+Devuelve    |[`DepositResult`](#depositresult)
 Requiere rol| player
 
 ### Retirar Premios 🔒
@@ -142,7 +142,7 @@ Requiere rol| player
 ---|---|
 Método      |`POST`
 Body (json) |[`CashoutRequest`](#cashoutrequest)
-Devuelve    |[`TransferResult`](#transferresult)
+Devuelve    |[`CoinTransferResult`](#cointransferresult)
 Requiere rol| player
 
 ### Ver Depósitos Pendientes 🔒
@@ -159,16 +159,8 @@ Requiere rol| player
 
 |Endpoint| `/transactions/deposit/:id/confirm`|
 ---|---|
-Método      |`PUT`
-Devuelve    |[`TransferResult`](#transferresult)
-Requiere rol| player
-
-### Eliminar Depósito Pendiente 🔒
-
-|Endpoint| `/transactions/deposit/:id/delete`|
----|---|
 Método      |`POST`
-Devuelve    | 200 OK
+Devuelve    |[`DepositResult`](#depositresult)
 Requiere rol| player
 
 ### Ver Cuenta Alquimia 🔒
@@ -363,9 +355,7 @@ Requiere rol| agent
 ### DepositRequest
 ```typescript
 {
-  currency: string;
   tracking_number: string;
-  paid_at: string;                    // 2024-01-29T18:14:41.534Z fecha en que el jugador pagó
 }
 ```
 
@@ -373,17 +363,24 @@ Requiere rol| agent
 ```typescript
 {
   amount: number
-  currency: string
   bank_account: number                // ID de cuenta bancaria
 }
 ```
 
-### TransferResult
+### CoinTransferResult
 Estado de transferencia de fichas
 ```typescript
 {
-  status: "COMPLETED" | "INCOMPLETE"
-  player_balance: number?             // undefined en caso de deposito INCOMPLETE
+  ok: boolean
+  player_balance: number
+  error: string?                      // En caso de error, el motivo
+}
+```
+
+### DepositResult
+```typescript
+{
+  player_balance: number?             // undefined en caso de deposito no ok
   error: string?                      // En caso de error, el motivo
   deposit: Deposit
 }
@@ -396,12 +393,10 @@ Estado de transferencia de fichas
   player_id: string
   currency: string
   dirty: boolean
-  // Esperando confirmacion | no encontrado en alquimia | confirmado | cancelado por jugador | eliminado por agente
-  status: "pending"|"rejected"|"confirmed"|"cancelled"|"deleted"
+  // Esperando verificacion | verificado en alquimia | verificado y fichas enviadas | todo OK | eliminado por agente
+  status: "pending"|"verified"|"confirmed"|"completed"|"deleted"
   tracking_number: string
   amount: number
-  coins_transfered?: datetime         // 2024-02-23T12:35:51.017Z
-  paid_at?: datetime                  // 2024-02-23T12:35:51.017Z
   created_at: datetime                // 2024-02-23T12:35:51.017Z
   updated_at: datetime                // 2024-02-23T12:35:51.017Z
 }
@@ -481,6 +476,11 @@ Estado de transferencia de fichas
 - Hacer endpoint de cancelar deposito para jugador
 - Tener en cuenta que pasa si el casino devuelve 200 a una transfer de fichas pero la transferencia no pasa
 - Balance Alquimia en panel agente
+
+- Hacer una DB transaction en `TransactionController.deposit` y `.confirmDeposit`
+- Dar al agente posibilidad de modificar un deposito y llamar `.confirmDeposit`
+- Sacar `paid_at` de DepositRequest
+<!-- - No se puede crear un deposito si hay uno pendiente -->
 
 ### Fichas insuficientes
 

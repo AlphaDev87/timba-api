@@ -35,7 +35,7 @@ export class DepositsDAO {
           : {
               OR: [
                 { status: CONFIG.SD.DEPOSIT_STATUS.PENDING },
-                { status: CONFIG.SD.DEPOSIT_STATUS.REJECTED },
+                { status: CONFIG.SD.DEPOSIT_STATUS.VERIFIED },
               ],
             },
         include: { Player: true },
@@ -86,7 +86,7 @@ export class DepositsDAO {
           AND: {
             OR: [
               { status: CONFIG.SD.DEPOSIT_STATUS.PENDING },
-              { status: CONFIG.SD.DEPOSIT_STATUS.REJECTED },
+              { status: CONFIG.SD.DEPOSIT_STATUS.VERIFIED },
             ],
           },
         },
@@ -106,8 +106,7 @@ export class DepositsDAO {
     try {
       return prisma.deposit.findMany({
         where: {
-          coins_transfered: null,
-          status: CONFIG.SD.DEPOSIT_STATUS.CONFIRMED,
+          status: CONFIG.SD.DEPOSIT_STATUS.VERIFIED,
         },
         include: { Player: true },
       });
@@ -161,8 +160,8 @@ export class DepositsDAO {
   /**
    * Checks if:
    *  - deposit exists and belongs to player
-   *  - deposit is not already confirmed
-   *  - deposit is not being confirmed
+   *  - deposit is not completed or deleted
+   *  - deposit is not being confirmed (dirty)
    *
    * If checks pass, sets dirty flag to true (deposit is being confirmed)
    * @throws if checks fail
@@ -170,9 +169,9 @@ export class DepositsDAO {
   static async authorizeConfirmation(deposit_id: string, player_id: string) {
     try {
       let deposit = await this.authorizeTransaction(deposit_id, player_id);
-      if (deposit.status === CONFIG.SD.DEPOSIT_STATUS.CONFIRMED)
+      if (deposit.status === CONFIG.SD.DEPOSIT_STATUS.COMPLETED)
         throw new ForbiddenError(
-          "No se pueden modificar depositos confirmados",
+          "No se pueden modificar depositos completados",
         );
       if (deposit.status === CONFIG.SD.DEPOSIT_STATUS.DELETED)
         throw new ForbiddenError("No se pueden modificar depositos eliminados");

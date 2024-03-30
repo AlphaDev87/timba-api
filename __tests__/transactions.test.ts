@@ -31,7 +31,6 @@ describe("[UNIT] => TRANSACTIONS", () => {
         .set("User-Agent", USER_AGENT);
 
       expect(response.status).toBe(OK);
-      expect(response.body.data.status).toBeDefined();
       expect(response.body.data.deposit).toBeDefined();
 
       deposits[0] = response.body.data.deposit;
@@ -44,7 +43,6 @@ describe("[UNIT] => TRANSACTIONS", () => {
         .set("Authorization", `Bearer ${tokens[1].access}`)
         .set("User-Agent", USER_AGENT);
       expect(response.status).toBe(OK);
-      expect(response.body.data.status).toBeDefined();
       expect(response.body.data.deposit).toBeDefined();
 
       deposits[1] = response.body.data.deposit;
@@ -52,9 +50,7 @@ describe("[UNIT] => TRANSACTIONS", () => {
 
     it.each`
       field                | message
-      ${"currency"}        | ${"currency must be a string of length 3"}
       ${"tracking_number"} | ${"tracking_number is required"}
-      ${"paid_at"}         | ${"paid_at must be a string in the format yyyy-mm-ddThh:mm:ss.sssZ"}
     `("Should return 400 missing_fields", async ({ field, message }) => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/transactions/deposit`)
@@ -100,8 +96,9 @@ describe("[UNIT] => TRANSACTIONS", () => {
         .send(depositRequests[1])
         .set("Authorization", `Bearer ${tokens[1].access}`)
         .set("User-Agent", USER_AGENT);
+
+      console.log("CONFIRMATION RESULT", response.body);
       expect(response.status).toBe(OK);
-      expect(response.body.data.status).toBeDefined();
       expect(response.body.data.deposit).toBeDefined();
     });
 
@@ -114,7 +111,7 @@ describe("[UNIT] => TRANSACTIONS", () => {
     });
 
     /** Attempt to confirm someone else's deposit */
-    it("Should return 403", async () => {
+    it("Attempts to confirm someone else's deposit.\n Should return 403", async () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}`)
         .send(depositRequests[1])
@@ -153,8 +150,6 @@ describe("[UNIT] => TRANSACTIONS", () => {
         "status",
         "tracking_number",
         "amount",
-        "coins_transfered",
-        "paid_at",
         "created_at",
         "updated_at",
       ]);
@@ -175,68 +170,69 @@ describe("[UNIT] => TRANSACTIONS", () => {
     });
   });
 
-  describe("POST: /transactions/deposit/:id/delete", () => {
-    /** Attempt to delete someone else's deposit */
-    it("Should return 403", async () => {
-      const response = await agent
-        .post(
-          `/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}/delete`,
-        )
-        .set("Authorization", `Bearer ${tokens[0].access}`)
-        .set("User-Agent", USER_AGENT);
+  // describe("POST: /transactions/deposit/:id/delete", () => {
+  //   /** Attempt to delete someone else's deposit */
+  //   it("Should return 403", async () => {
+  //     const response = await agent
+  //       .post(
+  //         `/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}/delete`,
+  //       )
+  //       .set("Authorization", `Bearer ${tokens[0].access}`)
+  //       .set("User-Agent", USER_AGENT);
 
-      expect(response.status).toBe(FORBIDDEN);
-    });
+  //     console.log("DELETE RESULT", response.body);
+  //     expect(response.status).toBe(FORBIDDEN);
+  //   });
 
-    it("Should delete a deposit", async () => {
-      const response = await agent
-        .post(
-          `/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}/delete`,
-        )
-        .set("Authorization", `Bearer ${tokens[1].access}`)
-        .set("User-Agent", USER_AGENT);
+  //   it("Should delete a deposit", async () => {
+  //     const response = await agent
+  //       .post(
+  //         `/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[1].id}/delete`,
+  //       )
+  //       .set("Authorization", `Bearer ${tokens[1].access}`)
+  //       .set("User-Agent", USER_AGENT);
 
-      expect(response.status).toBe(OK);
-    });
+  //     expect(response.status).toBe(OK);
+  //   });
 
-    // it("Should return 400 bad_request", async () => {
-    //   const response = await agent
-    //     .delete(`/app/${CONFIG.APP.VER}/transactions/deposit/9999`)
-    //     .set("Authorization", `Bearer ${tokens[0].access}`)
-    //     .set("User-Agent", USER_AGENT);
+  //   // it("Should return 400 bad_request", async () => {
+  //   //   const response = await agent
+  //   //     .delete(`/app/${CONFIG.APP.VER}/transactions/deposit/9999`)
+  //   //     .set("Authorization", `Bearer ${tokens[0].access}`)
+  //   //     .set("User-Agent", USER_AGENT);
 
-    //   expect(response.status).toBe(BAD_REQUEST);
-    // });
+  //   //   expect(response.status).toBe(BAD_REQUEST);
+  //   // });
 
-    it("Should return 401", async () => {
-      const response = await agent.post(
-        `/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[0].id}/delete`,
-      );
+  //   it("Should return 401", async () => {
+  //     const response = await agent.post(
+  //       `/app/${CONFIG.APP.VER}/transactions/deposit/${deposits[0].id}/delete`,
+  //     );
 
-      expect(response.status).toBe(UNAUTHORIZED);
-    });
+  //     expect(response.status).toBe(UNAUTHORIZED);
+  //   });
 
-    /** Attempt to delete a confirmed deposit */
-    it("Should return 403 [deposit confirmed]", async () => {
-      const response = await agent
-        .post(
-          `/app/${CONFIG.APP.VER}/transactions/deposit/${confirmedDeposit.id}/delete`,
-        )
-        .set("Authorization", `Bearer ${tokens[0].access}`)
-        .set("User-Agent", USER_AGENT);
+  //   /** Attempt to delete a confirmed deposit */
+  //   it("Should return 403 [deposit confirmed]", async () => {
+  //     const response = await agent
+  //       .post(
+  //         `/app/${CONFIG.APP.VER}/transactions/deposit/${confirmedDeposit.id}/delete`,
+  //       )
+  //       .set("Authorization", `Bearer ${tokens[0].access}`)
+  //       .set("User-Agent", USER_AGENT);
 
-      expect(response.status).toBe(FORBIDDEN);
-    });
+  //     expect(response.status).toBe(FORBIDDEN);
+  //   });
 
-    it("Should return 404", async () => {
-      const response = await agent
-        .post(`/app/${CONFIG.APP.VER}/transactions/deposit/-10/delete`)
-        .set("Authorization", `Bearer ${tokens[0].access}`)
-        .set("User-Agent", USER_AGENT);
+  //   it("Should return 404", async () => {
+  //     const response = await agent
+  //       .post(`/app/${CONFIG.APP.VER}/transactions/deposit/-10/delete`)
+  //       .set("Authorization", `Bearer ${tokens[0].access}`)
+  //       .set("User-Agent", USER_AGENT);
 
-      expect(response.status).toBe(404);
-    });
-  });
+  //     expect(response.status).toBe(404);
+  //   });
+  // });
 
   describe("POST: /transactions/cashout", () => {
     it("Should create a withdrawal", async () => {
@@ -252,7 +248,6 @@ describe("[UNIT] => TRANSACTIONS", () => {
     it.each`
       field             | message
       ${"amount"}       | ${"amount is required"}
-      ${"currency"}     | ${"currency must be a string of length 3"}
       ${"bank_account"} | ${"bank_account (account id) is required"}
     `("Should return 400 missing_fields", async ({ field, message }) => {
       const response = await agent
@@ -314,20 +309,15 @@ async function initialize() {
 
   depositRequests = [
     {
-      currency: "MXN",
       tracking_number: TEST_DEPOSIT,
-      paid_at: new Date("2024-03-10").toISOString(),
     },
     {
-      currency: "MXN",
       tracking_number: "test_tracking_number2" + Date.now(),
-      paid_at: new Date().toISOString(),
     },
   ];
 
   cashoutRequest = {
     amount: 0.01,
-    currency: "MXN",
     bank_account: players[0].BankAccounts[0].id,
   };
 
@@ -336,7 +326,6 @@ async function initialize() {
       status: CONFIG.SD.DEPOSIT_STATUS.CONFIRMED,
       player_id: players[0].id,
       currency: "MXN",
-      paid_at: new Date().toISOString(),
       tracking_number: "test_tracking_number4" + Date.now(),
       amount: 0.01,
     },
@@ -359,7 +348,7 @@ async function cleanUp() {
     });
     await prisma.deposit.delete({ where: { id: confirmedDeposit.id } });
     await prisma.deposit.delete({ where: { id: deposits[0].id } });
-    // await prisma.deposit.delete({ where: { id: deposits[1].id } });
+    await prisma.deposit.delete({ where: { id: deposits[1].id } });
   } catch (e) {
     console.error(e);
   } finally {

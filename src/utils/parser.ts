@@ -27,7 +27,7 @@ export const parsePlayer = (playerDB: any): PlayerResponse | null => {
 
 export const parseTransferResult = (
   transfer: any,
-  type: "deposit" | "withdrawal",
+  type: "deposit" | "cashout",
 ): CoinTransferResult => {
   const ok = transfer.status === 201;
   let player_balance: number | undefined = undefined;
@@ -35,15 +35,15 @@ export const parseTransferResult = (
   ok && type === "deposit"
     ? (player_balance = transfer.data.recipient_balance_after)
     : "";
-  ok && type === "withdrawal"
+  ok && type === "cashout"
     ? (player_balance = transfer.data.sender_balance_after)
     : "";
-  !ok && type === "withdrawal"
+  !ok && type === "cashout"
     ? (player_balance = transfer.data.variables.balance_amount)
     : "";
 
   const result: CoinTransferResult = {
-    status: ok ? "COMPLETED" : "INCOMPLETE",
+    ok,
     player_balance,
     error: ok ? undefined : CONFIG.SD.INSUFICIENT_BALANCE,
   };

@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import readlineSync from "readline-sync";
 import CONFIG from "@/config";
 import { encrypt, hash } from "@/utils/crypt";
+import { CasinoTokenService } from "@/services/casino-token.service";
 
 /**
  * Ensure user roles exists, create if not.
@@ -70,6 +71,9 @@ async function main() {
       panel_id: -1,
     },
   });
+
+  const casinoTokenService = new CasinoTokenService();
+  await casinoTokenService.login();
 
   console.log("Agente creado 👍");
   console.log();

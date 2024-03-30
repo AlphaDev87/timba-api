@@ -62,4 +62,9 @@ export const ERR: { [key: string]: ErrorData } = {
     code: "alquimia",
     description: "Error en Alquimia al obtener token.",
   },
+  TRANSACTION_LOG: {
+    status: 500,
+    code: "transaction_log",
+    description: "Error al loguear transaccion",
+  },
 };
