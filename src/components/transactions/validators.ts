@@ -11,7 +11,7 @@ export const validateCashoutRequest = () =>
     bank_account: {
       in: ["body"],
       isEmpty: false,
-      isInt: true,
+      isString: true,
       errorMessage: "bank_account (account id) is required",
     },
   });
