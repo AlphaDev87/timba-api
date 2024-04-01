@@ -26,9 +26,6 @@ export class TransactionsController {
       } else if (!deposit && !deposit_id) {
         result = await financeServices.deposit(player, request);
       } else {
-        // const deposit = await DepositsDAO.getById(deposit_id);
-        // if (!deposit) throw new NotFoundException();
-
         result = await financeServices.confirmDeposit(
           player,
           deposit_id,

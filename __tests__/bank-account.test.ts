@@ -44,7 +44,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
   it.each`
     field           | message
     ${"owner"}      | ${"Owner name is required"}
-    ${"owner_id"}   | ${"Owner id is required"}
+    ${"owner_id"}   | ${"Owner id is required and must be of type number"}
     ${"bankName"}   | ${"Bank name is required"}
     ${"bankNumber"} | ${"Bank number is required"}
   `(

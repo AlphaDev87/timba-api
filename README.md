@@ -477,10 +477,7 @@ Estado de transferencia de fichas
 - Tener en cuenta que pasa si el casino devuelve 200 a una transfer de fichas pero la transferencia no pasa
 - Balance Alquimia en panel agente
 
-- Hacer una DB transaction en `TransactionController.deposit` y `.confirmDeposit`
 - Dar al agente posibilidad de modificar un deposito y llamar `.confirmDeposit`
-- Sacar `paid_at` de DepositRequest
-<!-- - No se puede crear un deposito si hay uno pendiente -->
 
 ### Fichas insuficientes
 

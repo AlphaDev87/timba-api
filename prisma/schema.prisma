@@ -83,7 +83,7 @@ model Payment {
 model BankAccount {
   id                String        @id @default(uuid())
   owner             String        // Nombre del beneficiario
-  owner_id          Int           // DNI
+  owner_id          Int           @db.UnsignedInt // DNI
   Player            Player        @relation(fields: [player_id], references: [id])
   player_id         String        // ID de Player
   bankName          String        // Nombre del banco
