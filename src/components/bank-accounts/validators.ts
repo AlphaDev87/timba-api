@@ -29,7 +29,7 @@ export const validateBankAccount = () =>
         options: (value) => typeof value === "number" && value < 4294967295,
       },
       customSanitizer: { options: (value) => Number(value) },
-      errorMessage: "Owner id is required and must be of type number",
+      errorMessage: "owner_id must be an integer lower than 2**32",
     },
     bankName: {
       in: ["body"],
