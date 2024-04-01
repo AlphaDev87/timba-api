@@ -44,7 +44,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
   it.each`
     field           | message
     ${"owner"}      | ${"Owner name is required"}
-    ${"owner_id"}   | ${"Owner id is required"}
+    ${"owner_id"}   | ${"owner_id must be an integer lower than 2**32"}
     ${"bankName"}   | ${"Bank name is required"}
     ${"bankNumber"} | ${"Bank number is required"}
   `(
@@ -54,7 +54,7 @@ describe("[UNIT] => BANK ACCOUNTS ROUTER", () => {
         .post(`/app/${CONFIG.APP.VER}/bank-account`)
         .send({
           owner: "Test " + Date.now(),
-          owner_id: playerId,
+          owner_id: 33333333,
           bankName: "Test Bank " + Date.now(),
           bankNumber: `${Date.now()}`,
           [field]: undefined,
