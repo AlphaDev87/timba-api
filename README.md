@@ -451,6 +451,27 @@ Estado de transferencia de fichas
 }
 ```
 
+## Load Testing
+
+### Ddosify
+
+Correr contenedor de ddosify con
+```bash
+$ docker run -it --rm --add-host host.docker.internal:host-gateway ddosify/ddosify
+```
+
+Luego obtener un token de acceso y correr el siguiente comando en el contenedor
+```bash
+$ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
+-m POST \
+-b '{"json": "data"}' \
+-h 'Content-Type: application/json' \
+-h "Authorization: Bearer $ACCESS_TOKEN" \
+-h 'User-Agent: curl/7.81.0' \
+-n <request_count>
+-d <test_duration>
+```
+
 ## Despliegue
 
 - `npx prisma migrate deploy` Para levantar la base de datos.
@@ -458,7 +479,6 @@ Estado de transferencia de fichas
 
 ## TODO
 
-- Instanciar servicios en lugar de usar metodos estaticos
 - Cambiar contraseña (no funciona en el casino, vamos por este lado)
   - Endpoint https://agent.casinomex.vip/api/users/5941/change-password/
   - Body: `{ new_password:	string }`
@@ -468,16 +488,14 @@ Estado de transferencia de fichas
 
 - [Bot Whatsapp](https://bot-whatsapp.netlify.app/) ✅
   + [Diagrama Flujo](https://www.figma.com/file/rtxhrNqQxdEdYzOfPl1mRc/Whatsapp-Bot?type=whiteboard&node-id=0%3A1&t=5ACojRhp99vrh24S-1)
-- Cambiar IDs incrementales por UUIDs en producción
 - Configurar bbdd distintas para dev y prod
 - Chequear si agent existe en la bbdd en `seed.ts`
 - Subir la duracion del refresh token a 24 horas
-- Actualizar tabla depositos en panel agente
-- Hacer endpoint de cancelar deposito para jugador
 - Tener en cuenta que pasa si el casino devuelve 200 a una transfer de fichas pero la transferencia no pasa
 - Balance Alquimia en panel agente
-
 - Dar al agente posibilidad de modificar un deposito y llamar `.confirmDeposit`
+- Setear ancho maximo en columnas ID en panel agente
+- Agregar boton para copiar ID en panel agente
 
 ### Fichas insuficientes
 

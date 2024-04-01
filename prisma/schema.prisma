@@ -52,7 +52,7 @@ model Player {
   date_of_birth     DateTime?
   movile_number     String?       @db.VarChar(50)
   country           String?       @db.VarChar(50)
-  BankAccounts      BankAccount[]  
+  BankAccounts      BankAccount[]
   balance_currency  String       @db.VarChar(10) @default("MXN")
   status            String?       @db.VarChar(20) @default("ACTIVO")
   Payments          Payment[]       
@@ -68,7 +68,7 @@ model Player {
 model Payment {
   id                String        @id @default(uuid())
   player_id         String           
-  Player            Player        @relation(fields: [player_id], references: [id])
+  Player            Player        @relation(fields: [player_id], references: [id], onDelete: Cascade)
   amount            Float
   paid              DateTime?     
   bank_account      String           
@@ -84,7 +84,7 @@ model BankAccount {
   id                String        @id @default(uuid())
   owner             String        // Nombre del beneficiario
   owner_id          Int           @db.UnsignedInt // DNI
-  Player            Player        @relation(fields: [player_id], references: [id])
+  Player            Player        @relation(fields: [player_id], references: [id], onDelete: Cascade)
   player_id         String        // ID de Player
   bankName          String        // Nombre del banco
   bankNumber        String        @unique // CBU
@@ -99,7 +99,7 @@ model BankAccount {
 model Deposit {
   id                String        @id @default(uuid())
   player_id         String           
-  Player            Player        @relation(fields: [player_id], references: [id])
+  Player            Player        @relation(fields: [player_id], references: [id], onDelete: Cascade)
   currency          String        @default("MXN")
   dirty             Boolean       @default(true)
   status            String
@@ -116,7 +116,7 @@ model Token {
   invalid           Boolean       @default(false)
   next              String?       
   player_id         String           
-  player            Player        @relation(fields: [player_id], references: [id])
+  player            Player        @relation(fields: [player_id], references: [id], onDelete: Cascade)
   user_agent        String?       @db.VarChar(256)
   created_at        DateTime      @default(now())
   updated_at        DateTime      @updatedAt 

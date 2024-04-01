@@ -9,6 +9,7 @@ import {
   validateDepositRequest,
 } from "@/components/transactions/validators";
 import { AgentController } from "@/components/agent";
+import { depositRateLimiter } from "@/middlewares/rate-limiters/deposit";
 
 const transactionsRouter = Router();
 
@@ -16,12 +17,12 @@ transactionsRouter.use(
   passport.authenticate("jwt", { session: false, failWithError: true }),
 );
 transactionsRouter.use(requireUserRole);
-// TODO throttle by Tracking number
 transactionsRouter.post(
   "/deposit/:id?",
   validateDepositRequest(),
   checkExact(),
   throwIfBadRequest,
+  depositRateLimiter,
   TransactionsController.deposit,
 );
 transactionsRouter.get(
