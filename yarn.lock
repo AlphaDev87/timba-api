@@ -1501,14 +1501,7 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bot-whatsapp/bot@*":
-  version "0.1.38"
-  resolved "https://registry.yarnpkg.com/@bot-whatsapp/bot/-/bot-0.1.38.tgz#3c9a2a5a1f00f99710dd42fc037fd130d5f676bb"
-  integrity sha512-M1FDbsgkn+03zss3zen0w2BdQytOEcHLXAkJZP8qU6w22B1B6nOw0871o/LqKzIaiLS7paSEc/6rDr3reYl84g==
-  dependencies:
-    dotenv "^16.0.3"
-
-"@bot-whatsapp/bot@^0.1.38":
+"@bot-whatsapp/bot@*", "@bot-whatsapp/bot@^0.1.38":
   version "0.1.38"
   resolved "https://registry.yarnpkg.com/@bot-whatsapp/bot/-/bot-0.1.38.tgz#3c9a2a5a1f00f99710dd42fc037fd130d5f676bb"
   integrity sha512-M1FDbsgkn+03zss3zen0w2BdQytOEcHLXAkJZP8qU6w22B1B6nOw0871o/LqKzIaiLS7paSEc/6rDr3reYl84g==
@@ -4264,11 +4257,6 @@ core-util-is@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
   integrity sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==
-
-core-util-is@~1.0.0:
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.3.tgz"
-  integrity sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==
 
 cors@^2.8.3:
   version "2.8.5"
@@ -8237,6 +8225,11 @@ range-parser@~1.2.1:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
+rate-limiter-flexible@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/rate-limiter-flexible/-/rate-limiter-flexible-5.0.0.tgz#e03de7eac7f8fe55f976b9f2eafc365739bb6cf8"
+  integrity sha512-ivCyLBwPtR5IRrz+aZnztVwX16ZK3iAjdlW21I/vjHq56at5Zb8eIefDzODg8R7hwPOHpBtb6Pj9Zdmn0nRb8g==
+
 raw-body@2.5.2:
   version "2.5.2"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.5.2.tgz#99febd83b90e08975087e8f1f9419a149366b68a"
@@ -8990,22 +8983,10 @@ string.prototype.trimstart@^1.0.7:
 
 string_decoder@^1.1.1, string_decoder@^1.3.0:
   version "1.3.0"
-  resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-1.3.0.tgz#42f114594a46cf1a8e30b0a84f56c78c3edac21e"
-  integrity sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA==
-  dependencies:
-    safe-buffer "~5.2.0"
-
-string_decoder@^1.1.1:
-  version "1.3.0"
   resolved "https://registry.npmjs.org/string_decoder/-/string_decoder-1.3.0.tgz"
   integrity sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA==
   dependencies:
     safe-buffer "~5.2.0"
-
-string_decoder@~0.10.x:
-  version "0.10.31"
-  resolved "https://registry.npmjs.org/string_decoder/-/string_decoder-0.10.31.tgz"
-  integrity sha512-ev2QzSzWPYmy9GuqfIVildA4OdcGLeFZQrq5ys6RtiuF+RQQiZWr8TZNyAcuVXyQRYfEO+MsoB/1BuQVhOJuoQ==
 
 strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"

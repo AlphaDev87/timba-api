@@ -97,7 +97,6 @@ describe("[UNIT] => TRANSACTIONS", () => {
         .set("Authorization", `Bearer ${tokens[1].access}`)
         .set("User-Agent", USER_AGENT);
 
-      console.log("CONFIRMATION RESULT", response.body);
       expect(response.status).toBe(OK);
       expect(response.body.data.deposit).toBeDefined();
     });

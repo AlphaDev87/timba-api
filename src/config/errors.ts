@@ -67,4 +67,9 @@ export const ERR: { [key: string]: ErrorData } = {
     code: "transaction_log",
     description: "Error al loguear transaccion",
   },
+  TOO_MANY_REQUESTS: {
+    status: 429,
+    code: "too_many_requests",
+    description: "Demasiadas solicitudes",
+  },
 };

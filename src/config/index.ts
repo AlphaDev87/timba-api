@@ -80,6 +80,11 @@ const CONFIG = {
       /** Deleted by agent */
       DELETED: "deleted",
     },
+    ENVIRONMENTS: {
+      TEST: "test",
+      DEV: "dev",
+      PRODUCTION: "production",
+    },
   },
 } as const;
 
