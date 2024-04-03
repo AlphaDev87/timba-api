@@ -42,9 +42,10 @@ export class AgentController {
     }
   }
 
-  static async showDeposits(_req: Req, res: Res, next: NextFn) {
+  static async showDeposits(req: Req, res: Res, next: NextFn) {
     try {
-      const deposits = await AgentServices.showDeposits();
+      const depositId = req.params.id;
+      const deposits = await AgentServices.showDeposits(depositId);
 
       res.status(OK).json(apiResponse(deposits));
     } catch (error) {

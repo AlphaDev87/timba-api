@@ -169,7 +169,8 @@ async function initialize() {
       NOT: { player_id: playerId },
     },
   });
-  foreignBankAccountId = bankAccount?.id || "0";
+  if (!bankAccount) throw new Error();
+  foreignBankAccountId = bankAccount.id!;
 }
 
 async function cleanUp() {

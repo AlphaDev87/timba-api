@@ -19,7 +19,7 @@ import { ERR } from "@/config/errors";
  */
 export class CasinoCoinsService {
   /**
-   * Transfer coins from player to agent
+   * Transfer coins from player to agent (Cashout)
    */
   async playerToAgent(
     cashOutRequest: CashoutRequest,
@@ -40,17 +40,16 @@ export class CasinoCoinsService {
   }
 
   /**
-   * Transfer coins from agent to player
+   * Transfer coins from agent to player (Deposit)
    */
   async agentToPlayer(
-    deposit: Deposit,
-    player: Player,
+    deposit: Deposit & { Player: Player },
   ): Promise<CoinTransferResult> {
     const transferDetails = await this.generateTransferDetails(
       "deposit",
-      player.panel_id,
+      deposit.Player.panel_id,
       deposit.amount!,
-      player.balance_currency,
+      deposit.Player.balance_currency,
     );
 
     if (deposit.status === CONFIG.SD.DEPOSIT_STATUS.CONFIRMED) {
@@ -59,7 +58,6 @@ export class CasinoCoinsService {
     }
 
     const result = await this.transfer(transferDetails);
-
     if (result.data.code == "insuficient_balance") {
       const difference =
         transferDetails.amount - result.data.variables.balance_amount;

@@ -370,10 +370,10 @@ describe("[UNIT] => AGENT ROUTER", () => {
     });
   });
 
-  describe("GET: /agent/deposits/complete", () => {
+  describe("GET: /agent/pending/deposits", () => {
     it("Should return completed deposits", async () => {
       const response = await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/deposits/complete`)
+        .get(`/app/${CONFIG.APP.VER}/agent/pending/deposits`)
         .set("Authorization", `Bearer ${access}`)
         .set("User-Agent", USER_AGENT);
 
@@ -383,7 +383,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
 
     it("Should return 401", async () => {
       const response = await agent.get(
-        `/app/${CONFIG.APP.VER}/agent/deposits/complete`,
+        `/app/${CONFIG.APP.VER}/agent/pending/deposits`,
       );
 
       expect(response.status).toBe(UNAUTHORIZED);
@@ -391,7 +391,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
 
     it("Should return 403", async () => {
       const response = await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/deposits/complete`)
+        .get(`/app/${CONFIG.APP.VER}/agent/pending/deposits`)
         .set("Authorization", `Bearer ${playerAccessToken}`)
         .set("User-Agent", USER_AGENT);
 

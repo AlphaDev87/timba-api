@@ -223,10 +223,10 @@ Requiere rol| agent
 
 ### Ver Depósitos 🔒
 
-|Endpoint| `/agent/deposits`|
+|Endpoint| `/agent/deposits/:id?`|
 ---|---|
 Método      |`GET`
-Devuelve    |[`Deposit[]`](#deposit )
+Devuelve    |[`Deposit[]`](#deposit)
 Requiere rol| agent
 
 ### Ver QR 🔒
@@ -380,7 +380,7 @@ Estado de transferencia de fichas
 ### DepositResult
 ```typescript
 {
-  player_balance: number?             // undefined en caso de deposito no ok
+  player_balance: number?             // undefined en caso de fichas no transferidas
   error: string?                      // En caso de error, el motivo
   deposit: Deposit
 }
@@ -484,6 +484,7 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
   - Body: `{ new_password:	string }`
 - Handle sudden token revokation in frontend
 - Log errors to file
+- Log all external API calls to file
 - Usar endpoint /auth/logout en frontend
 
 - [Bot Whatsapp](https://bot-whatsapp.netlify.app/) ✅
@@ -494,8 +495,6 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Tener en cuenta que pasa si el casino devuelve 200 a una transfer de fichas pero la transferencia no pasa
 - Balance Alquimia en panel agente
 - Dar al agente posibilidad de modificar un deposito y llamar `.confirmDeposit`
-- Setear ancho maximo en columnas ID en panel agente
-- Agregar boton para copiar ID en panel agente
 
 ### Fichas insuficientes
 

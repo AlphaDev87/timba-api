@@ -5,10 +5,13 @@ import { AgentController } from "@/components/agent/controller";
 import { validateCredentials } from "@/components/players/validators";
 import {
   validateBankAccountUpdate,
+  validateDepositIndex,
+  validateDepositUpdate,
   validatePaymentIndex,
 } from "@/components/agent/validators";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
 import { requireAgentRole } from "@/middlewares/auth";
+import { TransactionsController } from "@/components/transactions";
 
 const agentRouter = Router();
 
@@ -31,7 +34,18 @@ agentRouter.post(
   throwIfBadRequest,
   AgentController.markAsPaid,
 );
-agentRouter.get("/deposits", AgentController.showDeposits);
+agentRouter.get(
+  "/deposits/:id?",
+  validateDepositIndex(),
+  throwIfBadRequest,
+  AgentController.showDeposits,
+);
+agentRouter.post(
+  "/deposits/:id",
+  validateDepositUpdate(),
+  throwIfBadRequest,
+  TransactionsController.deposit,
+);
 agentRouter.get("/qr", AgentController.qr);
 agentRouter.get("/bank-account", AgentController.getBankAccount);
 agentRouter.post(
@@ -42,6 +56,6 @@ agentRouter.post(
   AgentController.updateBankAccount,
 );
 agentRouter.get("/balance", AgentController.getBalance);
-agentRouter.get("/deposits/complete", AgentController.completePendingDeposits);
+agentRouter.get("/pending/deposits", AgentController.completePendingDeposits);
 
 export default agentRouter;
