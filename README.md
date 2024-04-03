@@ -494,7 +494,6 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Subir la duracion del refresh token a 24 horas
 - Tener en cuenta que pasa si el casino devuelve 200 a una transfer de fichas pero la transferencia no pasa
 - Balance Alquimia en panel agente
-- Dar al agente posibilidad de modificar un deposito y llamar `.confirmDeposit`
 
 ### Fichas insuficientes
 
