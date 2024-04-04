@@ -63,16 +63,4 @@ export class TransactionsController {
       next(err);
     }
   };
-
-  static deleteDeposit = async (req: AuthedReq, res: Res, next: NextFn) => {
-    const player = req.user!;
-    const deposit_id = req.params.id;
-
-    try {
-      await FinanceServices.deleteDeposit(deposit_id, player.id);
-      res.send();
-    } catch (err) {
-      next(err);
-    }
-  };
 }
