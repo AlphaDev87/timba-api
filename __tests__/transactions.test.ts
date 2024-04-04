@@ -1,6 +1,6 @@
 import { BankAccount, Deposit, Player, PrismaClient } from "@prisma/client";
 import { SuperAgentTest } from "supertest";
-import { BAD_REQUEST, FORBIDDEN, OK, UNAUTHORIZED } from "http-status";
+import { BAD_REQUEST, FORBIDDEN, OK, TOO_MANY_REQUESTS, UNAUTHORIZED } from "http-status";
 import { initAgent } from "./helpers";
 import { TokenPair } from "@/types/response/jwt";
 import { AuthServices } from "@/components/auth/services";
@@ -244,6 +244,16 @@ describe("[UNIT] => TRANSACTIONS", () => {
       expect(result.status).toBe(OK);
     });
 
+    it("Should should return 429 too_many_requests", async () => {
+      const result = await agent
+        .post(`/app/${CONFIG.APP.VER}/transactions/cashout`)
+        .send(cashoutRequest)
+        .set("Authorization", `Bearer ${tokens[0].access}`)
+        .set("User-Agent", USER_AGENT);
+
+      expect(result.status).toBe(TOO_MANY_REQUESTS);
+    });
+
     it.each`
       field             | message
       ${"amount"}       | ${"amount is required"}
@@ -335,6 +345,17 @@ async function initialize() {
   const auth2 = await authServices.tokens(players[1].id, USER_AGENT);
   tokens[0] = auth1.tokens;
   tokens[1] = auth2.tokens;
+
+  /**
+   * Clear latest cashouts
+   */
+  const dayInMs = 1000 * 60 * 60 * 24;
+  await prisma.payment.deleteMany({
+    where: {
+      player_id: players[0].id,
+      updated_at: { gte: new Date(Date.now() - dayInMs) },
+    },
+  });
 }
 
 async function cleanUp() {

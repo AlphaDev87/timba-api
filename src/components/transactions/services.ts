@@ -1,6 +1,5 @@
 import { AlquimiaDeposit, Deposit, Payment, Player } from "@prisma/client";
 import { AxiosResponse } from "axios";
-import { TransactionsDAO } from "@/db/transactions";
 import { DepositsDAO } from "@/db/deposits";
 import { HttpService } from "@/services/http.service";
 import { PlainPlayerResponse, RoledPlayer } from "@/types/response/players";
@@ -61,7 +60,7 @@ export class FinanceServices {
     player: PlainPlayerResponse,
     request: CashoutRequest,
   ): Promise<CoinTransferResult> {
-    await TransactionsDAO.authorizeTransaction(request.bank_account, player.id);
+    await PaymentsDAO.authorizeCreation(request.bank_account, player.id);
 
     const casinoCoinsService = new CasinoCoinsService();
 
@@ -80,7 +79,6 @@ export class FinanceServices {
    */
   private async finalizeDeposit(
     deposit: Deposit & { Player: Player },
-    // player: Player,
   ): Promise<DepositResult> {
     if (
       deposit.status !== CONFIG.SD.DEPOSIT_STATUS.VERIFIED &&
