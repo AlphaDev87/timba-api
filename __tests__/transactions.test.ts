@@ -1,6 +1,12 @@
 import { BankAccount, Deposit, Player, PrismaClient } from "@prisma/client";
 import { SuperAgentTest } from "supertest";
-import { BAD_REQUEST, FORBIDDEN, OK, TOO_MANY_REQUESTS, UNAUTHORIZED } from "http-status";
+import {
+  BAD_REQUEST,
+  FORBIDDEN,
+  OK,
+  TOO_MANY_REQUESTS,
+  UNAUTHORIZED,
+} from "http-status";
 import { initAgent } from "./helpers";
 import { TokenPair } from "@/types/response/jwt";
 import { AuthServices } from "@/components/auth/services";
