@@ -9,9 +9,10 @@ import { Prisma } from "@prisma/client";
 import { TimeOutError } from "@/helpers/error";
 import { ErrorData } from "@/types/response/error";
 import CONFIG from "@/config";
+import { logtailLogger } from "@/helpers/loggers";
 
 /**
- * @description Error response middleware for 404 not found. This middleware function should be at the very bottom of the stack.
+ * @description Error response middleware for not found urls. This middleware function should be at the very bottom of the stack.
  * @param req Express.Request
  * @param res Express.Response
  * @param _next Express.NextFunction
@@ -72,22 +73,33 @@ export const customErrorHandler = (
       code: err.code,
       description: err.description,
     });
+    if (
+      // @ts-ignore
+      CONFIG.LOG.CODES.includes(err.code) &&
+      CONFIG.APP.ENV === "production"
+    ) {
+      logtailLogger.error({ err, tag: err.code });
+    }
   } else {
     return next(err);
   }
 };
 
 export class CustomError extends Error {
-  status: number;
-  code: string;
-  description: string;
+  public status: number;
+  public code: string;
+  public description: string;
+  /**
+   * Extra info for logging
+   */
+  public detail?: object;
 
   constructor(err: ErrorData) {
-    super(err.description);
-
-    this.description = err.description;
-    this.code = err.code;
+    super();
     this.status = err.status;
+    this.code = err.code;
+    this.description = err.description;
+    this.detail = err.detail;
   }
 }
 

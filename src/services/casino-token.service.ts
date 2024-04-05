@@ -149,7 +149,7 @@ export class CasinoTokenService extends JwtService implements ITokenRetreiver {
     if (response.status !== 200) {
       throw new CustomError({
         status: response.status,
-        code: "server_error",
+        code: "agent_api_error",
         description: "Error en el panel al loguear al agente",
       });
     }

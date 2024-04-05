@@ -40,6 +40,7 @@
     "@bot-whatsapp/cli": "^0.1.38",
     "@bot-whatsapp/database": "^0.1.38",
     "@bot-whatsapp/provider": "^0.1.38",
+    "@logtail/pino": "^0.4.21",
     "@prisma/client": "^5.9.1",
     "@whiskeysockets/baileys": "^6.6.0",
     "axios": "^1.6.7",
