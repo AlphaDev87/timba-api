@@ -9,6 +9,7 @@
 
 ### Changed
 - Added optional `detail` field to `CustomError` for extra details relating to the original error
+- Verify token signature in `AuthServices.refresh`
 
 ## [1.0.0] - 2024-04-04
 
