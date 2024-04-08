@@ -1,15 +1,19 @@
 import { addKeyword, EVENTS, IMethodsChain } from "@bot-whatsapp/bot";
-import { PrismaClient } from "@prisma/client";
+import { BotFlow, PrismaClient } from "@prisma/client";
 import BotWhatsapp from "@bot-whatsapp/bot";
+import { BotFlowsDAO } from "@/db/bot-flows";
 
 export async function createFlow() {
   const prisma = new PrismaClient();
 
-  const botData = await prisma.botMessages.findFirst();
+  const botData = await prisma.botFlow.findMany();
+
   if (!botData) return;
 
-  const botMessages = botData.messages as string[][][];
-  const botMenus = botData.menus as string[][];
+  const regularFlow = botData.find((flow: BotFlow) => flow.on_call === false);
+  const onCallFlow = botData.find((flow: BotFlow) => flow.on_call === true);
+
+  if (!regularFlow || !onCallFlow) return;
 
   const resetBotIdleTimeout = async (
     state: any,
@@ -52,14 +56,22 @@ export async function createFlow() {
   };
 
   const submenus: IMethodsChain[] = [];
+  const onCallSubmenus: IMethodsChain[] = [];
 
-  for (let i = 1; i < botMenus.length; i++) {
-    const flow = createSubMenu(botMenus[i], botMessages[i]);
+  for (let i = 1; i < (regularFlow.menus as string[][]).length; i++) {
+    // @ts-ignore
+    const flow = createSubMenu(regularFlow.menus[i], regularFlow.messages[i]);
     submenus.push(flow);
+  }
+  for (let i = 1; i < (onCallFlow.menus as string[][][]).length; i++) {
+    // @ts-ignore
+    const flow = createSubMenu(onCallFlow.menus[i], onCallFlow.messages[i]);
+    onCallSubmenus.push(flow);
   }
 
   let welcomeFlow: IMethodsChain = addKeyword(EVENTS.WELCOME);
-  const welcomeMessages = botMessages[0];
+  // @ts-ignore
+  const welcomeMessages = regularFlow.messages[0] as string[][];
   if (welcomeMessages.length > 1) {
     for (let i = 0; i <= welcomeMessages.length - 2; i++) {
       welcomeFlow = welcomeFlow.addAnswer(welcomeMessages[i]);
@@ -75,18 +87,29 @@ export async function createFlow() {
   );
 
   const mainMenuFlow: IMethodsChain = addKeyword("menu")
-    .addAnswer(botMenus[0])
+    .addAction(async (_ctx, { flowDynamic }) => {
+      const weAreOnCall = await BotFlowsDAO.findOnCallFlow();
+      // @ts-ignore
+      const mainMenu = weAreOnCall ? onCallFlow.menus[0] : regularFlow.menus[0];
+      await flowDynamic(mainMenu.join("\n"));
+    })
     .addAction(
       { capture: true },
       async (ctx, { gotoFlow, fallBack, state }) => {
-        const mainMenuOptions = botMenus[0].filter((option) =>
+        const weAreOnCall = await BotFlowsDAO.findOnCallFlow();
+        // @ts-ignore
+        const menus = (
+          weAreOnCall ? onCallFlow.menus : regularFlow.menus
+        ) as string[][];
+        const mainMenuOptions = menus[0].filter((option) =>
           /\*\d+/.test(option),
         );
+        const subflows = weAreOnCall ? onCallSubmenus : submenus;
 
         const choice = Math.round(Number(ctx.body.trim()));
 
         if (choice > 0 && choice <= mainMenuOptions.length) {
-          await gotoFlow(submenus[choice - 1]);
+          await gotoFlow(subflows[choice - 1]);
         } else fallBack("Opción inválida. Intenta de nuevo.");
         await resetBotIdleTimeout(state, gotoFlow);
       },
@@ -101,6 +124,7 @@ export async function createFlow() {
     welcomeFlow,
     mainMenuFlow,
     ...submenus,
+    ...onCallSubmenus,
     timeoutFlow,
   ]);
 }

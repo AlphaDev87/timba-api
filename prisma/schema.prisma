@@ -143,12 +143,14 @@ model Role {
   @@map("ROLES")
 }
 
-model BotMessages {
+model BotFlow {
   id                String        @id @default(uuid())
   menus             Json      
   messages          Json
+  on_call           Boolean
+  active            Boolean
 
-  @@map("BOT_MESSAGES")
+  @@map("BOT_FLOWS")
 }
 
 model AlquimiaDeposit {

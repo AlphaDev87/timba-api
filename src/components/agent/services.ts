@@ -14,6 +14,7 @@ import { NotFoundException, UnauthorizedError } from "@/helpers/error";
 import { PlayersDAO } from "@/db/players";
 import CONFIG from "@/config";
 import { ERR } from "@/config/errors";
+import { BotFlowsDAO } from "@/db/bot-flows";
 
 export class AgentServices {
   static async login(
@@ -108,5 +109,9 @@ export class AgentServices {
     }
 
     return response;
+  }
+
+  static async setOnCallBotFlow(active: boolean): Promise<void> {
+    await BotFlowsDAO.setOnCall(active);
   }
 }
