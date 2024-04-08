@@ -28,9 +28,9 @@ const CONFIG = {
     CODES: [
       "agent_api_error",
       "error_transferencia",
-      "double_token_usage",
-      "wrong_token_type",
       "alquimia",
+      "token_invalid",
+      "wrong_token_type",
     ],
   },
   AUTH: {
