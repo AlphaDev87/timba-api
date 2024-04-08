@@ -482,9 +482,7 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Cambiar contraseña (no funciona en el casino, vamos por este lado)
   - Endpoint https://agent.casinomex.vip/api/users/5941/change-password/
   - Body: `{ new_password:	string }`
-- Handle sudden token revokation in frontend
 - Log errors to file
-- Log all external API calls to file
 - Usar endpoint /auth/logout en frontend
 
 - [Bot Whatsapp](https://bot-whatsapp.netlify.app/) ✅
@@ -492,8 +490,8 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Configurar bbdd distintas para dev y prod
 - Chequear si agent existe en la bbdd en `seed.ts`
 - Subir la duracion del refresh token a 24 horas
-- Tener en cuenta que pasa si el casino devuelve 200 a una transfer de fichas pero la transferencia no pasa
 - Balance Alquimia en panel agente
+- Tener en cuenta que pasa si el casino devuelve 200 a una transfer de fichas pero la transferencia no pasa
 
 ### Error logging
 

@@ -1,3 +1,14 @@
+## [1.0.0] - 2024-04-08
+
+### Added
+- `/agent/on-call` endpoint to activate/deactivate on call bot flow
+
+### Changed
+- Renamed table `BOT_MESSAGES` to `BOT_FLOWS`
+- Added `on_call` and `active` columns to `BOT_FLOWS`
+    + Revert by undoing commit 6a02ea4
+
+
 ## [1.0.0] - 2024-04-05
 
 ### Added
