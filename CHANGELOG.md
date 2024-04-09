@@ -1,7 +1,21 @@
-## [1.0.0] - 2024-04-03
+## [1.0.0] - 2024-04-05
+
+### Added
+- `logtailLogger` sends logs to logtail if ENV == 'production'.
+- External API error codes
+    + `agent_api_error` indicates something is not working on the casino's agent API
+- Token misuse error codes
+    + `wrong_token_type` someone is trying to use an access token on the `/auth/refresh` endpoint
+
+### Changed
+- Added optional `detail` field to `CustomError` for extra details relating to the original error
+- Verify token signature in `AuthServices.refresh`
+
+## [1.0.0] - 2024-04-04
 
 ### Added
 - Test case to expect status code 429 on POST `/transactions/cashout`
+- LOGTAIL_TOKEN to .env
 
 ### Changed
 - Restrict Deposits to 1 every 24 hours in `PaymentsDAO.authorizeCreation`

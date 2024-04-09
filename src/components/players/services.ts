@@ -39,11 +39,7 @@ export class PlayerServices {
     let response = await authedAgentApi.post(panelSignUpUrl, player);
 
     if (response.status !== 201 && response.status !== 400) {
-      throw new CustomError({
-        status: 500,
-        code: "error_panel",
-        description: "Error en el panel al crear el usuario",
-      });
+      throw new CustomError(ERR.PLAYER_CREATE);
     }
 
     if (

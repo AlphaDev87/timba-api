@@ -31,6 +31,16 @@ export const ERR: { [key: string]: ErrorData } = {
     code: "token_invalido",
     description: "Token invalido",
   },
+  TOKEN_REVOKED: {
+    status: 401,
+    code: "double_token_usage",
+    description: "Token invalido",
+  },
+  WRONG_TOKEN_TYPE: {
+    status: 401,
+    code: "wrong_token_type",
+    description: "Token invalido",
+  },
   KEY_NOT_FOUND: {
     status: 500,
     code: "env",
@@ -76,5 +86,10 @@ export const ERR: { [key: string]: ErrorData } = {
     status: 400,
     code: "already_exists",
     description: "Deposito ya existe",
+  },
+  PLAYER_CREATE: {
+    status: 500,
+    code: "agent_api_error",
+    description: "Error en el panel al crear el usuario",
   },
 };

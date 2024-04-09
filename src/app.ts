@@ -5,8 +5,8 @@ import morgan from "morgan";
 import timeout from "connect-timeout";
 import passport from "passport";
 import CONFIG from "./config";
-import { expressPinoLogger } from "./helpers";
 import { AuthServices } from "./components/auth/services";
+import { expressPinoConsoleLogger } from "./helpers/loggers";
 import * as errorHandler from "@/middlewares/errorHandler";
 import mainRouter from "@/routes";
 
@@ -28,7 +28,7 @@ export const createApp = (): express.Application => {
 
   if (CONFIG.APP.ENV !== "test") {
     app.use(morgan("dev"));
-    app.use(expressPinoLogger());
+    app.use(expressPinoConsoleLogger());
   }
 
   app.use(timeout(CONFIG.SERVER.TIMEOUT));

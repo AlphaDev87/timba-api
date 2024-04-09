@@ -27,9 +27,23 @@ export class JwtService {
   }
 
   /**
+   * Verify a token and return its payload
+   */
+  verifyToken(
+    token: string,
+    pass: string,
+  ): Promise<string | JWTPayload | undefined> {
+    return new Promise((resolve, reject) => {
+      jwt.verify(token, pass, (err, decoded) => {
+        if (err) reject(err);
+        resolve(decoded as string | JWTPayload | undefined);
+      });
+    });
+  }
+
+  /**
    * Generate token pair
    * @param sub User ID
-   * @param role User role ("player" | "agent")
    */
   generateTokenPair(sub: string, jti: string, pass: string): TokenPair {
     return {

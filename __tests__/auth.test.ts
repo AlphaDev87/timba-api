@@ -87,7 +87,7 @@ describe("[UNIT] => AUTH", () => {
         .set("User-Agent", USER_AGENT);
 
       expect(response.status).toBe(UNAUTHORIZED);
-      expect(response.body.code).toBe("token_invalido");
+      expect(response.body.code).toBe("wrong_token_type");
     });
 
     it("Should return 401 token_invalid [user-agent]", async () => {

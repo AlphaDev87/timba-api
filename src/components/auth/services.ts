@@ -42,8 +42,11 @@ export class AuthServices extends JwtService {
     if (!this.verifyTokenExpiration(refresh))
       throw new CustomError(ERR.TOKEN_EXPIRED);
 
-    const payload = this.decodePayload(refresh);
-    if (payload.type !== "refresh") throw new CustomError(ERR.TOKEN_INVALID);
+    const payload = await this.verifyToken(refresh, this.cypherPass);
+    if (!payload || typeof payload === "string")
+      throw new CustomError(ERR.TOKEN_INVALID);
+
+    if (payload.type !== "refresh") throw new CustomError(ERR.WRONG_TOKEN_TYPE);
 
     let token = await TokenDAO.getById(payload.jti);
     if (!token) throw new CustomError(ERR.TOKEN_INVALID);
@@ -53,8 +56,6 @@ export class AuthServices extends JwtService {
 
     if (token.invalid) {
       await this.invalidateChildren(token);
-      // TODO
-      // notify("Uso duplicado de refresh token");
       throw new CustomError(ERR.TOKEN_INVALID);
     }
 

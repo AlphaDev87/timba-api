@@ -25,6 +25,13 @@ const CONFIG = {
     PATH: process.env.LOGGING_DIR || "logs",
     LEVEL: process.env.LOGGING_LEVEL || "info",
     MAX_FILES: process.env.LOGGING_MAX_FILES || 5,
+    CODES: [
+      "agent_api_error",
+      "error_transferencia",
+      "alquimia",
+      "token_invalid",
+      "wrong_token_type",
+    ],
   },
   AUTH: {
     SALT_ROUNDS: process.env.SALT_ROUNDS || "11",
@@ -37,6 +44,7 @@ const CONFIG = {
     ALQUIMIA_BASIC_AUTH: process.env.ALQUIMIA_BASIC_AUTH,
     ALQUIMIA_USERNAME: process.env.ALQUIMIA_USERNAME,
     ALQUIMIA_PASSWORD: process.env.ALQUIMIA_PASSWORD,
+    LOGTAIL_TOKEN: process.env.LOGTAIL_TOKEN,
   },
   AWS: {
     ACCESS_KEY: process.env.AWS_ACCESS_KEY,

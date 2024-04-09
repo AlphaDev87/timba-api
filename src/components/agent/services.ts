@@ -82,9 +82,10 @@ export class AgentServices {
     const response = await httpService.authedAgentApi.get(url);
     if (response.status !== 200)
       throw new CustomError({
-        code: "error_balance",
+        code: "agent_api_error",
         status: response.status,
         description: "Error en el panel al obtener el balance",
+        detail: response.data,
       });
     return {
       balance: Number(response.data.balance),
