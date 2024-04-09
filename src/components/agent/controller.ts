@@ -106,4 +106,26 @@ export class AgentController {
       next(error);
     }
   }
+
+  static async setOnCallBotFlow(req: Req, res: Res, next: NextFn) {
+    try {
+      const { active } = req.body;
+
+      await AgentServices.setOnCallBotFlow(active);
+
+      res.status(OK).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getOnCallStatus(_req: Req, res: Res, next: NextFn) {
+    try {
+      const onCall: boolean = await AgentServices.getOnCallStatus();
+
+      res.status(OK).json(apiResponse(onCall));
+    } catch (error) {
+      next(error);
+    }
+  }
 }

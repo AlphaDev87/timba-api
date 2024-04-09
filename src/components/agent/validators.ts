@@ -73,3 +73,12 @@ export const validateDepositUpdate = () =>
       optional: false,
     },
   });
+
+export const validateOnCallRequest = () =>
+  checkSchema({
+    active: {
+      in: ["body"],
+      isBoolean: true,
+      optional: false,
+    },
+  });

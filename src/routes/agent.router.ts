@@ -7,6 +7,7 @@ import {
   validateBankAccountUpdate,
   validateDepositIndex,
   validateDepositUpdate,
+  validateOnCallRequest,
   validatePaymentIndex,
 } from "@/components/agent/validators";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
@@ -57,5 +58,13 @@ agentRouter.post(
 );
 agentRouter.get("/balance", AgentController.getBalance);
 agentRouter.get("/pending/deposits", AgentController.completePendingDeposits);
+agentRouter.post(
+  "/on-call",
+  validateOnCallRequest(),
+  checkExact(),
+  throwIfBadRequest,
+  AgentController.setOnCallBotFlow,
+);
+agentRouter.get("/on-call", AgentController.getOnCallStatus);
 
 export default agentRouter;

@@ -44,8 +44,8 @@ describe("[UNIT] => AGENT ROUTER", () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/agent/login`)
         .send({
-          username: "agente",
-          password: "E8DaacEN/G5pdWS/FjHYlpw+csU6OKpU",
+          username: process.env.AGENT_PANEL_USERNAME,
+          password: process.env.AGENT_PANEL_PASSWORD,
         })
         .set("User-Agent", USER_AGENT);
 
@@ -392,6 +392,81 @@ describe("[UNIT] => AGENT ROUTER", () => {
     it("Should return 403", async () => {
       const response = await agent
         .get(`/app/${CONFIG.APP.VER}/agent/pending/deposits`)
+        .set("Authorization", `Bearer ${playerAccessToken}`)
+        .set("User-Agent", USER_AGENT);
+
+      expect(response.status).toBe(FORBIDDEN);
+    });
+  });
+
+  describe("POST: /agent/on-call", () => {
+    it("Should set on call status", async () => {
+      const response = await agent
+        .post(`/app/${CONFIG.APP.VER}/agent/on-call`)
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT)
+        .send({
+          active: true,
+        });
+
+      expect(response.status).toBe(OK);
+      expect(response.body.data).toBeUndefined();
+    });
+
+    it("Should return 400", async () => {
+      const response = await agent
+        .post(`/app/${CONFIG.APP.VER}/agent/on-call`)
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT)
+        .send({
+          active: true,
+          unknownField: "foo",
+        });
+
+      console.log("RESPONSE", response.body);
+      expect(response.status).toBe(BAD_REQUEST);
+      expect(response.body.details[0].type).toBe("unknown_fields");
+    });
+
+    it("Should return 401", async () => {
+      const response = await agent
+        .post(`/app/${CONFIG.APP.VER}/agent/on-call`)
+        .send({ active: true });
+
+      expect(response.status).toBe(UNAUTHORIZED);
+    });
+
+    it("Should return 403", async () => {
+      const response = await agent
+        .post(`/app/${CONFIG.APP.VER}/agent/on-call`)
+        .send({ active: true })
+        .set("Authorization", `Bearer ${playerAccessToken}`)
+        .set("User-Agent", USER_AGENT);
+
+      expect(response.status).toBe(FORBIDDEN);
+    });
+  });
+
+  describe("GET: /agent/on-call", () => {
+    it("Should return on call status", async () => {
+      const response = await agent
+        .get(`/app/${CONFIG.APP.VER}/agent/on-call`)
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT);
+
+      expect(response.status).toBe(OK);
+      expect(response.body.data).toBeTruthy();
+    });
+
+    it("Should return 401", async () => {
+      const response = await agent.get(`/app/${CONFIG.APP.VER}/agent/on-call`);
+
+      expect(response.status).toBe(UNAUTHORIZED);
+    });
+
+    it("Should return 403", async () => {
+      const response = await agent
+        .get(`/app/${CONFIG.APP.VER}/agent/on-call`)
         .set("Authorization", `Bearer ${playerAccessToken}`)
         .set("User-Agent", USER_AGENT);
 

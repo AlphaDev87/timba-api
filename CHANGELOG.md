@@ -1,3 +1,21 @@
+## [1.0.0] - 2024-04-09
+
+### Added
+- GET `/agent/on-call` endpoint to fetch on call status
+
+## [1.0.0] - 2024-04-08
+
+### Added
+- `/agent/on-call` endpoint to activate/deactivate on call bot flow.
+
+### Changed
+- Renamed table `BOT_MESSAGES` to `BOT_FLOWS`.
+- Added `on_call` and `active` columns to `BOT_FLOWS`.
+    + Revert by undoing commit 6a02ea4.
+- `seed.ts` now tries to find users on db before requesting details.
+- `seed.ts` now inserts bot flows into db.
+
+
 ## [1.0.0] - 2024-04-05
 
 ### Added
