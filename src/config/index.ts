@@ -94,6 +94,13 @@ const CONFIG = {
       PRODUCTION: "production",
     },
   },
+  INFO: {
+    NAME: pkg.name,
+    VERSION: pkg.version,
+    VER: `v${pkg.version[0][0]}`,
+    DESCRIPTION: pkg.description,
+    AUTHORS: pkg.authors,
+  },
 } as const;
 
 export default CONFIG;
