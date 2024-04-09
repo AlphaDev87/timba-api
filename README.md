@@ -526,6 +526,12 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Notificar solo luego de X errores por dia.
 - Ver errores en panel agente.
 
+### Error logging
+
+- Loguear errores de api externas a un archivo, errores nuestros a otro.
+- Notificar solo luego de X errores por dia.
+- Ver errores en panel agente.
+
 ### Fichas insuficientes
 
 - Revisar respuesta y avisarle al agente si quedaron transferencias sin liberar
