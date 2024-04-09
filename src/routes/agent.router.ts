@@ -65,5 +65,6 @@ agentRouter.post(
   throwIfBadRequest,
   AgentController.setOnCallBotFlow,
 );
+agentRouter.get("/on-call", AgentController.getOnCallStatus);
 
 export default agentRouter;

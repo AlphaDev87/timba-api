@@ -118,4 +118,14 @@ export class AgentController {
       next(error);
     }
   }
+
+  static async getOnCallStatus(_req: Req, res: Res, next: NextFn) {
+    try {
+      const onCall: boolean = await AgentServices.getOnCallStatus();
+
+      res.status(OK).json(apiResponse(onCall));
+    } catch (error) {
+      next(error);
+    }
+  }
 }

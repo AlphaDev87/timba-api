@@ -114,4 +114,10 @@ export class AgentServices {
   static async setOnCallBotFlow(active: boolean): Promise<void> {
     await BotFlowsDAO.setOnCall(active);
   }
+
+  static async getOnCallStatus(): Promise<boolean> {
+    const botFlow = await BotFlowsDAO.findOnCallFlow();
+
+    return !!botFlow;
+  }
 }

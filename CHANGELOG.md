@@ -1,3 +1,8 @@
+## [1.0.0] - 2024-04-09
+
+### Added
+- GET `/agent/on-call` endpoint to fetch on call status
+
 ## [1.0.0] - 2024-04-08
 
 ### Added
