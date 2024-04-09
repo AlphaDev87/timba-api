@@ -44,8 +44,8 @@ describe("[UNIT] => AGENT ROUTER", () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/agent/login`)
         .send({
-          username: "cmex-admin",
-          password: "Alphadev4518",
+          username: process.env.AGENT_PANEL_USERNAME,
+          password: process.env.AGENT_PANEL_PASSWORD,
         })
         .set("User-Agent", USER_AGENT);
 
