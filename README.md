@@ -49,6 +49,8 @@ Comes with:
 + [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-🔒)
 + [Ver Balance](#ver-balance-🔒)
 + [Liberar Fichas Pendientes](#liberar-fichas-pendientes-🔒)
++ [Indicar Que El Agente Esta De Guardia](#setear-guardia-🔒)
++ [Ver Estado De Guardia]
 
 ### Auth
 + [Refrescar Token](#refrescar-token)
@@ -273,6 +275,24 @@ Método      |`GET`
 Devuelve    |[`Deposit[]`](#deposit) - los depositos afectados
 Requiere rol| agent
 
+### Setear Guardia 🔒
+Indicar que alguien está al teléfono para que el bot muestre el menú "contactanos".
+
+|Endpoint| `/agent/on-call`|
+---|---|
+Método      |`POST`
+Body (json) |[`OnCallRequest`](#oncallrequest)
+Devuelve    |200 OK
+Requiere rol| agent
+
+### Ver Guardia 🔒
+Indicar que alguien está al teléfono para que el bot muestre el menú "contactanos".
+
+|Endpoint| `/agent/on-call`|
+---|---|
+Método      |`GET`
+Devuelve    |boolean
+Requiere rol| agent
 
 ## Interfaces
 
@@ -451,6 +471,12 @@ Estado de transferencia de fichas
 }
 ```
 
+### OnCallRequest
+```typescript
+{
+  active: boolean
+}
+```
 ## Load Testing
 
 ### Ddosify
