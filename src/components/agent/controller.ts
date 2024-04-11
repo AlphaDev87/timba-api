@@ -56,6 +56,8 @@ export class AgentController {
   static async qr(_req: Req, res: Res, next: NextFn) {
     try {
       const PATH_QR = join(process.cwd(), `bot.qr.png`);
+      // TODO
+      // Ensure file exists
       const fileStream = createReadStream(PATH_QR);
 
       res.writeHead(200, { "Content-Type": "image/png" });
