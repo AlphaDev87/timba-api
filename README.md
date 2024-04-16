@@ -521,8 +521,6 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - [Bot Whatsapp](https://bot-whatsapp.netlify.app/) ✅
   + [Diagrama Flujo](https://www.figma.com/file/rtxhrNqQxdEdYzOfPl1mRc/Whatsapp-Bot?type=whiteboard&node-id=0%3A1&t=5ACojRhp99vrh24S-1)
 - Limpiar tabla TOKENS periodicamente => al crear un token nuevo?
-- Volar el pino logger
-- No permitir retiros astronomicos 
 
 ### Fichas insuficientes
 
