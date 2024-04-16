@@ -88,7 +88,12 @@ export class ExternalApiService {
       if (response.status === 401) {
         this._auth = await this.handleTokenExpiration();
         if (!this._auth) {
-          throw new CustomError(ERR.EXTERNAL_LOGIN);
+          throw new CustomError({
+            status: response.status,
+            code: "external_login",
+            description: "Error en login externo",
+            detail: response.data,
+          });
         }
 
         return await this._authedAxiosInstance({ url, method, data });

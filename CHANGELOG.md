@@ -2,6 +2,7 @@
 
 ### Added
 - `AgentApiError` as a wrapper around `CustomError` with code "agent_api_error".
+- Ensure value of `CashoutRequest.amount` is between 0 and 2**32 in request validator 
 
 ### Changed
 - Fetch token duration from `.env`.
