@@ -9,6 +9,7 @@
 - Improve `HttpService` typing.
 - Error code `error_transferencia` is now `agent_api_error`.
 - Remove `expressPinoLogger` (middleware that logged errors to console).
+- Truncate TOKENS table on token creation.
 
 ## [1.0.0] - 2024-04-15
 
