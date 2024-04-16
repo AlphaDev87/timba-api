@@ -1,7 +1,12 @@
 ## [1.0.0] - 2024-04-16
 
+### Added
+- `AgentApiError` as a wrapper around `CustomError` with code "agent_api_error"
+
 ### Changed
 - Fetch token duration from `.env`
+- Improve `HttpService` typing
+- Error code `error_transferencia` is now `agent_api_error`
 
 ## [1.0.0] - 2024-04-15
 

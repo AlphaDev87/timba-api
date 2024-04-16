@@ -27,7 +27,7 @@ const CONFIG = {
     MAX_FILES: process.env.LOGGING_MAX_FILES || 5,
     CODES: [
       "agent_api_error",
-      "error_transferencia",
+      "external_login",
       "alquimia",
       "token_invalid",
       "wrong_token_type",

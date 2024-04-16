@@ -36,12 +36,10 @@ export const createApp = (): express.Application => {
   app.use(`/app/${CONFIG.APP.VER}`, mainRouter);
 
   // Error Middleware
-  for (const handler in errorHandler) {
-    if (handler === "notFoundError" || handler === "genericErrorHandler")
-      continue;
-    // @ts-ignore
-    app.use(errorHandler[handler]);
-  }
+  app.use(errorHandler.requestTimeoutHandler);
+  app.use(errorHandler.customErrorHandler);
+  app.use(errorHandler.authenticationErrorHandler);
+  app.use(errorHandler.prismaErrorHandler);
   app.use(errorHandler.genericErrorHandler);
   app.use(errorHandler.notFoundError);
 
