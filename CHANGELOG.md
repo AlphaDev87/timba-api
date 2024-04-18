@@ -1,3 +1,11 @@
+## [1.0.0] - 2024-04-18
+
+### Added
+- `BOT_QR_PATH` in `.env`. Absolute path to the bot.qr.png.
+
+### Changed
+- Moved bot server out into its own project
+
 ## [1.0.0] - 2024-04-16
 
 ### Added
