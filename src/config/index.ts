@@ -101,6 +101,9 @@ const CONFIG = {
     DESCRIPTION: pkg.description,
     AUTHORS: pkg.authors,
   },
+  BOT: {
+    QR_PATH: process.env.BOT_QR_PATH ?? "",
+  },
 } as const;
 
 export default CONFIG;
