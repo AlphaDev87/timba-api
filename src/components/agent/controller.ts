@@ -57,7 +57,6 @@ export class AgentController {
   static async qr(_req: Req, res: Res, next: NextFn) {
     let fileStream: ReadStream | undefined = undefined;
     try {
-      // const PATH_QR = join(process.cwd(), `bot.qr.png`);
       const PATH_QR = CONFIG.BOT.QR_PATH;
       if (!existsSync(PATH_QR)) {
         throw new NotFoundException("bot.qr.png not found");
