@@ -8,6 +8,8 @@ services:
       MARIADB_USER: timba
       MARIADB_PASSWORD: timba2024
       MARIADB_DATABASE: timba-dev
+    volumes:
+      - ./mariadb-data:/var/lib/mysql
     ports:
       - 3307:3306
 
