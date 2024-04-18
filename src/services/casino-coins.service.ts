@@ -94,7 +94,6 @@ export class CasinoCoinsService {
         "Error en el panel al transferir fichas",
         result.data,
       );
-
     return result;
   }
 

@@ -19,6 +19,11 @@
 - Remove `expressPinoLogger` (middleware that logged errors to console).
 - Truncate TOKENS table on token creation.
 
+## [1.0.0] - 2024-04-16
+
+### Changed
+- Fetch token duration from `.env`
+
 ## [1.0.0] - 2024-04-15
 
 ### Changed

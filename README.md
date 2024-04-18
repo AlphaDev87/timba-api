@@ -521,6 +521,16 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
   + [Diagrama Flujo](https://www.figma.com/file/rtxhrNqQxdEdYzOfPl1mRc/Whatsapp-Bot?type=whiteboard&node-id=0%3A1&t=5ACojRhp99vrh24S-1)
 - Usar endpoint /auth/logout en frontend
 - Acomodar frontend para nuevos errores
+- Usar endpoint /auth/logout en frontend
+- [Bot Whatsapp](https://bot-whatsapp.netlify.app/) ✅
+  + [Diagrama Flujo](https://www.figma.com/file/rtxhrNqQxdEdYzOfPl1mRc/Whatsapp-Bot?type=whiteboard&node-id=0%3A1&t=5ACojRhp99vrh24S-1)
+- Chequear si agent existe en la bbdd en `seed.ts`
+- Subir la duracion del refresh token a 24 horas
+- Tomar duracion de los tokens de `.env`
+- Balance Alquimia en panel agente
+- Tener en cuenta que pasa si el casino devuelve 200 a una transfer de fichas pero la transferencia no pasa
+- Limpiar tabla TOKENS periodicamente
+- Chequear token sesion en dos dispositivos
 
 ### Fichas insuficientes
 
