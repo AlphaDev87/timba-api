@@ -531,7 +531,6 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Asegurarse que los status code de las respuestas de api externa esten presente en logs
 - Usar instancia global de prisma.
 
-- Actualizar agente en `seed.ts` para no tener que borrar la fila.
 - Agregar a panel agente posibilidad de setear dos telefonos:
   + bot
   + soporte humano
