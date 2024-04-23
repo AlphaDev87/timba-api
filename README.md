@@ -514,39 +514,15 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Cambiar contraseña (no funciona en el casino, vamos por este lado)
   - Endpoint https://agent.casinomex.vip/api/users/5941/change-password/
   - Body: `{ new_password:	string }`
-- Log errors to file
 - [Bot Whatsapp](https://bot-whatsapp.netlify.app/) ✅
   + [Diagrama Flujo](https://www.figma.com/file/rtxhrNqQxdEdYzOfPl1mRc/Whatsapp-Bot?type=whiteboard&node-id=0%3A1&t=5ACojRhp99vrh24S-1)
 - Usar endpoint /auth/logout en frontend
-- Acomodar frontend para nuevos errores
-- Usar endpoint /auth/logout en frontend
-- [Bot Whatsapp](https://bot-whatsapp.netlify.app/) ✅
-  + [Diagrama Flujo](https://www.figma.com/file/rtxhrNqQxdEdYzOfPl1mRc/Whatsapp-Bot?type=whiteboard&node-id=0%3A1&t=5ACojRhp99vrh24S-1)
-- Chequear si agent existe en la bbdd en `seed.ts`
-- Subir la duracion del refresh token a 24 horas
-- Tomar duracion de los tokens de `.env`
-- Balance Alquimia en panel agente
-- Tener en cuenta que pasa si el casino devuelve 200 a una transfer de fichas pero la transferencia no pasa
-- Limpiar tabla TOKENS periodicamente
-- Asegurarse que los status code de las respuestas de api externa esten presente en logs
-- Usar instancia global de prisma.
 
 - Agregar a panel agente posibilidad de setear dos telefonos:
   + bot
   + soporte humano
 - Agregar telefono de soporte a endpoint cuenta bancaria alquimia
 
-### Error logging
-
-- Loguear errores de api externas a un archivo, errores nuestros a otro.
-- Notificar solo luego de X errores por dia.
-- Ver errores en panel agente.
-
-### Error logging
-
-- Loguear errores de api externas a un archivo, errores nuestros a otro.
-- Notificar solo luego de X errores por dia.
-- Ver errores en panel agente.
 
 ### Fichas insuficientes
 

@@ -2,6 +2,7 @@
 
 ### Changed
 - Improve `seed.ts` to allow updating credentials
+- Move bot seeding logic into bot repo
 
 ## [1.0.0] - 2024-04-20
 
