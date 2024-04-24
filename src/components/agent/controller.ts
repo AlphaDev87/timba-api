@@ -54,15 +54,17 @@ export class AgentController {
     }
   }
 
-  static async qr(_req: Req, res: Res, next: NextFn) {
+  static async qr(req: Req, res: Res, next: NextFn) {
+    const { name } = req.params;
     let fileStream: ReadStream | undefined = undefined;
     try {
-      const PATH_QR = CONFIG.BOT.QR_PATH;
-      if (!existsSync(PATH_QR)) {
-        throw new NotFoundException("bot.qr.png not found");
+      const paths = CONFIG.BOT.QR_PATHS.trim().split("\n");
+      const path = paths.find((path) => path.includes(name));
+      if (!path || !existsSync(path)) {
+        throw new NotFoundException(`${name}.qr.png not found`);
       }
 
-      fileStream = createReadStream(PATH_QR);
+      fileStream = createReadStream(path);
 
       res.writeHead(200, { "Content-Type": "image/png" });
       fileStream.pipe(res);

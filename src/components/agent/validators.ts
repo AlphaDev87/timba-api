@@ -110,3 +110,19 @@ export const validateSupportRequest = () =>
       },
     },
   });
+
+export const validateQrName = () =>
+  checkSchema({
+    name: {
+      in: ["params"],
+      isString: true,
+      isEmpty: false,
+      trim: true,
+      isLength: {
+        options: { min: 1, max: 10 },
+      },
+      customSanitizer: {
+        options: (value: string) => value.toLowerCase().replaceAll(/[./]/g, ""),
+      },
+    },
+  });
