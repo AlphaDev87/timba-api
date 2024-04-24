@@ -51,7 +51,9 @@ Comes with:
 + [Ver Balance Alquimia](#ver-balance-alquimia-🔒)
 + [Liberar Fichas Pendientes](#liberar-fichas-pendientes-🔒)
 + [Indicar Que El Agente Esta De Guardia](#setear-guardia-🔒)
-+ [Ver Estado De Guardia]
++ [Ver Estado De Guardia](#ver-guardia-🔒)
++ [Ver Números de Soporte](#ver-números-de-soporte-🔒)
++ [Actualizar Números de Soporte](#actualizar-números-de-soporte-🔒)
 
 ### Auth
 + [Refrescar Token](#refrescar-token)
@@ -303,6 +305,22 @@ Método      |`GET`
 Devuelve    |boolean
 Requiere rol| agent
 
+### Ver Números de soporte 🔒
+
+|Endpoint| `/agent/support`|
+---|---|
+Método      |`GET`
+Devuelve    |[`SupportResponse`](#supportresponse)
+Requiere rol| agent
+
+### Actualizar Números de soporte 🔒
+
+|Endpoint| `/agent/support`|
+---|---|
+Método      |`POST`
+Devuelve    |[`SupportRequest`](#supportrequest)
+Requiere rol| agent
+
 ## Interfaces
 
 ### Player
@@ -483,6 +501,23 @@ Estado de transferencia de fichas
   active: boolean
 }
 ```
+
+### SupportResponse
+```typescript
+{
+  bot_phone: string | null;
+  human_phone: string | null;
+}
+```
+
+### SupportRequest
+```typescript
+{
+  bot_phone?: string;
+  human_phone?: string;
+}
+```
+
 ## Load Testing
 
 ### Ddosify

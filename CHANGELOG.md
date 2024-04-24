@@ -1,5 +1,8 @@
 ## [1.0.0] - 2024-04-23
 
+### Added
+- GET and POST `/agent/support` to view and update support telephone numbers. 
+
 ### Changed
 - Improve `seed.ts` to allow updating credentials
 - Move bot seeding logic into bot repo

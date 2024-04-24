@@ -144,4 +144,26 @@ export class AgentController {
       next(error);
     }
   }
+
+  static async getSupportNumbers(_req: Req, res: Res, next: NextFn) {
+    try {
+      const numbers = await AgentServices.getSupportNumbers();
+
+      res.status(OK).json(apiResponse(numbers));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateSupportNumbers(req: Req, res: Res, next: NextFn) {
+    try {
+      const data = req.body;
+
+      const response = await AgentServices.updateSupportNumbers(data);
+
+      res.status(OK).send(apiResponse(response));
+    } catch (error) {
+      next(error);
+    }
+  }
 }

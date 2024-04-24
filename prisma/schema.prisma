@@ -150,6 +150,7 @@ model BotFlow {
   messages          Json
   on_call           Boolean
   active            Boolean
+  name              String        @db.VarChar(20)
 
   @@map("BOT_FLOWS")
 }
