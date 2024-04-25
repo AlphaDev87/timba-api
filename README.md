@@ -327,6 +327,7 @@ Devuelve    |`Blob | string[]`
 Requiere rol| agent
 
 > Omitir el parametro `:name` para que devuelva un array con los nombres de los bots.
+> Cualquier caracter que no esté en el rango [a-b] es eliminado del parametro `:name`. Ademas `:name` debe tener entre 1 y 10 caracteres.
 
 ## Interfaces
 

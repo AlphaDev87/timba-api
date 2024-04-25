@@ -12,7 +12,8 @@ export const validateQrName = () =>
         options: { min: 1, max: 10 },
       },
       customSanitizer: {
-        options: (value: string) => value.toLowerCase().replaceAll(/[./]/g, ""),
+        options: (value: string) =>
+          value.toLowerCase().replaceAll(/[^a-z]/g, ""),
       },
     },
   });
