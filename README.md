@@ -559,6 +559,7 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - [Bot Whatsapp](https://bot-whatsapp.netlify.app/) ✅
   + [Diagrama Flujo](https://www.figma.com/file/rtxhrNqQxdEdYzOfPl1mRc/Whatsapp-Bot?type=whiteboard&node-id=0%3A1&t=5ACojRhp99vrh24S-1)
 - Usar endpoint /auth/logout en frontend
+- Buscar deposito en alquimia con clave de rastreo incluyendo `clave_rastreo` en los search params
 
 - QRs dinámicos
 
@@ -605,12 +606,18 @@ curl -X GET\
 -d 'id_cuenta=120902&id_transaccion=18489885' \
 -H 'Content-Type: x-www-form-urlencoded'
 ```
-Devuelve 404 al intentar confirmar el ingreso de $10 con su id_transaccion
 
-Consulta de movimientos
-- Consulta movimientos `/1.0.0/v2/cuenta-ahorro-cliente`
-  + Si el movimiento figura en la lista devuelta por "Consulta de Movimientos", esta confirmado? 
-  + Cuales son los posibles valors del campo `estatus_transaccion` en el resultado de este endpoint?
-- el endpoint "Consulta estatus TX `/1.0.0/v2/consulta-estatus-tx`" nos sirve para confirmar transferencias recibidas? o solo pagos salientes?
+Consultar transferencia por clave de rastreo
+```bash
+curl -X GET\
+-H "Authorization: Bearer $API_TOKEN" \
+-H "AuthorizationAlquimia: Bearer $ALQ_TOKEN" \
+"${ALQ_BASE_URL}1.0.0/v2/cuenta-ahorro-cliente/:BaccountId/transaccion
+-d 'clave_rastreo=$TRACKING_NUMBER'
+```
 
-
+Transferir platita
+mismo endpoint que arriba
+canal SPEI
+ASP (medio de pago 4)
+cuenta destino
