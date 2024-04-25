@@ -1,11 +1,8 @@
-import { ReadStream, createReadStream, existsSync } from "fs";
 import { OK } from "http-status";
 import { AgentServices } from "./services";
 import { Credentials } from "@/types/request/players";
 import { apiResponse } from "@/helpers/apiResponse";
 import { AgentBankAccount } from "@/types/response/agent";
-import { NotFoundException } from "@/helpers/error";
-import CONFIG from "@/config";
 
 export class AgentController {
   static async login(req: Req, res: Res, next: NextFn) {
@@ -49,25 +46,6 @@ export class AgentController {
       const deposits = await AgentServices.showDeposits(depositId);
 
       res.status(OK).json(apiResponse(deposits));
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async qr(req: Req, res: Res, next: NextFn) {
-    const { name } = req.params;
-    let fileStream: ReadStream | undefined = undefined;
-    try {
-      const paths = CONFIG.BOT.QR_PATHS.trim().split("\n");
-      const path = paths.find((path) => path.includes(name));
-      if (!path || !existsSync(path)) {
-        throw new NotFoundException(`${name}.qr.png not found`);
-      }
-
-      fileStream = createReadStream(path);
-
-      res.writeHead(200, { "Content-Type": "image/png" });
-      fileStream.pipe(res);
     } catch (error) {
       next(error);
     }

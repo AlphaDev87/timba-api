@@ -220,32 +220,6 @@ describe("[UNIT] => AGENT ROUTER", () => {
     });
   });
 
-  describe("GET: /agent/qr", () => {
-    it("Should return 200", async () => {
-      const response = await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/qr`)
-        .set("Authorization", `Bearer ${access}`)
-        .set("User-Agent", USER_AGENT);
-
-      expect(response.status).toBe(OK);
-    });
-
-    it("Should return 401", async () => {
-      const response = await agent.get(`/app/${CONFIG.APP.VER}/agent/qr`);
-
-      expect(response.status).toBe(UNAUTHORIZED);
-    });
-
-    it("Should return 403", async () => {
-      const response = await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/qr`)
-        .set("Authorization", `Bearer ${playerAccessToken}`)
-        .set("User-Agent", USER_AGENT);
-
-      expect(response.status).toBe(FORBIDDEN);
-    });
-  });
-
   describe("POST: /agent/bank-account", () => {
     it("Should update bank account", async () => {
       const response = await agent

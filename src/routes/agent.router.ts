@@ -9,7 +9,6 @@ import {
   validateDepositUpdate,
   validateOnCallRequest,
   validatePaymentIndex,
-  validateQrName,
   validateSupportRequest,
 } from "@/components/agent/validators";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
@@ -48,12 +47,6 @@ agentRouter.post(
   validateDepositUpdate(),
   throwIfBadRequest,
   TransactionsController.deposit,
-);
-agentRouter.get(
-  "/qr/:name",
-  validateQrName(),
-  checkExact(),
-  AgentController.qr,
 );
 agentRouter.get("/bank-account", AgentController.getBankAccount);
 agentRouter.post(

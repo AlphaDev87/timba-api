@@ -55,6 +55,8 @@ Comes with:
 + [Ver Números de Soporte](#ver-números-de-soporte-🔒)
 + [Actualizar Números de Soporte](#actualizar-números-de-soporte-🔒)
 
+### Bot
+
 ### Auth
 + [Refrescar Token](#refrescar-token)
 + [Logout](#logout-🔒)
@@ -234,14 +236,6 @@ Método      |`GET`
 Devuelve    |[`Deposit[]`](#deposit)
 Requiere rol| agent
 
-### Ver QR 🔒
-
-|Endpoint| `/agent/qr`|
----|---|
-Método      |`GET`
-Devuelve    |`Blob`
-Requiere rol| agent
-
 ### Ver Cuenta Bancaria 🔒
 
 |Endpoint| `/agent/bank-account`|
@@ -320,6 +314,19 @@ Requiere rol| agent
 Método      |`POST`
 Devuelve    |[`SupportRequest`](#supportrequest)
 Requiere rol| agent
+
+Bot
+---
+
+### Ver QR 🔒
+
+|Endpoint| `/bot/:name?`|
+---|---|
+Método      |`GET`
+Devuelve    |`Blob | string[]`
+Requiere rol| agent
+
+> Omitir el parametro `:name` para que devuelva un array con los nombres de los bots.
 
 ## Interfaces
 
@@ -553,10 +560,8 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
   + [Diagrama Flujo](https://www.figma.com/file/rtxhrNqQxdEdYzOfPl1mRc/Whatsapp-Bot?type=whiteboard&node-id=0%3A1&t=5ACojRhp99vrh24S-1)
 - Usar endpoint /auth/logout en frontend
 
-- Agregar a panel agente posibilidad de setear dos telefonos:
-  + bot
-  + soporte humano
-- Agregar telefono de soporte a endpoint cuenta bancaria alquimia
+- QRs dinámicos
+
 
 
 ### Fichas insuficientes

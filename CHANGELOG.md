@@ -1,3 +1,9 @@
+## [1.0.0] - 2024-04-24
+
+### Changed
+- Moved `/agent/qr/:name` to `/bot/:name?`.
+- Return bot names from `/bot` when `:name` param is omitted.
+
 ## [1.0.0] - 2024-04-23
 
 ### Added
