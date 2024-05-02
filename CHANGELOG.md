@@ -1,3 +1,16 @@
+## [1.0.0] - 2024-04-29
+
+### Added
+- Installed nodemailer npm package
+
+### Changed
+- Make PLAYER.email a non null field in Prisma model
+
+## [1.0.0] - 2024-04-26
+
+### Added
+- POST `/auth/reset` to reset password. Requires player role.
+
 ## [1.0.0] - 2024-04-24
 
 ### Changed
