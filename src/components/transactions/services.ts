@@ -224,6 +224,7 @@ export class FinanceServices {
     // TODO
     // Look up by clave_rastreo with
     // searchParams.set("clave_rastreo", tracking_number)
+    console.log("LOOKING UP");
     const accountId = CONFIG.EXTERNAL.ALQ_SAVINGS_ACCOUNT_ID;
     const endpoint = `cuenta-ahorro-cliente/${accountId}/transaccion`;
     const PAGE_SIZE = 20;
@@ -243,6 +244,7 @@ export class FinanceServices {
     const movements: AxiosResponse = await httpService.authedAlqApi.get(
       endpoint + "?" + searchParams.toString(),
     );
+    console.log("MOVEMENTS", movements.data);
 
     if (movements.data.length === 0) return;
 
