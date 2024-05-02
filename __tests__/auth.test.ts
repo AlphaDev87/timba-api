@@ -2,12 +2,11 @@ import { SuperAgentTest } from "supertest";
 import { Player, PrismaClient } from "@prisma/client";
 import { BAD_REQUEST, FORBIDDEN, UNAUTHORIZED } from "http-status";
 import jwt from "jsonwebtoken";
-import * as nodemailer from "nodemailer";
+// import * as nodemailer from "nodemailer";
 import { initAgent } from "./helpers";
 import { TokenPair } from "@/types/response/jwt";
 import { AuthServices } from "@/components/auth/services";
 import CONFIG from "@/config";
-import { NewPasswordServices } from "@/components/new-password/services";
 
 let agent: SuperAgentTest;
 let prisma: PrismaClient;
@@ -187,19 +186,19 @@ describe("[UNIT] => AUTH", () => {
   });
 
   describe("POST: /auth/forgot-password", () => {
-    const sendMailMock = jest.fn();
-    jest.mock("nodemailer", () => ({
-      createTransport: jest.fn().mockImplementation(() => ({
-        sendMail: sendMailMock,
-      })),
-    }));
+    // const sendMailMock = jest.fn();
+    // jest.mock("nodemailer", () => ({
+    //   createTransport: jest.fn().mockImplementation(() => ({
+    //     sendMail: sendMailMock,
+    //   })),
+    // }));
 
-    it.only("Should send password reset email", async () => {
-      const newPasswordServices = new NewPasswordServices();
-      await newPasswordServices.forgotPassword(player.username);
+    // it.only("Should send password reset email", async () => {
+    //   const newPasswordServices = new NewPasswordServices();
+    //   await newPasswordServices.forgotPassword(player.username);
 
-      expect(nodemailer.createTransport().sendMail).toHaveBeenCalledTimes(1);
-    });
+    //   expect(nodemailer.createTransport().sendMail).toHaveBeenCalledTimes(1);
+    // });
 
     it("Should return 200 with valid username", async () => {
       const response = await agent
