@@ -7,7 +7,6 @@ import { DepositResult } from "@/types/response/transfers";
 
 export class TransactionsController {
   static deposit = async (req: AuthedReq, res: Res, next: NextFn) => {
-    console.log("WE ARE IN");
     const deposit_id = req.params.id;
     const request: Omit<DepositRequest, "player_id"> = req.body;
     const player = req.user!;

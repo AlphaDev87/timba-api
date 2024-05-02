@@ -732,3 +732,8 @@ Datos que necesitamos saber:
 ### URL token
 [x] Either user a [criptographically secure random number](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html#secure-random-number-generation) or JWT
 
+Transferir platita
+mismo endpoint que arriba
+canal SPEI
+ASP (medio de pago 4)
+cuenta destino

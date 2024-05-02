@@ -194,7 +194,7 @@ describe("[UNIT] => AUTH", () => {
       })),
     }));
 
-    it("Should send password reset email", async () => {
+    it.only("Should send password reset email", async () => {
       const newPasswordServices = new NewPasswordServices();
       await newPasswordServices.forgotPassword(player.username);
 
