@@ -7,7 +7,6 @@ import { PaymentsDAO } from "@/db/payments";
 import { CashoutRequest, DepositRequest } from "@/types/request/transfers";
 import CONFIG from "@/config";
 import { CoinTransferResult, DepositResult } from "@/types/response/transfers";
-import { AlquimiaDepositDAO } from "@/db/alq-deposits";
 import { AlqMovementResponse } from "@/types/response/alquimia";
 import { CasinoCoinsService } from "@/services/casino-coins.service";
 import { ERR } from "@/config/errors";
@@ -133,12 +132,6 @@ export class FinanceServices {
       return deposit.amount!;
 
     try {
-      const localDeposit = await AlquimiaDepositDAO.findByTrackingNumber(
-        deposit.tracking_number,
-      );
-
-      if (localDeposit) return localDeposit.valor_real;
-
       const alqDeposit = await this.alquimiaDepositLookup(
         deposit.tracking_number,
       );
