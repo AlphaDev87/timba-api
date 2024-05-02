@@ -156,28 +156,6 @@ model BotFlow {
   @@map("BOT_FLOWS")
 }
 
-model AlquimiaDeposit {
-  id_transaccion              Int       @id
-  tipo_transaccion            Int
-  id_cuenta_ahorro            Int
-  id_medio_pago               Int
-  id_cliente                  Int
-  tipo_movimiento             Int
-  tipo_cargo                  Int
-  tipo_operacion              Int
-  fecha_alta                  DateTime
-  fecha_actualizacion         DateTime
-  concepto                    String
-  estatus_transaccion         Int
-  clave_rastreo               String    @unique
-  id_cuenta_ahorro_medio_pago Int
-  fecha_operacion             DateTime
-  monto                       String
-  valor_real                  Float
-
-  @@map("ALQ_DEPOSITS")
-}
-
 model PasswordResetToken {
   id                          String    @id @default(uuid())
   token                       String    @db.VarChar(342)      // 256 bytes in base64url
