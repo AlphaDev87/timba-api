@@ -211,6 +211,9 @@ export class FinanceServices {
   private async alquimiaDepositLookup(
     tracking_number: string,
   ): Promise<AlqMovementResponse | undefined> {
+    // TODO
+    // Look up by clave_rastreo with
+    // searchParams.set("clave_rastreo", tracking_number)
     const accountId = CONFIG.EXTERNAL.ALQ_SAVINGS_ACCOUNT_ID;
     const endpoint = `cuenta-ahorro-cliente/${accountId}/transaccion`;
 
