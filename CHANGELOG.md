@@ -1,3 +1,9 @@
+## [1.0.0] - 2024-05-02
+
+### Changed
+- Improve `FinanceServices.alquimiaDepositLookup` by including `clave_rastreo` in query parameters. Reducing the search to a single query.
+- Drop ALQ_DEPOSITS table.
+
 ## [1.0.0] - 2024-04-29
 
 ### Added
