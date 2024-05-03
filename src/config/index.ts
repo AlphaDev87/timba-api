@@ -31,6 +31,7 @@ const CONFIG = {
       "alquimia",
       "token_invalid",
       "wrong_token_type",
+      "database_error",
     ],
   },
   AUTH: {
