@@ -1,7 +1,7 @@
 import { Deposit, Payment } from "@prisma/client";
 import { AxiosResponse } from "axios";
-import { FinanceServices } from "../transactions/services";
 import { AuthServices } from "../auth/services";
+import { DepositServices } from "../deposits/services";
 import { Credentials } from "@/types/request/players";
 import { compare } from "@/utils/crypt";
 import { PaymentsDAO } from "@/db/payments";
@@ -124,14 +124,12 @@ export class AgentServices {
   static async freePendingCoinTransfers(): Promise<Deposit[]> {
     const deposits = await DepositsDAO.getPendingCoinTransfers();
     const response: Deposit[] = [];
-    const financeServices = new FinanceServices();
+    const depositServices = new DepositServices();
     for (const deposit of deposits) {
       if (deposit.status !== CONFIG.SD.DEPOSIT_STATUS.VERIFIED) continue;
-      const result = await financeServices.confirmDeposit(
-        deposit.Player,
-        deposit.id,
-        { tracking_number: deposit.tracking_number },
-      );
+      const result = await depositServices.confirm(deposit.Player, deposit.id, {
+        tracking_number: deposit.tracking_number,
+      });
       response.push(result.deposit);
     }
 

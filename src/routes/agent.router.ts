@@ -13,7 +13,7 @@ import {
 } from "@/components/agent/validators";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
 import { requireAgentRole } from "@/middlewares/auth";
-import { TransactionsController } from "@/components/transactions";
+import { DepositController } from "@/components/deposits/controller";
 
 const agentRouter = Router();
 
@@ -46,7 +46,7 @@ agentRouter.post(
   "/deposits/:id",
   validateDepositUpdate(),
   throwIfBadRequest,
-  TransactionsController.deposit,
+  DepositController.create,
 );
 agentRouter.get("/bank-account", AgentController.getBankAccount);
 agentRouter.post(

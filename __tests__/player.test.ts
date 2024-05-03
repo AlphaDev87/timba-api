@@ -148,7 +148,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
       expect(response.body.code).toBe("bad_request");
     });
 
-    it("Should return 404 user not found", async () => {
+    it("Should return 400 invalid credentials", async () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/players/login`)
         .send({

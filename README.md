@@ -618,7 +618,6 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Usar endpoint /auth/logout en frontend
 - Buscar deposito en alquimia con clave de rastreo incluyendo `clave_rastreo` en los search params
 - Replace user_agent with [user context](https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html#token-sidejacking) to prevent JWT sidejacking 
-- Logtail DB errors
 - Arreglar UI agente telefonos de soporte
 
 
@@ -701,6 +700,17 @@ curl -X GET \
 -H "Authorization: Bearer $API_TOKEN" \
 -H "AuthorizationAlquimia: Bearer $ALQ_TOKEN" \
 "${ALQ_TEST_BASE_URL}/consulta-estatus-tx?id_transaccion=7281723" 
+```
+Respuesta
+```js
+{
+  id_transaccion: "7281723",
+  estatus: "LIQUIDADA",
+  detalle_proveedor: {
+    "error":true,
+    "message":"Respuesta proveedor desconocida"
+  }
+}
 ```
 
 Consultar transferencia por clave de rastreo
