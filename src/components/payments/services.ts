@@ -25,15 +25,7 @@ export class PaymentServices {
       if (transferResult.ok) this.createDbObject(player, request);
       return transferResult;
     } catch (e) {
-      if (
-        e instanceof CustomError &&
-        e.code === ERR.TRANSACTION_LOG.code &&
-        transferResult?.ok
-      ) {
-        this.createDbObject(player, request);
-        return transferResult;
-      }
-      throw e;
+      return await this.handleCreateError(e, player, request, transferResult);
     }
   }
 
@@ -47,5 +39,22 @@ export class PaymentServices {
       bank_account: request.bank_account,
       currency: player.balance_currency,
     });
+  }
+
+  private async handleCreateError(
+    e: any,
+    player: PlainPlayerResponse,
+    request: CashoutRequest,
+    transferResult?: CoinTransferResult,
+  ): Promise<CoinTransferResult> {
+    if (
+      e instanceof CustomError &&
+      e.code === ERR.TRANSACTION_LOG.code &&
+      transferResult?.ok
+    ) {
+      await this.createDbObject(player, request);
+      return transferResult;
+    }
+    throw e;
   }
 }

@@ -4,7 +4,7 @@ import { apiResponse } from "@/helpers/apiResponse";
 import { CashoutRequest } from "@/types/request/transfers";
 
 export class PaymentController {
-  static create = async (req: AuthedReq, res: Res, next: NextFn) => {
+  static readonly create = async (req: AuthedReq, res: Res, next: NextFn) => {
     const request: CashoutRequest = req.body;
     const player = req.user!;
 
