@@ -621,7 +621,6 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Arreglar UI agente telefonos de soporte
 
 
-
 ### Fichas insuficientes
 
 - Revisar respuesta y avisarle al agente si quedaron transferencias sin liberar

@@ -6,6 +6,7 @@
 - Split `TransactionsController` into `PaymentController` and `DepositController`.
 - Split `FinanceServices` into `PaymentServices` and `DepositServices`.
 
+
 ## [1.0.0] - 2024-05-02
 
 ### Changed
