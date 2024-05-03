@@ -10,6 +10,7 @@ import { CoinTransferResult, DepositResult } from "@/types/response/transfers";
 import { hidePassword } from "@/utils/auth";
 import { HttpService } from "@/services/http.service";
 import { AlqMovementResponse } from "@/types/response/alquimia";
+import { logtailLogger } from "@/helpers/loggers";
 
 export class DepositServices {
   /**
@@ -76,8 +77,7 @@ export class DepositServices {
       if (e instanceof CustomError && e.code === ERR.TRANSACTION_LOG.code)
         deposit = await this.markAsConfirmed(deposit);
       else deposit = await this.markAsCompleted(deposit);
-      // TODO
-      // Notify, something went wrong
+      logtailLogger.warn({ err: e });
     }
 
     deposit.Player = hidePassword(deposit.Player);
