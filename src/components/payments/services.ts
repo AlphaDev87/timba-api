@@ -23,6 +23,7 @@ export class PaymentServices {
       transferResult = await casinoCoinsService.playerToAgent(request, player);
 
       if (transferResult.ok) this.createDbObject(player, request);
+
       return transferResult;
     } catch (e) {
       return await this.handleCreateError(e, player, request, transferResult);
