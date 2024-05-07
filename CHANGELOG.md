@@ -5,7 +5,6 @@
 - `dirty` column to `PAYMENTS` table.
 
 ### Changed
-- Return `CashoutResult` instead of `CoinTransferResult` from `/transactions/cashout`.
 - Replace `agent/payments/:id/paid` with `agent/payments/:id/release`.
 
 ## [1.0.0] - 2024-05-04
