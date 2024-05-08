@@ -114,7 +114,7 @@ export class PaymentsDAO {
       if (!latestCashout || CONFIG.APP.ENV === CONFIG.SD.ENVIRONMENTS.DEV)
         return;
 
-      const latestCashoutTime = latestCashout?.updated_at.getTime();
+      const latestCashoutTime = latestCashout?.created_at.getTime();
       const retryAfterMins = Math.ceil(
         (dayInMs - (now - latestCashoutTime)) / 1000 / 60,
       );

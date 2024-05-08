@@ -8,6 +8,7 @@ import {
   AlqAuthorizeTxResponse,
 } from "@/types/response/alquimia";
 import { PaymentsDAO } from "@/db/payments";
+import { CustomError } from "@/helpers/error/CustomError";
 
 export class AlquimiaTransferService {
   private httpService: HttpService;
@@ -53,8 +54,15 @@ export class AlquimiaTransferService {
     };
     const response =
       await this.httpService.authedAlqApi.post<AlqCreateTxResponse>(url, data);
+
     if (response.status === 200)
       this.payment.alquimia_id = response.data.id_transaccion;
+    else if (response.status === 422)
+      throw new CustomError({
+        status: 422,
+        code: "transfer_error",
+        description: response.data.message,
+      });
     else
       throw new AlquimiaApiError(
         response.status,
