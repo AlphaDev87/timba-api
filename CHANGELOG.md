@@ -1,3 +1,8 @@
+## [1.0.0] - 2024-05-07
+
+### Changed
+- Stop sending email to casino on player creation.
+
 ## [1.0.0] - 2024-05-06
 
 ### Added

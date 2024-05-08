@@ -10,7 +10,7 @@ import {
 import { PaymentsDAO } from "@/db/payments";
 
 export class AlquimiaTransferService {
-  httpService: HttpService;
+  private httpService: HttpService;
 
   constructor(private payment: Payment & { BankAccount: BankAccount }) {
     this.httpService = new HttpService();
