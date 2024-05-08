@@ -553,15 +553,16 @@ describe("[UNIT] => AGENT ROUTER", () => {
       ${"human_phone"} | ${"555555555555555555555"} | ${"human_phone must be a numeric string between 10 and 20 characters long"}
       ${"human_phone"} | ${"5555"}                  | ${"human_phone must be a numeric string between 10 and 20 characters long"}
       ${"human_phone"} | ${"5555555555ABC"}         | ${"human_phone must be a numeric string between 10 and 20 characters long"}
-    `("Should return 400", async ({ field, message }) => {
+    `("Should return 400", async ({ field, value, message }) => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/agent/support`)
         .set("Authorization", `Bearer ${access}`)
         .set("User-Agent", USER_AGENT)
         .send({
-          [field]: "555555555555555555555",
+          [field]: value,
         });
 
+      console.log(response.body);
       expect(response.status).toBe(BAD_REQUEST);
       expect(response.body.data[0].msg).toBe(message);
     });

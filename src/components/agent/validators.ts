@@ -92,13 +92,12 @@ export const validateSupportRequest = () =>
       trim: true,
       custom: {
         options: (value: string) =>
-          value.length > 0 ? !isNaN(Number(value)) : true,
-        errorMessage: "bot_phone must be a numeric string",
+          value.length > 0 ? value.length > 10 && !isNaN(Number(value)) : true,
       },
       errorMessage:
         "bot_phone must be a numeric string between 10 and 20 characters long",
       isLength: {
-        options: { min: 0, max: 20 },
+        options: { max: 20 },
       },
     },
     human_phone: {
@@ -107,8 +106,7 @@ export const validateSupportRequest = () =>
       optional: true,
       custom: {
         options: (value: string) =>
-          value.length > 0 ? !isNaN(Number(value)) : true,
-        errorMessage: "bot_phone must be a numeric string",
+          value.length > 0 ? value.length > 10 && !isNaN(Number(value)) : true,
       },
       trim: true,
       errorMessage:
