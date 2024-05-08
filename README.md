@@ -619,6 +619,7 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Buscar deposito en alquimia con clave de rastreo incluyendo `clave_rastreo` en los search params
 - Replace user_agent with [user context](https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html#token-sidejacking) to prevent JWT sidejacking 
 - Arreglar UI agente telefonos de soporte
+- Refactor calls to \*DAO.authorize\* to use same format as `PaymentsDAO.authorizeRelease()`
 
 
 ### Fichas insuficientes
@@ -692,7 +693,7 @@ curl -X GET \
 -H "AuthorizationAlquimia: Bearer $ALQ_TOKEN" \
 "${ALQ_TEST_BASE_URL}/ordenes-importador?id_cuenta=120902"
 ```
-
+7388577, 7388722 
 Consultar status TX
 ```bash
 curl -X GET \

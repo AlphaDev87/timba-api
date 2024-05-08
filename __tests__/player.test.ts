@@ -1,4 +1,4 @@
-import { BAD_REQUEST, CREATED, NOT_FOUND, OK, UNAUTHORIZED } from "http-status";
+import { BAD_REQUEST, CREATED, OK, UNAUTHORIZED } from "http-status";
 import { SuperAgentTest } from "supertest";
 import { PrismaClient } from "@prisma/client";
 import { initAgent } from "./helpers";
@@ -156,7 +156,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
           password,
         });
 
-      expect(response.status).toBe(NOT_FOUND);
+      expect(response.status).toBe(BAD_REQUEST);
       expect(response.body.code).toBe("credenciales_invalidas");
     });
   });

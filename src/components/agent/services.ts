@@ -19,9 +19,13 @@ import { PlayersDAO } from "@/db/players";
 import CONFIG from "@/config";
 import { ERR } from "@/config/errors";
 import { BotFlowsDAO } from "@/db/bot-flows";
-import { AlqCuentaAhorroResponse } from "@/types/response/alquimia";
+import {
+  AlqCuentaAhorroResponse,
+  AlqStatusTx,
+} from "@/types/response/alquimia";
 import { CustomError } from "@/helpers/error/CustomError";
 import { UserRootUpdatableProps } from "@/types/request/agent";
+import { AlquimiaTransferService } from "@/services/alquimia-transfer.service";
 
 export class AgentServices {
   static async login(
@@ -51,13 +55,25 @@ export class AgentServices {
   }
 
   /**
-   * Mark a pending payment as paid
+   * Release requested payment into player's bank account
    */
-  static async markAsPaid(payment_id: string): Promise<Payment> {
-    const payment = PaymentsDAO.update(payment_id, {
-      paid: new Date().toISOString(),
-    });
-    return payment;
+  static async releasePayment(payment_id: string): Promise<Payment> {
+    const payment = await PaymentsDAO.authorizeRelease(payment_id);
+    try {
+      const alquimiaTransferService = new AlquimiaTransferService(payment);
+      const transferStatus: AlqStatusTx = await alquimiaTransferService.pay();
+
+      const updated = await PaymentsDAO.update(payment_id, {
+        status: transferStatus.estatus,
+        dirty: false,
+        alquimia_id: Number(transferStatus.id_transaccion),
+      });
+
+      return updated;
+    } catch (e) {
+      await PaymentsDAO.update(payment_id, { dirty: false });
+      throw e;
+    }
   }
 
   static async showDeposits(depositId?: string): Promise<Deposit[] | null> {

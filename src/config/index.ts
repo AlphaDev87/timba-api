@@ -68,6 +68,7 @@ const CONFIG = {
     ALQ_API_VERSION: process.env.ALQ_API_VERSION,
     ALQ_TOKEN_URL: process.env.ALQ_TOKEN_URL,
     ALQ_SAVINGS_ACCOUNT_ID: Number(process.env.ALQ_SAVINGS_ACCOUNT_ID),
+    ALQ_API_KEY: process.env.ALQ_API_KEY,
   },
   ROLES: {
     AGENT: "agent",
@@ -88,6 +89,20 @@ const CONFIG = {
       COMPLETED: "completed",
       /** Deleted by agent */
       DELETED: "deleted",
+    },
+    PAYMENT_STATUS: {
+      /** Requested by player, awaiting to be released by agent */
+      REQUESTED: "PEDIDO",
+      /** Created, awaiting authorization */
+      PENDING: "PENDIENTE AUTORIZAR",
+      /** Authorized, processing */
+      PROCESSING: "EN PROCESO",
+      /** Awaiting provider's response */
+      PROVIDER: "PENDIENTE RESPUESTA PROVEEDOR",
+      /** Completed */
+      COMPLETED: "LIQUIDADA",
+      /** Error */
+      ERROR: "error",
     },
     ENVIRONMENTS: {
       TEST: "test",

@@ -14,6 +14,7 @@ import {
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
 import { requireAgentRole } from "@/middlewares/auth";
 import { DepositController } from "@/components/deposits/controller";
+import { paymentRateLimiter } from "@/middlewares/rate-limiters/payment";
 
 const agentRouter = Router();
 
@@ -30,11 +31,12 @@ agentRouter.use(
 agentRouter.use(requireAgentRole);
 agentRouter.get("/payments", AgentController.showPayments);
 agentRouter.post(
-  "/payments/:id/paid",
+  "/payments/:id/release",
   validatePaymentIndex(),
   checkExact(),
   throwIfBadRequest,
-  AgentController.markAsPaid,
+  paymentRateLimiter,
+  AgentController.releasePayment,
 );
 agentRouter.get(
   "/deposits/:id?",
