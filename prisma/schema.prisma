@@ -169,3 +169,13 @@ model PasswordResetToken {
 
   @@map("PASSWORD_RESET_TOKENS")
 }
+
+model ChatData {
+  id                          String    @id @default(uuid())
+  number                      String    @unique
+  name                        String    
+  created_at                  DateTime  @default(now())
+  updated_at                  DateTime  @updatedAt 
+
+  @@map("CHAT_DATA")
+}
