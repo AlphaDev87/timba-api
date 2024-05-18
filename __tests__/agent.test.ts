@@ -349,7 +349,6 @@ describe("[UNIT] => AGENT ROUTER", () => {
     //     .set("Authorization", `Bearer ${access}`)
     //     .set("User-Agent", USER_AGENT);
 
-    //   console.log(response.body);
     //   expect(response.status).toBe(OK);
     //   expect(Object.keys(response.body.data)).toStrictEqual(["balance"]);
     // });
@@ -562,7 +561,6 @@ describe("[UNIT] => AGENT ROUTER", () => {
           [field]: value,
         });
 
-      console.log(response.body);
       expect(response.status).toBe(BAD_REQUEST);
       expect(response.body.data[0].msg).toBe(message);
     });

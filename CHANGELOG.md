@@ -1,3 +1,13 @@
+## [1.0.0] - 2024-05-15
+
+### Changed
+- GET `/players?page=1&items_per_page=20&search=<string>&sort_column=<string>&sort_direction=<asc|desc>` now returns a list of players. Requires agent role.
+- Mock call to `PlayerServices.createCasinoPlayer` to avoid creating players on casino on every test run.
+
+### Added
+- GET `/players/:id` returns player details.
+- POST `/players/:id` to update a player. Requires agent role.
+
 ## [1.0.0] - 2024-05-07
 
 ### Changed

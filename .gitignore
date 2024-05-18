@@ -115,8 +115,8 @@ mariadb-data
 test.txt
 
 # Bot stuff
-bot.qr.png
-bot_sessions
+*.qr.png
+*_sessions
 
 history.txt
 test_setup.sh

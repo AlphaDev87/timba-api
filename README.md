@@ -21,12 +21,14 @@ Comes with:
 ## Contenidos
 
 ### Jugadores
-+ [Ver Jugador](#ver-jugador)
++ [Listar Jugadores](#listar-jugadores)
++ [Ver Jugador](#ver-jugador-)
 + [Crear Jugador](#crear-jugador)
++ [Editar Jugador](#editar-jugador-)
 + [Login de Jugador](#login-jugador)
 
 #### Cuentas Bancarias
-+ [Ver Cuentas Bancarias](#ver-cuentas-bancarias-🔒)
++ [Ver Cuentas Bancarias](#ver-cuentas-bancarias-)
 + [Crear Cuenta Bancaria](#crear-cuenta-bancaria-🔒)
 + [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-🔒)
 + [Eliminar Cuenta Bancaria](#eliminar-cuenta-bancaria-🔒)
@@ -73,9 +75,18 @@ Comes with:
 Jugadores
 ---------
 
+### Listar Jugadores 🔒
+
+|Endpoint:| `/players`|
+---|---|
+Método      | `GET`
+Query string| [`PlayersListQueryString`](#playerslistquerystring)
+Devuelve    | [`PlayerListResponse`](#playerlistresponse)
+Requiere rol| agent
+
 ### Ver Jugador 🔒
 
-|Endpoint:| `/players/`|
+|Endpoint:| `/players/:id`|
 ---|---|
 Método      | `GET`
 Devuelve    | [`Player & { bank_accounts: BankAccount[] }`](#player)
@@ -88,6 +99,15 @@ Requiere rol| player
 Método      | `POST`
 Body (json) | [`PlayerRequest`](#playerrequest)
 Devuelve    | [`LoginResponse`](#loginresponse)
+
+### Editar Jugador 🔒
+
+|Endpoint:| `/players/:id`|
+---|---|
+Método      | `POST`
+Body (json) | [`PlayerUpdateRequest`](#playerupdaterequest)
+Devuelve    | [`Player`](#player)
+Requiere rol| agent
 
 ### Login Jugador
 
@@ -384,6 +404,23 @@ Requiere rol| agent
 }
 ```
 
+### PlayersListQueryString
+```typescript
+  page=1
+  items_per_page=20
+  search=<string>
+  sort_column=<string>
+  sort_direction='asc' | 'desc'
+```
+
+### PlayerListResponse
+```typescript
+{
+  players: Player[]
+  totalPlayers: number
+}
+```
+
 ### LoginResponse
 ```typescript
 {
@@ -407,6 +444,16 @@ Requiere rol| agent
   country: string?
 }
 ``` 
+
+### PlayerUpdateRequest
+```typescript
+{
+  email?: string
+  movile_number?: string
+  first_name?: string
+  last_name?: string
+}
+```
 
 ### BankAccountRequest
 ```typescript

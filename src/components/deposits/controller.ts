@@ -12,7 +12,7 @@ export class DepositController {
    * @param res
    * @param next
    */
-  static readonly index = async (req: AuthedReq, res: Res, next: NextFn) => {
+  static readonly index = async (req: Req, res: Res, next: NextFn) => {
     const player = req.user!;
 
     try {
@@ -26,7 +26,7 @@ export class DepositController {
   /**
    * Create new deposit or verify existing
    */
-  static readonly create = async (req: AuthedReq, res: Res, next: NextFn) => {
+  static readonly create = async (req: Req, res: Res, next: NextFn) => {
     const deposit_id = req.params.id;
     const request: Omit<DepositRequest, "player_id"> = req.body;
     const player = req.user!;

@@ -1,24 +1,48 @@
 import { NOT_FOUND, OK, CREATED } from "http-status/lib";
 import { Response } from "express";
+import { Player } from "@prisma/client";
 import { AuthServices } from "../auth/services";
 import { PlayerServices } from "./services";
 import { apiResponse } from "@/helpers/apiResponse";
 import { Credentials, PlayerRequest } from "@/types/request/players";
-import { NotFoundException } from "@/helpers/error";
+import { NotFoundException, UnauthorizedError } from "@/helpers/error";
+import { PlayersDAO } from "@/db/players";
 
 export class PlayersController {
-  /**
-   * @description Gets the API information.
-   * @param {Req} req
-   * @param {Res} res
-   */
-  static getPlayerById = async (
+  static index = async (req: Req, res: Response, next: NextFn) => {
+    try {
+      const page = Number(req.query.page) - 1;
+      const itemsPerPage = Number(req.query.items_per_page) ?? 20;
+      const search = req.query.search as string;
+      const sortColumn = req.query.sort_column as keyof Player;
+      const sortDirection = req.query.sort_direction as SortDirection;
+
+      const playersServices = new PlayerServices();
+
+      const players = await playersServices.getAllPlayers(
+        page,
+        itemsPerPage,
+        search,
+        { [sortColumn]: sortDirection },
+      );
+      const totalPlayers = await PlayersDAO.count;
+
+      res.status(OK).json(apiResponse({ players, totalPlayers }));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  static show = async (
     req: Req,
     res: Response<any, Record<string, any>>,
     next: NextFn,
   ) => {
     try {
-      const playerId = req.user!.id;
+      if (!req.user) throw new UnauthorizedError("No autorizado");
+      await PlayersDAO.authorizeShow(req.user, req.params.id);
+
+      const playerId = req.params.id;
 
       const playersServices = new PlayerServices();
 
@@ -73,6 +97,21 @@ export class PlayersController {
       );
 
       res.status(OK).json(apiResponse(loginResponse));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  static update = async (req: Req, res: Res, next: NextFn) => {
+    try {
+      const playersServices = new PlayerServices();
+
+      const playerId = req.params.id;
+      const request: PlayerRequest = req.body;
+
+      const player = await playersServices.update(playerId, request);
+
+      res.status(OK).json(apiResponse(player));
     } catch (error) {
       next(error);
     }

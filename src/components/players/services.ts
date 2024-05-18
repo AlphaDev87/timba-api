@@ -3,7 +3,9 @@ import { AuthServices } from "../auth/services";
 import { PlayersDAO } from "@/db/players";
 import {
   Credentials,
+  PlayerOrderBy,
   PlayerRequest,
+  PlayerUpdateRequest,
   getPlayerId,
 } from "@/types/request/players";
 import { LoginResponse, PlainPlayerResponse } from "@/types/response/players";
@@ -19,6 +21,30 @@ import { Whatsapp } from "@/notification/whatsapp";
 import CONFIG from "@/config";
 
 export class PlayerServices {
+  /**
+   * @description Get all players.
+   * @returns Player[]
+   */
+  getAllPlayers = async (
+    page: number,
+    itemsPerPage: number,
+    search?: string,
+    orderBy?: PlayerOrderBy,
+  ): Promise<PlainPlayerResponse[]> => {
+    const players = await PlayersDAO._getAll(
+      page,
+      itemsPerPage,
+      search,
+      orderBy,
+    );
+
+    return players.map((player) => hidePassword(player));
+  };
+
+  getTotalPlayers = async (): Promise<number> => {
+    return await PlayersDAO.count;
+  };
+
   /**
    * @description Get player information by ID.
    * @param playerId ID of the player to retrieve information.
@@ -185,5 +211,11 @@ export class PlayerServices {
     };
     const mail = new Mail();
     mail.compose(subject, user.username, body, cta).send(user.email);
+  }
+
+  async update(player_id: string, request: PlayerUpdateRequest) {
+    const player = await PlayersDAO.update(player_id, request);
+
+    return hidePassword(player);
   }
 }
