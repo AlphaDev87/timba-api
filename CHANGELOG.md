@@ -1,3 +1,8 @@
+## [1.0.0] - 2024-05-27
+
+### Changed
+- Improve `movile_number` validator: must be a numerical string of up to 20 characters
+
 ## [1.0.0] - 2024-05-15
 
 ### Changed
