@@ -94,7 +94,19 @@ export const validatePlayerRequest = () => {
         },
       },
     },
-    movile_number: optionalString,
+    movile_number: {
+      in: ["body"],
+      isString: true,
+      isNumeric: true,
+      optional: true,
+      trim: true,
+      isEmpty: false,
+      isLength: {
+        options: { max: 20 },
+        errorMessage: "movile_number is too long",
+      },
+      errorMessage: "movile_number must be a numeric string",
+    },
     country: optionalString,
   });
 };
@@ -190,9 +202,15 @@ export const validatePlayerUpdateRequest = () =>
     movile_number: {
       in: ["body"],
       isString: true,
+      isNumeric: true,
       optional: true,
       trim: true,
       isEmpty: false,
+      isLength: {
+        options: { max: 20 },
+        errorMessage: "movile_number is too long",
+      },
+      errorMessage: "movile_number must be a numeric string",
     },
     first_name: {
       in: ["body"],

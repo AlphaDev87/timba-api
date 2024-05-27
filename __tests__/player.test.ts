@@ -98,6 +98,13 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
       },
     );
 
+    it.each`
+      field              | value             | message
+      ${"password"}      | ${"a".repeat(73)} | ${"password must be under 73 characters"}
+      ${"email"}         | ${email}          | ${"Usuario con ese email ya existe"}
+      ${"movile_number"} | ${"345sdfg"}      | ${"movile_number must be a numeric string"}
+      ${"movile_number"} | ${"1".repeat(21)} | ${"movile_number is too long"}
+    `;
     it("Should return 400 password too long", async () => {
       const response = await agent.post(`/app/${CONFIG.APP.VER}/players`).send({
         username,
@@ -227,10 +234,10 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
         .set("Authorization", `Bearer ${agentAccessToken}`)
         .set("User-Agent", USER_AGENT);
 
-      console.log("RESPONSE", response.body);
       expect(response.status).toBe(OK);
-      expect(response.body.data).toBeInstanceOf(Array);
-      expect(Object.keys(response.body.data[0])).toEqual([
+      expect(response.body.data.players).toBeInstanceOf(Array);
+      expect(response.body.data.totalPlayers).toBeGreaterThanOrEqual(0);
+      expect(Object.keys(response.body.data.players[0])).toEqual([
         "id",
         "panel_id",
         "username",

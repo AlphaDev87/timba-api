@@ -21,7 +21,7 @@ Comes with:
 ## Contenidos
 
 ### Jugadores
-+ [Listar Jugadores](#listar-jugadores)
++ [Listar Jugadores](#listar-jugadores-)
 + [Ver Jugador](#ver-jugador-)
 + [Crear Jugador](#crear-jugador)
 + [Editar Jugador](#editar-jugador-)
