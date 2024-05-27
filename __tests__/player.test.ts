@@ -104,6 +104,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
       ${"email"}         | ${email}          | ${"Usuario con ese email ya existe"}
       ${"movile_number"} | ${"345sdfg"}      | ${"movile_number must be a numeric string"}
       ${"movile_number"} | ${"1".repeat(21)} | ${"movile_number is too long"}
+      ${"status"}        | ${"foo"}          | ${"invalid status"}
     `;
     it("Should return 400 password too long", async () => {
       const response = await agent.post(`/app/${CONFIG.APP.VER}/players`).send({

@@ -1,4 +1,5 @@
 import { Player } from "@prisma/client";
+import { PLAYER_STATUS } from "@/config";
 
 export type getPlayerId = string;
 
@@ -25,6 +26,7 @@ export type PlayerUpdatableProps = {
   movile_number?: string;
   first_name?: string;
   last_name?: string;
+  status?: PLAYER_STATUS;
 };
 
 export type PlayerUpdateRequest = {
@@ -32,6 +34,7 @@ export type PlayerUpdateRequest = {
   movile_number?: string;
   first_name?: string;
   last_name?: string;
+  status?: PLAYER_STATUS;
 };
 
 export type PlayerOrderBy = {

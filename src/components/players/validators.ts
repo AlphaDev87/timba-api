@@ -6,6 +6,7 @@ import {
 } from "express-validator";
 import { Player } from "@prisma/client";
 import { PlayersDAO } from "@/db/players";
+import { PLAYER_STATUS } from "@/config";
 
 const isDate: CustomValidator = (value: string, { req }) => {
   if (value.length === 0) return true;
@@ -34,6 +35,12 @@ const isKeyOfPlayer = (key: string): key is keyof Player => {
 
 const isSortDirection = (key: string): key is "asc" | "desc" => {
   return key === "asc" || key === "desc";
+};
+
+const isPlayerStatus = (
+  value: string,
+): value is PLAYER_STATUS.ACTIVE | PLAYER_STATUS.BANNED => {
+  return value === PLAYER_STATUS.ACTIVE || value === PLAYER_STATUS.BANNED;
 };
 
 export const validatePlayerRequest = () => {
@@ -225,5 +232,16 @@ export const validatePlayerUpdateRequest = () =>
       optional: true,
       trim: true,
       isEmpty: false,
+    },
+    status: {
+      in: ["body"],
+      isString: true,
+      optional: true,
+      trim: true,
+      isEmpty: false,
+      custom: {
+        options: isPlayerStatus,
+        errorMessage: "invalid status",
+      },
     },
   });
