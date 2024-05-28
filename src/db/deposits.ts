@@ -34,9 +34,7 @@ export class DepositsDAO {
           ],
         },
         orderBy,
-        // TODO
-        // include player and obfuscate password
-        // include: { Player: true },
+        include: { Player: true },
       });
       return deposits;
     } catch (error: any) {

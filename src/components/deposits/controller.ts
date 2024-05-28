@@ -6,6 +6,7 @@ import { apiResponse } from "@/helpers/apiResponse";
 import { DepositRequest } from "@/types/request/transfers";
 import { DepositResult } from "@/types/response/transfers";
 import { extractResourceSearchQueryParams } from "@/helpers/queryParams";
+import { hidePassword } from "@/utils/auth";
 
 export class DepositController {
   static readonly index = async (req: Req, res: Res, next: NextFn) => {
@@ -19,9 +20,15 @@ export class DepositController {
       >(page, itemsPerPage, search, {
         [sortColumn]: sortDirection,
       });
+      const safeDeposits = deposits.map((deposit) => ({
+        ...deposit,
+        player: hidePassword(deposit.Player),
+      }));
       const totalDeposits = await DepositsDAO.count;
 
-      res.status(OK).json(apiResponse({ deposits, totalDeposits }));
+      res
+        .status(OK)
+        .json(apiResponse({ deposits: safeDeposits, totalDeposits }));
     } catch (err) {
       next(err);
     }
