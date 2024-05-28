@@ -1,3 +1,8 @@
+## [1.0.0] - 2024-05-28
+
+### Added
+- `/agent/reset-player-password` for the agent to reset players' passwords.
+
 ## [1.0.0] - 2024-05-27
 
 ### Changed

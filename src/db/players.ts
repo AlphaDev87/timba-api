@@ -1,4 +1,4 @@
-import { Player, PrismaClient } from "@prisma/client";
+import { BankAccount, Player, PrismaClient, Role } from "@prisma/client";
 import {
   PlainPlayerResponse,
   PlayerResponse,
@@ -63,7 +63,11 @@ export class PlayersDAO {
    * @param playerId ID of the player to retrieve information.
    * @returns Raw player, including sensitive data
    */
-  static _getById = async (playerId: getPlayerId): Promise<Player | null> => {
+  static _getById = async (
+    playerId: getPlayerId,
+  ): Promise<
+    (Player & { BankAccounts: BankAccount[]; roles: Role[] }) | null
+  > => {
     try {
       const playerPrisma = await prisma.player.findUnique({
         where: { id: playerId },

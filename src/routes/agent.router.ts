@@ -9,6 +9,7 @@ import {
   validateDepositUpdate,
   validateOnCallRequest,
   validatePaymentIndex,
+  validateResetPasswordRequest,
   validateSupportRequest,
 } from "@/components/agent/validators";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
@@ -76,6 +77,13 @@ agentRouter.post(
   checkExact(),
   throwIfBadRequest,
   AgentController.updateSupportNumbers,
+);
+agentRouter.post(
+  "/reset-player-password",
+  validateResetPasswordRequest(),
+  checkExact(),
+  throwIfBadRequest,
+  AgentController.resetPlayerPassword,
 );
 
 export default agentRouter;
