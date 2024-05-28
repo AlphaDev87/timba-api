@@ -7,6 +7,8 @@
 - Split GET `/agent/deposits/:id?` into GET `/transactions/deposit/:id` and GET `/transactions/deposit`.
 - Move POST `/agent/deposits/:id` into `/transactions/deposit/:id`.
 - Return `{ deposits, totalDeposits }` from GET `/transactions/deposit`.
+- Move GET `/agent/payments` to GET `/transactions/payment`
+- Return `{ payments, totalPayments }` from GET `/transactions/payment`.
 
 ## [1.0.0] - 2024-05-27
 

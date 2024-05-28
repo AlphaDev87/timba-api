@@ -1,4 +1,21 @@
+import { Payment } from "@prisma/client";
 import { checkSchema } from "express-validator";
+
+export const isKeyOfPayment = (key: string): key is keyof Payment => {
+  const mockPayment: Payment = {
+    id: "",
+    amount: 0,
+    bank_account: "",
+    currency: "",
+    dirty: false,
+    player_id: "",
+    status: "",
+    alquimia_id: 0,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+  return key in mockPayment;
+};
 
 export const validateCashoutRequest = () =>
   checkSchema({

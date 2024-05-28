@@ -27,7 +27,6 @@ agentRouter.use(
   passport.authenticate("jwt", { session: false, failWithError: true }),
 );
 agentRouter.use(requireAgentRole);
-agentRouter.get("/payments", AgentController.showPayments);
 agentRouter.post(
   "/payments/:id/release",
   validatePaymentIndex(),

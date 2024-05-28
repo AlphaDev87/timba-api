@@ -49,10 +49,10 @@ export class AgentServices {
     return tokens;
   }
 
-  static async showPayments(): Promise<Payment[] | null> {
-    const payments = PaymentsDAO.index();
-    return payments;
-  }
+  // static async showPayments(): Promise<Payment[] | null> {
+  //   const payments = PaymentsDAO.index();
+  //   return payments;
+  // }
 
   /**
    * Release requested payment into player's bank account

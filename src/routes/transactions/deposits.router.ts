@@ -48,7 +48,7 @@ depositsRouter.get(
   DepositController.show,
 );
 depositsRouter.get(
-  "/deposit/",
+  "/deposit",
   validateResourceSearchRequest(isKeyOfDeposit),
   checkExact(),
   throwIfBadRequest,

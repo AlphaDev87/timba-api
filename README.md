@@ -43,10 +43,10 @@ Comes with:
 
 ### Pagos (plataforma ➡ jugador)
 + [Retirar Premios](#retirar-premios-) (instanciar pago)
++ [Listar Pagos](#listar-pagos-)
 
 ### Agente
 + [Login de Agente](#login-agente)
-+ [Ver Pagos](#ver-pagos-)
 + [Marcar Pago Como Completado](#marcar-pago-como-completado-)
 + [Ver QR](#ver-qr-)
 + [Ver Cuenta Bancaria](#ver-cuenta-bancaria-)
@@ -83,7 +83,7 @@ Jugadores
 |Endpoint:| `/players`|
 ---|---|
 Método      | `GET`
-Query string| [`PlayersListQueryString`](#playerslistquerystring)
+Query string| [`ResourceListQueryString`](#ResourceListQueryString)
 Devuelve    | [`PlayerListResponse`](#playerlistresponse)
 Requiere rol| agent
 
@@ -180,6 +180,15 @@ Body (json) |[`CashoutRequest`](#cashoutrequest)
 Devuelve    |[`CoinTransferResult`](#cointransferresult)
 Requiere rol| player
 
+### Listar Pagos 🔒
+
+|Endpoint| `/transactions/payment`|
+---|---|
+Método      |`GET`
+Query string| [`ResourceListQueryString`](#ResourceListQueryString)
+Devuelve    |[`Payment[]`](#payment)
+Requiere rol| agent
+
 ### Ver Depósitos Pendientes 🔒
 
 |Endpoint| `/transactions/deposit/pending`|
@@ -270,14 +279,6 @@ Método      |`POST`
 Body (json) |[`Credenciales`](#credenciales)
 Devuelve    |[`Tokens`](#tokens)
 
-### Ver Pagos 🔒
-
-|Endpoint| `/agent/payments`|
----|---|
-Método      |`GET`
-Devuelve    |[`Payment[]`](#payment)
-Requiere rol| agent
-
 ### Marcar Pago Como Completado 🔒
 
 |Endpoint| `/agent/payments/:id/paid`|
@@ -299,6 +300,7 @@ Requiere rol| agent
 |Endpoint| `/transactions/deposit/`|
 ---|---|
 Método      |`GET`
+Query string| [`ResourceListQueryString`](#ResourceListQueryString)
 Devuelve    |[`Deposit[]`](#deposit)
 Requiere rol| agent
 
@@ -435,7 +437,7 @@ Requiere rol| agent
 }
 ```
 
-### PlayersListQueryString
+### ResourceListQueryString
 ```typescript
   page=1
   items_per_page=20

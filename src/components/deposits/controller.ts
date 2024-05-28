@@ -22,9 +22,9 @@ export class DepositController {
       });
       const safeDeposits = deposits.map((deposit) => ({
         ...deposit,
-        player: hidePassword(deposit.Player),
+        Player: hidePassword(deposit.Player),
       }));
-      const totalDeposits = await DepositsDAO.count;
+      const totalDeposits = await DepositsDAO.count();
 
       res
         .status(OK)

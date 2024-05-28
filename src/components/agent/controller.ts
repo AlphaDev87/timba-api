@@ -21,15 +21,15 @@ export class AgentController {
     }
   }
 
-  static async showPayments(_req: Req, res: Res, next: NextFn) {
-    try {
-      const payments = await AgentServices.showPayments();
+  // static async showPayments(_req: Req, res: Res, next: NextFn) {
+  //   try {
+  //     const payments = await AgentServices.showPayments();
 
-      res.status(OK).json(apiResponse(payments));
-    } catch (error) {
-      next(error);
-    }
-  }
+  //     res.status(OK).json(apiResponse(payments));
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 
   static async releasePayment(req: Req, res: Res, next: NextFn) {
     try {
