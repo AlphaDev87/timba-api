@@ -18,7 +18,8 @@ import { AgentApiError } from "@/helpers/error/AgentApiError";
 import { Mail } from "@/helpers/email/email";
 import { TokenDAO } from "@/db/token";
 import { Whatsapp } from "@/notification/whatsapp";
-import CONFIG from "@/config";
+import CONFIG, { PLAYER_STATUS } from "@/config";
+import { ForbiddenError } from "@/helpers/error";
 
 export class PlayerServices {
   /**
@@ -138,6 +139,9 @@ export class PlayerServices {
     // Verificar user y pass en nuestra DB
     const player = await PlayersDAO.getByUsername(credentials.username);
 
+    if (player?.status === PLAYER_STATUS.BANNED)
+      throw new ForbiddenError("Usuario bloqueado");
+
     if (player && (await compare(credentials.password, player.password))) {
       return await this.loginResponse(player, user_agent);
     }
@@ -215,6 +219,9 @@ export class PlayerServices {
 
   async update(player_id: string, request: PlayerUpdateRequest) {
     const player = await PlayersDAO.update(player_id, request);
+
+    if (player.status === PLAYER_STATUS.BANNED)
+      await TokenDAO.update({ player_id }, { invalid: true });
 
     return hidePassword(player);
   }
