@@ -202,16 +202,17 @@ describe("[UNIT] => AGENT ROUTER", () => {
     });
   });
 
-  describe("GET: /agent/deposits", () => {
+  describe("GET: /transactions/deposit", () => {
     it("Should return deposits", async () => {
       const response = await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/deposits`)
+        .get(`/app/${CONFIG.APP.VER}/transactions/deposit`)
         .set("Authorization", `Bearer ${access}`)
         .set("User-Agent", USER_AGENT);
 
       expect(response.status).toBe(OK);
-      expect(response.body.data.length).toBeGreaterThanOrEqual(1);
-      expect(Object.keys(response.body.data[0])).toStrictEqual([
+      expect(response.body.data.deposits.length).toBeGreaterThanOrEqual(0);
+      expect(response.body.data.totalDeposits).toBeGreaterThanOrEqual(0);
+      expect(Object.keys(response.body.data.deposits[0])).toStrictEqual([
         "id",
         "player_id",
         "currency",
@@ -225,15 +226,33 @@ describe("[UNIT] => AGENT ROUTER", () => {
       ]);
     });
 
+    it.each`
+      field               | value    | message
+      ${"page"}           | ${"-1"}  | ${"page must be greater than 0"}
+      ${"items_per_page"} | ${"0"}   | ${"items_per_page must be greater than 1"}
+      ${"sort_column"}    | ${"foo"} | ${"Invalid sort_column"}
+      ${"sort_direction"} | ${"baz"} | ${"sort_direction must be 'asc' or 'desc'"}
+    `("Shloud return 400", async ({ field, value, message }) => {
+      const response = await agent
+        .get(`/app/${CONFIG.APP.VER}/transactions/deposit?${field}=${value}`)
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT);
+
+      expect(response.status).toBe(BAD_REQUEST);
+      expect(response.body.data[0].msg).toBe(message);
+    });
+
     it("Should return 401", async () => {
-      const response = await agent.get(`/app/${CONFIG.APP.VER}/agent/deposits`);
+      const response = await agent.get(
+        `/app/${CONFIG.APP.VER}/transactions/deposit`,
+      );
 
       expect(response.status).toBe(UNAUTHORIZED);
     });
 
     it("Should return 403", async () => {
       const response = await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/deposits`)
+        .get(`/app/${CONFIG.APP.VER}/transactions/deposit`)
         .set("Authorization", `Bearer ${playerAccessToken}`)
         .set("User-Agent", USER_AGENT);
 

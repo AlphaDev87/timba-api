@@ -27,25 +27,27 @@ Comes with:
 + [Editar Jugador](#editar-jugador-)
 + [Login de Jugador](#login-jugador)
 
-#### Cuentas Bancarias
+### Cuentas Bancarias
 + [Ver Cuentas Bancarias](#ver-cuentas-bancarias-)
 + [Crear Cuenta Bancaria](#crear-cuenta-bancaria-)
 + [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-)
 + [Eliminar Cuenta Bancaria](#eliminar-cuenta-bancaria-)
 
-### Transferencias
-+ [Cargar Fichas](#cargar-fichas-)
-+ [Retirar Premios](#retirar-premios-)
+### Depositos (jugador ➡ plataforma)
++ [Cargar Fichas](#cargar-fichas-) (instanciar depósito)
 + [Ver Depósitos Pendientes](#ver-depósitos-pendientes-)
-+ [Confirmar Depósito Pendiente](#confirmar-depósito-pendiente-)
-+ [Eliminar Depósito Pendiente](#eliminar-depósito-pendiente-)
++ [Ver Depósito](#ver-depósito-)
++ [Listar Depósitos](#listar-depósitos-)
++ [Editar Depósito]()
 + [Ver Cuenta Bancaria de Alquimia](#ver-cuenta-alquimia-)
+
+### Pagos (plataforma ➡ jugador)
++ [Retirar Premios](#retirar-premios-) (instanciar pago)
 
 ### Agente
 + [Login de Agente](#login-agente)
 + [Ver Pagos](#ver-pagos-)
 + [Marcar Pago Como Completado](#marcar-pago-como-completado-)
-+ [Ver Depósitos](#ver-depósitos-)
 + [Ver QR](#ver-qr-)
 + [Ver Cuenta Bancaria](#ver-cuenta-bancaria-)
 + [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-)
@@ -284,12 +286,30 @@ Método      |`POST`
 Devuelve    |[`Payment`](#payment)
 Requiere rol| agent
 
-### Ver Depósitos 🔒
+### Ver Depósito 🔒
 
-|Endpoint| `/agent/deposits/:id?`|
+|Endpoint| `/transactions/deposit/:id`|
 ---|---|
 Método      |`GET`
 Devuelve    |[`Deposit[]`](#deposit)
+Requiere rol| agent
+
+### Listar Depósitos 🔒
+
+|Endpoint| `/transactions/deposit/`|
+---|---|
+Método      |`GET`
+Devuelve    |[`Deposit[]`](#deposit)
+Requiere rol| agent
+
+### Editar Depósito 🔒
+Endpoint para que el agente modifique el `trackin_number` de un depósito y dispare el flujo de verificación.
+
+|Endpoint| `/transactions/deposit/:id`|
+---|---|
+Método      |`POST`
+Body (json) | [`EditDepositRequest`](#editdepositrequest)
+Devuelve    |[`Deposit`](#deposit)
 Requiere rol| agent
 
 ### Ver Cuenta Bancaria 🔒
@@ -330,7 +350,7 @@ Requiere rol| agent
 ### Liberar Fichas Pendientes 🔒
 Liberar transferencias que hayan quedado pendientes en el caso que un jugador quiera comprar mas fichas de las que tiene dispoibles el agente
 
-|Endpoint| `/agent/deposits/complete`|
+|Endpoint| `/agent/pending/deposits`|
 ---|---|
 Método      |`GET`
 Devuelve    |[`Deposit[]`](#deposit) - los depositos afectados
@@ -545,6 +565,13 @@ Estado de transferencia de fichas
   amount: number
   created_at: datetime                // 2024-02-23T12:35:51.017Z
   updated_at: datetime                // 2024-02-23T12:35:51.017Z
+}
+```
+
+### EditDepositRequest
+```typescript
+{
+  trackin_number: string
 }
 ```
 

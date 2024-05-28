@@ -13,7 +13,7 @@ const isDate: CustomValidator = (value: string, { req }) => {
   return body("date_of_birth").isISO8601().run(req);
 };
 
-const isKeyOfPlayer = (key: string): key is keyof Player => {
+export const isKeyOfPlayer = (key: string): key is keyof Player => {
   const mockPlayer: Player = {
     id: "",
     panel_id: 0,
@@ -144,7 +144,7 @@ export const validateCredentials = () =>
     },
   });
 
-export const validatePlayerSearchRequest = () =>
+export const validateResourceSearchRequest = (isKeyOf: KeyIsKeyOfTValidator) =>
   checkSchema({
     page: {
       in: ["query"],
@@ -175,7 +175,7 @@ export const validatePlayerSearchRequest = () =>
       isString: true,
       optional: true,
       trim: true,
-      custom: { options: isKeyOfPlayer, errorMessage: "Invalid sort_column" },
+      custom: { options: isKeyOf, errorMessage: "Invalid sort_column" },
     },
     sort_direction: {
       in: ["query"],
@@ -245,3 +245,7 @@ export const validatePlayerUpdateRequest = () =>
       },
     },
   });
+
+export type KeyIsKeyOfTValidator = {
+  (key: string): boolean;
+};

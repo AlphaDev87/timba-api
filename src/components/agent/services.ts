@@ -76,16 +76,6 @@ export class AgentServices {
     }
   }
 
-  static async showDeposits(depositId?: string): Promise<Deposit[] | null> {
-    if (depositId) {
-      const deposit = await DepositsDAO.getById(depositId);
-      if (!deposit) return null;
-      return [deposit];
-    }
-    const deposits = DepositsDAO.index();
-    return deposits;
-  }
-
   static async getBankAccount(): Promise<AgentBankAccount> {
     const account = UserRootDAO.getBankAccount();
     return account;

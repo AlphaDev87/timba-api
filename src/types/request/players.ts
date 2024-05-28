@@ -1,4 +1,3 @@
-import { Player } from "@prisma/client";
 import { PLAYER_STATUS } from "@/config";
 
 export type getPlayerId = string;
@@ -37,6 +36,6 @@ export type PlayerUpdateRequest = {
   status?: PLAYER_STATUS;
 };
 
-export type PlayerOrderBy = {
-  [key in keyof Player]?: "asc" | "desc";
+export type OrderBy<T> = {
+  [key in keyof T]?: "asc" | "desc";
 };

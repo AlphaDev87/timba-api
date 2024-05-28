@@ -5,7 +5,7 @@ import {
   RoledPlayer,
 } from "@/types/response/players";
 import {
-  PlayerOrderBy,
+  OrderBy,
   PlayerRequest,
   PlayerUpdatableProps,
   getPlayerId,
@@ -31,7 +31,7 @@ export class PlayersDAO {
     page: number,
     itemsPerPage: number,
     search?: string,
-    orderBy?: PlayerOrderBy,
+    orderBy?: OrderBy<Player>,
   ): Promise<Player[]> => {
     try {
       const playersPrisma = await prisma.player.findMany({

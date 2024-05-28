@@ -3,6 +3,11 @@
 ### Added
 - `/agent/reset-player-password` for the agent to reset players' passwords.
 
+### Changed
+- Split GET `/agent/deposits/:id?` into GET `/transactions/deposit/:id` and GET `/transactions/deposit`.
+- Move POST `/agent/deposits/:id` into `/transactions/deposit/:id`.
+- Return `{ deposits, totalDeposits }` from GET `/transactions/deposit`.
+
 ## [1.0.0] - 2024-05-27
 
 ### Changed

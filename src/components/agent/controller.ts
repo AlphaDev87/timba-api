@@ -43,17 +43,6 @@ export class AgentController {
     }
   }
 
-  static async showDeposits(req: Req, res: Res, next: NextFn) {
-    try {
-      const depositId = req.params.id;
-      const deposits = await AgentServices.showDeposits(depositId);
-
-      res.status(OK).json(apiResponse(deposits));
-    } catch (error) {
-      next(error);
-    }
-  }
-
   static async getBankAccount(_req: Req, res: Res, next: NextFn) {
     try {
       const bankAccount = await AgentServices.getBankAccount();

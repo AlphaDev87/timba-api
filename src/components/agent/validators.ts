@@ -57,31 +57,6 @@ export const validateBankAccountUpdate = () => {
   });
 };
 
-export const validateDepositIndex = () =>
-  checkSchema({
-    id: {
-      in: ["params"],
-      isString: true,
-      optional: true,
-    },
-  });
-
-export const validateDepositUpdate = () =>
-  checkSchema({
-    id: {
-      in: ["params"],
-      isString: true,
-      isEmpty: false,
-      optional: false,
-    },
-    tracking_number: {
-      in: ["body"],
-      isString: true,
-      isEmpty: false,
-      optional: false,
-    },
-  });
-
 export const validateOnCallRequest = () =>
   checkSchema({
     active: {
