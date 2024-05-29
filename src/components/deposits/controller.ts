@@ -72,10 +72,7 @@ export class DepositController {
   };
 
   /**
-   * Show pending deposits
-   * @param req
-   * @param res
-   * @param next
+   * Show player's pending deposits
    */
   static readonly pending = async (req: Req, res: Res, next: NextFn) => {
     const player = req.user!;
@@ -83,6 +80,22 @@ export class DepositController {
     try {
       const deposits = await DepositServices.showPending(player.id);
       res.status(OK).json(apiResponse(deposits));
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  /**
+   * Show total amount of pending coin transfers
+   */
+  static readonly pendingCoinTransfers = async (
+    _req: Req,
+    res: Res,
+    next: NextFn,
+  ) => {
+    try {
+      const amount = await DepositServices.pendingCoinTransfers();
+      res.status(OK).json(apiResponse(amount));
     } catch (err) {
       next(err);
     }

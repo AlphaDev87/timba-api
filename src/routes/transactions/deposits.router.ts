@@ -42,6 +42,10 @@ depositsRouter.get(
 depositsRouter.use(requireAgentRole);
 
 depositsRouter.get(
+  "/deposit/pending-coin-transfers",
+  DepositController.pendingCoinTransfers,
+);
+depositsRouter.get(
   "/deposit/:id",
   validateDepositIndex(),
   throwIfBadRequest,

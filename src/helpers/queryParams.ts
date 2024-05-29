@@ -6,7 +6,7 @@ export const extractResourceSearchQueryParams = <T>(req: Req) => {
   const sortDirection = req.query.sort_direction as SortDirection;
 
   let orderBy;
-  if ((sortColumn as string).includes(".")) {
+  if (sortColumn && (sortColumn as string).includes(".")) {
     orderBy = {};
     const elements = (sortColumn as string).split(".");
     let prev = orderBy;
@@ -19,9 +19,8 @@ export const extractResourceSearchQueryParams = <T>(req: Req) => {
       prev = prev[el];
     });
   }
-  console.log("ORDER BY", orderBy);
 
-  if (!orderBy) orderBy = { [sortColumn]: sortDirection };
+  if (sortColumn && !orderBy) orderBy = { [sortColumn]: sortDirection };
 
   return { page, itemsPerPage, search, orderBy };
 };

@@ -69,5 +69,6 @@ agentRouter.post(
   throwIfBadRequest,
   AgentController.resetPlayerPassword,
 );
+// agentRouter.get
 
 export default agentRouter;

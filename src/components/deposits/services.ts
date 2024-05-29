@@ -180,4 +180,14 @@ export class DepositServices extends ResourceService {
     const deposits = await DepositsDAO.getPending(player_id);
     return deposits;
   }
+
+  static async pendingCoinTransfers(): Promise<number> {
+    const deposits = await DepositsDAO.getPendingCoinTransfers();
+    let total = 0;
+    deposits.forEach((deposit) => {
+      total += deposit.amount!;
+    });
+
+    return total;
+  }
 }

@@ -1,3 +1,8 @@
+## [1.0.0] - 2024-05-29
+
+### Added
+- GET `/transactions/deposit/pending-coin-transfers`
+
 ## [1.0.0] - 2024-05-28
 
 ### Added

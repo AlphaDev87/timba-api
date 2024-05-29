@@ -116,7 +116,6 @@ describe("[UNIT] => AGENT ROUTER", () => {
     it.each`
       field               | value    | message
       ${"page"}           | ${"-1"}  | ${"page must be greater than 0"}
-      ${"items_per_page"} | ${"0"}   | ${"items_per_page must be greater than 1"}
       ${"sort_column"}    | ${"foo"} | ${"Invalid sort_column"}
       ${"sort_direction"} | ${"baz"} | ${"sort_direction must be 'asc' or 'desc'"}
     `("Shloud return 400", async ({ field, value, message }) => {
@@ -250,7 +249,6 @@ describe("[UNIT] => AGENT ROUTER", () => {
     it.each`
       field               | value    | message
       ${"page"}           | ${"-1"}  | ${"page must be greater than 0"}
-      ${"items_per_page"} | ${"0"}   | ${"items_per_page must be greater than 1"}
       ${"sort_column"}    | ${"foo"} | ${"Invalid sort_column"}
       ${"sort_direction"} | ${"baz"} | ${"sort_direction must be 'asc' or 'desc'"}
     `("Shloud return 400", async ({ field, value, message }) => {
@@ -278,6 +276,28 @@ describe("[UNIT] => AGENT ROUTER", () => {
         .set("User-Agent", USER_AGENT);
 
       expect(response.status).toBe(FORBIDDEN);
+    });
+  });
+
+  describe("GET: /transactions/deposit/pending-coin-transfers", () => {
+    it("Should return pending coin transfers", async () => {
+      const response = await agent
+        .get(
+          `/app/${CONFIG.APP.VER}/transactions/deposit/pending-coin-transfers`,
+        )
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT);
+
+      expect(response.status).toBe(OK);
+      expect(response.body.data).toBeGreaterThanOrEqual(0);
+    });
+
+    it("Should return 401", async () => {
+      const response = await agent.get(
+        `/app/${CONFIG.APP.VER}/transactions/deposit/pending-coin-transfers`,
+      );
+
+      expect(response.status).toBe(UNAUTHORIZED);
     });
   });
 

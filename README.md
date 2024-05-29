@@ -53,6 +53,7 @@ Comes with:
 + [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-)
 + [Ver Balance Casino](#ver-balance-casino-)
 + [Ver Balance Alquimia](#ver-balance-alquimia-)
++ [Ver Transferencias de Fichas Pendientes](#ver-transferencias-de-fichas-pendientes-)
 + [Liberar Fichas Pendientes](#liberar-fichas-pendientes-)
 + [Indicar Que El Agente Esta De Guardia](#setear-guardia-)
 + [Ver Estado De Guardia](#ver-guardia-)
@@ -347,6 +348,15 @@ Requiere rol| agent
 ---|---|
 Método      |`GET`
 Devuelve    |[`Balance`](#balance)
+Requiere rol| agent
+
+### Ver Transferencias de Fichas Pendientes 🔒
+Devuelve el total de fichas que debe cargar el agente para liberar transferencias pendientes
+
+|Endpoint| `/agent/pending/pending-coin-transfers`|
+---|---|
+Método      |`GET`
+Devuelve    |`number`
 Requiere rol| agent
 
 ### Liberar Fichas Pendientes 🔒
