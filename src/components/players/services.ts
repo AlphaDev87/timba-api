@@ -19,6 +19,7 @@ import { Whatsapp } from "@/notification/whatsapp";
 import CONFIG, { PLAYER_STATUS } from "@/config";
 import { ForbiddenError } from "@/helpers/error";
 import { ResourceService } from "@/services/resource.service";
+import { logtailLogger } from "@/helpers/loggers";
 
 export class PlayerServices extends ResourceService {
   constructor() {
@@ -174,14 +175,18 @@ export class PlayerServices extends ResourceService {
   }
 
   private async emailPasswordResetConfirmation(user: Player) {
-    const subject = "Contraseña reestablecida";
-    const body = "Tu contraseña ha sido reestablecida.";
-    const cta = {
-      name: "Iniciar sesión",
-      href: "https://casino-mex.com",
-    };
-    const mail = new Mail();
-    mail.compose(subject, user.username, body, cta).send(user.email);
+    try {
+      const subject = "Contraseña reestablecida";
+      const body = "Tu contraseña ha sido reestablecida.";
+      const cta = {
+        name: "Iniciar sesión",
+        href: "https://casino-mex.com",
+      };
+      const mail = new Mail();
+      mail.compose(subject, user.username, body, cta).send(user.email);
+    } catch (e) {
+      logtailLogger.warn(e, "Error sending email");
+    }
   }
 
   async update(player_id: string, request: PlayerUpdateRequest) {
