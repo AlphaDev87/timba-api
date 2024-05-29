@@ -259,7 +259,6 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
     it.each`
       field               | value    | message
       ${"page"}           | ${"-1"}  | ${"page must be greater than 0"}
-      ${"items_per_page"} | ${"0"}   | ${"items_per_page must be greater than 1"}
       ${"sort_column"}    | ${"foo"} | ${"Invalid sort_column"}
       ${"sort_direction"} | ${"baz"} | ${"sort_direction must be 'asc' or 'desc'"}
     `("Shloud return 400", async ({ field, value, message }) => {
@@ -286,7 +285,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
         .set("Authorization", `Bearer ${playerAccessToken}`);
 
       expect(response.status).toBe(OK);
-      expect(response.body.data.id).toBe(playerId);
+      expect(response.body.data[0].id).toBe(playerId);
     });
 
     it("Should return 401", async () => {

@@ -52,7 +52,7 @@ export class PlayersController {
 
       const playersServices = new PlayerServices();
 
-      const player = await playersServices.show(playerId);
+      const player = await playersServices.show<Player>(playerId);
 
       if (player) {
         res.status(OK).json(apiResponse(player));

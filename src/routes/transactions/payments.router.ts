@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { checkExact } from "express-validator";
+import passport from "passport";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
 import {
   isKeyOfPayment,
@@ -11,6 +12,9 @@ import { validateResourceSearchRequest } from "@/components/players/validators";
 
 const paymentsRouter = Router();
 
+paymentsRouter.use(
+  passport.authenticate("jwt", { session: false, failWithError: true }),
+);
 paymentsRouter.post(
   "/cashout",
   requireUserRole,
@@ -19,9 +23,10 @@ paymentsRouter.post(
   throwIfBadRequest,
   PaymentController.create,
 );
-paymentsRouter.use(requireAgentRole);
+
 paymentsRouter.get(
   "/payment",
+  requireAgentRole,
   validateResourceSearchRequest(isKeyOfPayment),
   checkExact(),
   throwIfBadRequest,
