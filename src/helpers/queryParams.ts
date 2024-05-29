@@ -5,5 +5,23 @@ export const extractResourceSearchQueryParams = <T>(req: Req) => {
   const sortColumn = req.query.sort_column as keyof T;
   const sortDirection = req.query.sort_direction as SortDirection;
 
-  return { page, itemsPerPage, search, sortColumn, sortDirection };
+  let orderBy;
+  if ((sortColumn as string).includes(".")) {
+    orderBy = {};
+    const elements = (sortColumn as string).split(".");
+    let prev = orderBy;
+    elements.forEach((el, i) => {
+      // @ts-ignore
+      if (elements[i + 1]) prev[el] = {};
+      // @ts-ignore
+      else prev[el] = sortDirection;
+      // @ts-ignore
+      prev = prev[el];
+    });
+  }
+  console.log("ORDER BY", orderBy);
+
+  if (!orderBy) orderBy = { [sortColumn]: sortDirection };
+
+  return { page, itemsPerPage, search, orderBy };
 };

@@ -11,15 +11,13 @@ import { hidePassword } from "@/utils/auth";
 export class DepositController {
   static readonly index = async (req: Req, res: Res, next: NextFn) => {
     try {
-      const { page, itemsPerPage, search, sortColumn, sortDirection } =
-        extractResourceSearchQueryParams<Deposit>(req);
+      const { page, itemsPerPage, search, orderBy } =
+        extractResourceSearchQueryParams<Deposit & { Player: Player }>(req);
 
       const depositServices = new DepositServices();
       const deposits = await depositServices.getAll<
         Deposit & { Player: Player }
-      >(page, itemsPerPage, search, {
-        [sortColumn]: sortDirection,
-      });
+      >(page, itemsPerPage, search, orderBy);
       const safeDeposits = deposits.map((deposit) => ({
         ...deposit,
         Player: hidePassword(deposit.Player),

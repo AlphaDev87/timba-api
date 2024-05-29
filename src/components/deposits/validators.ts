@@ -1,8 +1,9 @@
-import { Deposit } from "@prisma/client";
+import { Deposit, Player } from "@prisma/client";
 import { checkSchema } from "express-validator";
+import { isKeyOfNestedObject } from "../players/validators";
 
 export const isKeyOfDeposit = (key: string): key is keyof Deposit => {
-  const mockDeposit: Deposit = {
+  const mockDeposit: Deposit & { Player: Player } = {
     id: "",
     amount: 0,
     currency: "",
@@ -10,10 +11,26 @@ export const isKeyOfDeposit = (key: string): key is keyof Deposit => {
     player_id: "",
     status: "",
     tracking_number: "",
+    Player: {
+      id: "",
+      panel_id: 0,
+      username: "",
+      password: "",
+      email: "",
+      first_name: "",
+      last_name: "",
+      date_of_birth: new Date(),
+      movile_number: "",
+      country: "",
+      balance_currency: "",
+      status: "",
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
     created_at: new Date(),
     updated_at: new Date(),
   };
-  return key in mockDeposit;
+  return isKeyOfNestedObject(mockDeposit, key);
 };
 
 export const validateDepositRequest = () =>

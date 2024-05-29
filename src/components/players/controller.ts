@@ -16,7 +16,7 @@ export class PlayersController {
    */
   static index = async (req: Req, res: Response, next: NextFn) => {
     try {
-      const { page, itemsPerPage, search, sortColumn, sortDirection } =
+      const { page, itemsPerPage, search, orderBy } =
         extractResourceSearchQueryParams<Player>(req);
 
       const playersServices = new PlayerServices();
@@ -25,9 +25,7 @@ export class PlayersController {
         page,
         itemsPerPage,
         search,
-        {
-          [sortColumn]: sortDirection,
-        },
+        orderBy,
       );
       const safePlayers = players.map((p) => hidePassword(p));
       const totalPlayers = await PlayersDAO.count;

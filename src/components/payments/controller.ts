@@ -1,5 +1,5 @@
 import { OK } from "http-status";
-import { Deposit, Payment, Player } from "@prisma/client";
+import { BankAccount, Deposit, Payment, Player } from "@prisma/client";
 import { PaymentServices } from "./services";
 import { apiResponse } from "@/helpers/apiResponse";
 import { CashoutRequest } from "@/types/request/transfers";
@@ -10,15 +10,13 @@ import { hidePassword } from "@/utils/auth";
 export class PaymentController {
   static readonly index = async (req: Req, res: Res, next: NextFn) => {
     try {
-      const { page, itemsPerPage, search, sortColumn, sortDirection } =
+      const { page, itemsPerPage, search, orderBy } =
         extractResourceSearchQueryParams<Deposit>(req);
 
       const paymentServices = new PaymentServices();
       const payments = await paymentServices.getAll<
-        Payment & { Player: Player }
-      >(page, itemsPerPage, search, {
-        [sortColumn]: sortDirection,
-      });
+        Payment & { Player: Player; BankAccount: BankAccount }
+      >(page, itemsPerPage, search, orderBy);
       const safePayments = payments.map((payment) => ({
         ...payment,
         Player: hidePassword(payment.Player),
