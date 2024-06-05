@@ -39,6 +39,7 @@ export class PlayersController {
   /**
    * Show single player
    */
+
   static show = async (
     req: Req,
     res: Response<any, Record<string, any>>,

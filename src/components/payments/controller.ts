@@ -8,6 +8,7 @@ import { extractResourceSearchQueryParams } from "@/helpers/queryParams";
 import { hidePassword } from "@/utils/auth";
 
 export class PaymentController {
+
   static readonly index = async (req: Req, res: Res, next: NextFn) => {
     try {
       const { page, itemsPerPage, search, orderBy } =
