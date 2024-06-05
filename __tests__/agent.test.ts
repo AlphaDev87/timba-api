@@ -86,16 +86,17 @@ describe("[UNIT] => AGENT ROUTER", () => {
     });
   });
 
-  describe("GET: /agent/payments", () => {
+  describe("GET: /transactions/payment", () => {
     it("Should return payments", async () => {
       const response = await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/payments`)
+        .get(`/app/${CONFIG.APP.VER}/transactions/payment`)
         .set("Authorization", `Bearer ${access}`)
         .set("User-Agent", USER_AGENT);
 
       expect(response.status).toBe(OK);
-      expect(response.body.data.length).toBeGreaterThanOrEqual(1);
-      expect(Object.keys(response.body.data[0])).toStrictEqual([
+      expect(response.body.data.payments.length).toBeGreaterThanOrEqual(0);
+      expect(response.body.data.totalPayments).toBeGreaterThanOrEqual(0);
+      expect(Object.keys(response.body.data.payments[0])).toStrictEqual([
         "id",
         "player_id",
         "amount",
@@ -109,12 +110,28 @@ describe("[UNIT] => AGENT ROUTER", () => {
         "Player",
         "BankAccount",
       ]);
+      expect(response.body.data.payments[0].Player.password).toBe("********");
+    });
+
+    it.each`
+      field               | value    | message
+      ${"page"}           | ${"-1"}  | ${"page must be greater than 0"}
+      ${"sort_column"}    | ${"foo"} | ${"Invalid sort_column"}
+      ${"sort_direction"} | ${"baz"} | ${"sort_direction must be 'asc' or 'desc'"}
+    `("Shloud return 400", async ({ field, value, message }) => {
+      const response = await agent
+        .get(`/app/${CONFIG.APP.VER}/transactions/payment?${field}=${value}`)
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT);
+
+      expect(response.status).toBe(BAD_REQUEST);
+      expect(response.body.data[0].msg).toBe(message);
     });
 
     /** Wrong token */
     it("Should return 401", async () => {
       const response = await await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/payments`)
+        .get(`/app/${CONFIG.APP.VER}/transactions/payment`)
         .set("Authorization", `Bearer ${refresh}`);
 
       expect(response.status).toBe(UNAUTHORIZED);
@@ -123,7 +140,9 @@ describe("[UNIT] => AGENT ROUTER", () => {
 
     /** No token */
     it("Should return 401", async () => {
-      const response = await agent.get(`/app/${CONFIG.APP.VER}/agent/payments`);
+      const response = await agent.get(
+        `/app/${CONFIG.APP.VER}/transactions/payment`,
+      );
 
       expect(response.status).toBe(UNAUTHORIZED);
       expect(response.body.code).toBe("Unauthorized");
@@ -131,7 +150,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
 
     it("Should return 403", async () => {
       const response = await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/payments`)
+        .get(`/app/${CONFIG.APP.VER}/transactions/payment`)
         .set("Authorization", `Bearer ${playerAccessToken}`)
         .set("User-Agent", USER_AGENT);
 
@@ -202,16 +221,17 @@ describe("[UNIT] => AGENT ROUTER", () => {
     });
   });
 
-  describe("GET: /agent/deposits", () => {
+  describe("GET: /transactions/deposit", () => {
     it("Should return deposits", async () => {
       const response = await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/deposits`)
+        .get(`/app/${CONFIG.APP.VER}/transactions/deposit`)
         .set("Authorization", `Bearer ${access}`)
         .set("User-Agent", USER_AGENT);
 
       expect(response.status).toBe(OK);
-      expect(response.body.data.length).toBeGreaterThanOrEqual(1);
-      expect(Object.keys(response.body.data[0])).toStrictEqual([
+      expect(response.body.data.deposits.length).toBeGreaterThanOrEqual(0);
+      expect(response.body.data.totalDeposits).toBeGreaterThanOrEqual(0);
+      expect(Object.keys(response.body.data.deposits[0])).toStrictEqual([
         "id",
         "player_id",
         "currency",
@@ -223,21 +243,61 @@ describe("[UNIT] => AGENT ROUTER", () => {
         "updated_at",
         "Player",
       ]);
+      expect(response.body.data.deposits[0].Player.password).toBe("********");
+    });
+
+    it.each`
+      field               | value    | message
+      ${"page"}           | ${"-1"}  | ${"page must be greater than 0"}
+      ${"sort_column"}    | ${"foo"} | ${"Invalid sort_column"}
+      ${"sort_direction"} | ${"baz"} | ${"sort_direction must be 'asc' or 'desc'"}
+    `("Shloud return 400", async ({ field, value, message }) => {
+      const response = await agent
+        .get(`/app/${CONFIG.APP.VER}/transactions/deposit?${field}=${value}`)
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT);
+
+      expect(response.status).toBe(BAD_REQUEST);
+      expect(response.body.data[0].msg).toBe(message);
     });
 
     it("Should return 401", async () => {
-      const response = await agent.get(`/app/${CONFIG.APP.VER}/agent/deposits`);
+      const response = await agent.get(
+        `/app/${CONFIG.APP.VER}/transactions/deposit`,
+      );
 
       expect(response.status).toBe(UNAUTHORIZED);
     });
 
     it("Should return 403", async () => {
       const response = await agent
-        .get(`/app/${CONFIG.APP.VER}/agent/deposits`)
+        .get(`/app/${CONFIG.APP.VER}/transactions/deposit`)
         .set("Authorization", `Bearer ${playerAccessToken}`)
         .set("User-Agent", USER_AGENT);
 
       expect(response.status).toBe(FORBIDDEN);
+    });
+  });
+
+  describe("GET: /transactions/deposit/pending-coin-transfers", () => {
+    it("Should return pending coin transfers", async () => {
+      const response = await agent
+        .get(
+          `/app/${CONFIG.APP.VER}/transactions/deposit/pending-coin-transfers`,
+        )
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT);
+
+      expect(response.status).toBe(OK);
+      expect(response.body.data).toBeGreaterThanOrEqual(0);
+    });
+
+    it("Should return 401", async () => {
+      const response = await agent.get(
+        `/app/${CONFIG.APP.VER}/transactions/deposit/pending-coin-transfers`,
+      );
+
+      expect(response.status).toBe(UNAUTHORIZED);
     });
   });
 

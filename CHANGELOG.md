@@ -1,7 +1,19 @@
+## [1.0.0] - 2024-05-29
+
+### Added
+- GET `/transactions/deposit/pending-coin-transfers`
+
 ## [1.0.0] - 2024-05-28
 
 ### Added
 - `/agent/reset-player-password` for the agent to reset players' passwords.
+
+### Changed
+- Split GET `/agent/deposits/:id?` into GET `/transactions/deposit/:id` and GET `/transactions/deposit`.
+- Move POST `/agent/deposits/:id` into `/transactions/deposit/:id`.
+- Return `{ deposits, totalDeposits }` from GET `/transactions/deposit`.
+- Move GET `/agent/payments` to GET `/transactions/payment`
+- Return `{ payments, totalPayments }` from GET `/transactions/payment`.
 
 ## [1.0.0] - 2024-05-27
 

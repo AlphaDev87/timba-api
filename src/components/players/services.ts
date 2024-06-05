@@ -5,8 +5,7 @@ import {
   Credentials,
   PlayerOrderBy,
   PlayerRequest,
-  PlayerUpdateRequest,
-  getPlayerId,
+  PlayerUpdateRequest
 } from "@/types/request/players";
 import { LoginResponse, PlainPlayerResponse } from "@/types/response/players";
 import { compare, hash } from "@/utils/crypt";
@@ -20,44 +19,13 @@ import { TokenDAO } from "@/db/token";
 import { Whatsapp } from "@/notification/whatsapp";
 import CONFIG, { PLAYER_STATUS } from "@/config";
 import { ForbiddenError } from "@/helpers/error";
+import { ResourceService } from "@/services/resource.service";
+import { logtailLogger } from "@/helpers/loggers";
 
-export class PlayerServices {
-  /**
-   * @description Get all players.
-   * @returns Player[]
-   */
-  getAllPlayers = async (
-    page: number,
-    itemsPerPage: number,
-    search?: string,
-    orderBy?: PlayerOrderBy,
-  ): Promise<PlainPlayerResponse[]> => {
-    const players = await PlayersDAO._getAll(
-      page,
-      itemsPerPage,
-      search,
-      orderBy,
-    );
-
-    return players.map((player) => hidePassword(player));
-  };
-
-  getTotalPlayers = async (): Promise<number> => {
-    return await PlayersDAO.count;
-  };
-
-  /**
-   * @description Get player information by ID.
-   * @param playerId ID of the player to retrieve information.
-   * @returns Player
-   */
-  getPlayerById = async (playerId: getPlayerId): Promise<Player | null> => {
-    const player = await PlayersDAO._getById(playerId);
-    if (!player) return null;
-
-    return hidePassword<Player>(player);
-  };
-
+export class PlayerServices extends ResourceService {
+  constructor() {
+    super(PlayersDAO);
+  }
   /**
    * Create player
    * @throws if user exists or something goes wrong
@@ -207,14 +175,27 @@ export class PlayerServices {
   }
 
   private async emailPasswordResetConfirmation(user: Player) {
-    const subject = "Contraseña reestablecida";
-    const body = "Tu contraseña ha sido reestablecida.";
-    const cta = {
-      name: "Iniciar sesión",
-      href: "https://casino-mex.com",
-    };
-    const mail = new Mail();
-    mail.compose(subject, user.username, body, cta).send(user.email);
+    try {
+      const subject = "Contraseña reestablecida";
+      const body = "Tu contraseña ha sido reestablecida.";
+      const cta = {
+        name: "Iniciar sesión",
+        href: "https://casino-mex.com",
+      };
+      const mail = new Mail();
+      mail.compose(subject, user.username, body, cta).send(user.email);
+    } catch (e) {
+      logtailLogger.warn(e, "Error sending email");
+    }
+  }
+
+  async update(player_id: string, request: PlayerUpdateRequest) {
+    const player = await PlayersDAO.update(player_id, request);
+
+    if (player.status === PLAYER_STATUS.BANNED)
+      await TokenDAO.update({ player_id }, { invalid: true });
+
+    return hidePassword(player);
   }
 
   async update(player_id: string, request: PlayerUpdateRequest) {

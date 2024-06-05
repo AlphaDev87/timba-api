@@ -119,7 +119,6 @@ test.txt
 *.qr.png
 *_sessions
 
-
 history.txt
 test_setup.sh
 

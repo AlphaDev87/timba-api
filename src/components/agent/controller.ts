@@ -21,16 +21,6 @@ export class AgentController {
     }
   }
 
-  static async showPayments(_req: Req, res: Res, next: NextFn) {
-    try {
-      const payments = await AgentServices.showPayments();
-
-      res.status(OK).json(apiResponse(payments));
-    } catch (error) {
-      next(error);
-    }
-  }
-
   static async releasePayment(req: Req, res: Res, next: NextFn) {
     try {
       const { id } = req.params;
@@ -38,17 +28,6 @@ export class AgentController {
       const payment = await AgentServices.releasePayment(id);
 
       res.status(OK).json(apiResponse(payment));
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async showDeposits(req: Req, res: Res, next: NextFn) {
-    try {
-      const depositId = req.params.id;
-      const deposits = await AgentServices.showDeposits(depositId);
-
-      res.status(OK).json(apiResponse(deposits));
     } catch (error) {
       next(error);
     }

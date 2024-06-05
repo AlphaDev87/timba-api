@@ -7,31 +7,38 @@ import { apiResponse } from "@/helpers/apiResponse";
 import { Credentials, PlayerRequest } from "@/types/request/players";
 import { NotFoundException, UnauthorizedError } from "@/helpers/error";
 import { PlayersDAO } from "@/db/players";
+import { hidePassword } from "@/utils/auth";
+import { extractResourceSearchQueryParams } from "@/helpers/queryParams";
 
 export class PlayersController {
+  /**
+   * List all players, optionally filtering and sorting
+   */
   static index = async (req: Req, res: Response, next: NextFn) => {
     try {
-      const page = Number(req.query.page) - 1;
-      const itemsPerPage = Number(req.query.items_per_page) ?? 20;
-      const search = req.query.search as string;
-      const sortColumn = req.query.sort_column as keyof Player;
-      const sortDirection = req.query.sort_direction as SortDirection;
+      const { page, itemsPerPage, search, orderBy } =
+        extractResourceSearchQueryParams<Player>(req);
 
       const playersServices = new PlayerServices();
 
-      const players = await playersServices.getAllPlayers(
+      const players = await playersServices.getAll<Player>(
         page,
         itemsPerPage,
         search,
-        { [sortColumn]: sortDirection },
+        orderBy,
       );
+      const safePlayers = players.map((p) => hidePassword(p));
       const totalPlayers = await PlayersDAO.count;
 
-      res.status(OK).json(apiResponse({ players, totalPlayers }));
+      res.status(OK).json(apiResponse({ players: safePlayers, totalPlayers }));
     } catch (error) {
       next(error);
     }
   };
+
+  /**
+   * Show single player
+   */
 
   static show = async (
     req: Req,
@@ -46,7 +53,7 @@ export class PlayersController {
 
       const playersServices = new PlayerServices();
 
-      const player = await playersServices.getPlayerById(playerId);
+      const player = await playersServices.show<Player>(playerId);
 
       if (player) {
         res.status(OK).json(apiResponse(player));

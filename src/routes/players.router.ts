@@ -3,10 +3,11 @@ import { checkExact } from "express-validator";
 import passport from "passport";
 import { PlayersController } from "@/components/players";
 import {
+  isKeyOfPlayer,
   validateCredentials,
   validatePlayerRequest,
-  validatePlayerSearchRequest,
   validatePlayerUpdateRequest,
+  validateResourceSearchRequest,
 } from "@/components/players/validators";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
 import { requireAgentRole } from "@/middlewares/auth";
@@ -33,7 +34,7 @@ playersRouter.get("/:id", PlayersController.show);
 playersRouter.use(requireAgentRole);
 playersRouter.get(
   "/",
-  validatePlayerSearchRequest(),
+  validateResourceSearchRequest(isKeyOfPlayer),
   checkExact(),
   throwIfBadRequest,
   PlayersController.index,

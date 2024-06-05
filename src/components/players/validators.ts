@@ -13,7 +13,25 @@ const isDate: CustomValidator = (value: string, { req }) => {
   return body("date_of_birth").isISO8601().run(req);
 };
 
-const isKeyOfPlayer = (key: string): key is keyof Player => {
+export const isKeyOfNestedObject = (
+  nestedObject: { [key: string]: any },
+  key: string,
+) => {
+  const keys = key.split(".");
+  let current = nestedObject;
+
+  for (const k of keys) {
+    if (current && typeof current === "object" && k in current) {
+      current = current[k];
+    } else {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export const isKeyOfPlayer = (key: string): key is keyof Player => {
   const mockPlayer: Player = {
     id: "",
     panel_id: 0,
@@ -30,7 +48,7 @@ const isKeyOfPlayer = (key: string): key is keyof Player => {
     created_at: new Date(),
     updated_at: new Date(),
   };
-  return key in mockPlayer;
+  return isKeyOfNestedObject(mockPlayer, key);
 };
 
 const isSortDirection = (key: string): key is "asc" | "desc" => {
@@ -144,7 +162,7 @@ export const validateCredentials = () =>
     },
   });
 
-export const validatePlayerSearchRequest = () =>
+export const validateResourceSearchRequest = (isKeyOf: KeyIsKeyOfTValidator) =>
   checkSchema({
     page: {
       in: ["query"],
@@ -158,9 +176,10 @@ export const validatePlayerSearchRequest = () =>
     items_per_page: {
       in: ["query"],
       default: { options: 20 },
+      customSanitizer: { options: (value) => (value <= 0 ? 20 : value) },
       isInt: {
         options: { min: 1, max: 2 ** 32 },
-        errorMessage: "items_per_page must be greater than 1",
+        errorMessage: "items_per_page must be greater than 0",
       },
       toInt: true,
     },
@@ -175,7 +194,7 @@ export const validatePlayerSearchRequest = () =>
       isString: true,
       optional: true,
       trim: true,
-      custom: { options: isKeyOfPlayer, errorMessage: "Invalid sort_column" },
+      custom: { options: isKeyOf, errorMessage: "Invalid sort_column" },
     },
     sort_direction: {
       in: ["query"],
@@ -245,3 +264,7 @@ export const validatePlayerUpdateRequest = () =>
       },
     },
   });
+
+export type KeyIsKeyOfTValidator = {
+  (key: string): boolean;
+};
