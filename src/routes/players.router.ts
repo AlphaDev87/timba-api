@@ -5,9 +5,11 @@ import { PlayersController } from "@/components/players";
 import {
   validateCredentials,
   validatePlayerRequest,
+  validatePlayerSearchRequest,
+  validatePlayerUpdateRequest,
 } from "@/components/players/validators";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
-import { requireUserRole } from "@/middlewares/auth";
+import { requireAgentRole } from "@/middlewares/auth";
 const playersRouter = Router();
 
 playersRouter.post(
@@ -27,7 +29,21 @@ playersRouter.post(
 playersRouter.use(
   passport.authenticate("jwt", { session: false, failWithError: true }),
 );
-playersRouter.use(requireUserRole);
-playersRouter.get("/", PlayersController.getPlayerById);
+playersRouter.get("/:id", PlayersController.show);
+playersRouter.use(requireAgentRole);
+playersRouter.get(
+  "/",
+  validatePlayerSearchRequest(),
+  checkExact(),
+  throwIfBadRequest,
+  PlayersController.index,
+);
+playersRouter.post(
+  "/:id",
+  validatePlayerUpdateRequest(),
+  checkExact(),
+  throwIfBadRequest,
+  PlayersController.update,
+);
 
 export default playersRouter;

@@ -12,11 +12,13 @@ import {
   Payment,
   Player,
   PrismaClient,
+  Role,
 } from "@prisma/client";
 import { AlquimiaTransferService } from "../src/services/alquimia-transfer.service";
 import { initAgent } from "./helpers";
 import CONFIG from "@/config";
 import { AuthServices } from "@/components/auth/services";
+import { PlayerServices } from "@/components/players/services";
 
 let agent: SuperAgentTest;
 let prisma: PrismaClient;
@@ -24,6 +26,7 @@ let player: Player & { BankAccounts: BankAccount[] };
 let playerAccessToken: string;
 let payment: Payment & { BankAccount: BankAccount };
 let deposit: Deposit;
+let userWithAgentRole: Player & { roles: Role[] };
 const USER_AGENT = "jest_test";
 
 const credentials = {
@@ -349,7 +352,6 @@ describe("[UNIT] => AGENT ROUTER", () => {
     //     .set("Authorization", `Bearer ${access}`)
     //     .set("User-Agent", USER_AGENT);
 
-    //   console.log(response.body);
     //   expect(response.status).toBe(OK);
     //   expect(Object.keys(response.body.data)).toStrictEqual(["balance"]);
     // });
@@ -562,7 +564,6 @@ describe("[UNIT] => AGENT ROUTER", () => {
           [field]: value,
         });
 
-      console.log(response.body);
       expect(response.status).toBe(BAD_REQUEST);
       expect(response.body.data[0].msg).toBe(message);
     });
@@ -583,6 +584,55 @@ describe("[UNIT] => AGENT ROUTER", () => {
         .set("User-Agent", USER_AGENT);
 
       expect(response.status).toBe(FORBIDDEN);
+    });
+  });
+
+  describe("POST: /agent/reset-player-password", () => {
+    jest.spyOn(PlayerServices.prototype, "resetPassword").mockResolvedValue();
+
+    it("Should reset player password", async () => {
+      const response = await agent
+        .post(`/app/${CONFIG.APP.VER}/agent/reset-player-password`)
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT)
+        .send({
+          new_password: "1234",
+          user_id: player.id,
+        });
+
+      expect(response.status).toBe(OK);
+      expect(response.body.data).toBeUndefined();
+    });
+
+    it("Should return 400 unknown_fields", async () => {
+      const response = await agent
+        .post(`/app/${CONFIG.APP.VER}/agent/reset-player-password`)
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT)
+        .send({
+          new_password: "1234",
+          user_id: player.id,
+          unknownField: "foo",
+        });
+
+      expect(response.status).toBe(BAD_REQUEST);
+      expect(response.body.data[0].type).toBe("unknown_fields");
+    });
+
+    it("Should return 400 can only reset player passwords", async () => {
+      const response = await agent
+        .post(`/app/${CONFIG.APP.VER}/agent/reset-player-password`)
+        .set("Authorization", `Bearer ${access}`)
+        .set("User-Agent", USER_AGENT)
+        .send({
+          new_password: "1234",
+          user_id: userWithAgentRole.id,
+        });
+
+      expect(response.status).toBe(BAD_REQUEST);
+      expect(response.body.data[0].msg).toBe(
+        "only player passwords can be updated",
+      );
     });
   });
 });
@@ -608,6 +658,23 @@ async function initialize() {
     },
     include: {
       BankAccounts: true,
+    },
+  });
+
+  userWithAgentRole = await prisma.player.create({
+    data: {
+      email: "userWithAgentRole@example.com",
+      password: "1234",
+      panel_id: -11,
+      username: "userWithAgentRole",
+      roles: {
+        connect: {
+          name: "agent",
+        },
+      },
+    },
+    include: {
+      roles: true,
     },
   });
 
@@ -641,8 +708,8 @@ async function cleanUp() {
   await prisma.deposit.delete({ where: { id: deposit.id } });
   await prisma.bankAccount.delete({ where: { id: player.BankAccounts[0].id } });
   await prisma.token.deleteMany({ where: { player_id: player.id } });
-  // await prisma.token.delete({ where: { }})
   await prisma.player.delete({ where: { id: player.id } });
+  await prisma.player.delete({ where: { id: userWithAgentRole.id } });
   prisma.$disconnect();
   jest.restoreAllMocks();
 }

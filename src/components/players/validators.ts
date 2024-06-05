@@ -4,11 +4,43 @@ import {
   body,
   checkSchema,
 } from "express-validator";
+import { Player } from "@prisma/client";
 import { PlayersDAO } from "@/db/players";
+import { PLAYER_STATUS } from "@/config";
 
 const isDate: CustomValidator = (value: string, { req }) => {
   if (value.length === 0) return true;
   return body("date_of_birth").isISO8601().run(req);
+};
+
+const isKeyOfPlayer = (key: string): key is keyof Player => {
+  const mockPlayer: Player = {
+    id: "",
+    panel_id: 0,
+    username: "",
+    password: "",
+    email: "",
+    first_name: "",
+    last_name: "",
+    date_of_birth: new Date(),
+    movile_number: "",
+    country: "",
+    balance_currency: "",
+    status: "",
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+  return key in mockPlayer;
+};
+
+const isSortDirection = (key: string): key is "asc" | "desc" => {
+  return key === "asc" || key === "desc";
+};
+
+const isPlayerStatus = (
+  value: string,
+): value is PLAYER_STATUS.ACTIVE | PLAYER_STATUS.BANNED => {
+  return value === PLAYER_STATUS.ACTIVE || value === PLAYER_STATUS.BANNED;
 };
 
 export const validatePlayerRequest = () => {
@@ -69,7 +101,19 @@ export const validatePlayerRequest = () => {
         },
       },
     },
-    movile_number: optionalString,
+    movile_number: {
+      in: ["body"],
+      isString: true,
+      isNumeric: true,
+      optional: true,
+      trim: true,
+      isEmpty: false,
+      isLength: {
+        options: { max: 20 },
+        errorMessage: "movile_number is too long",
+      },
+      errorMessage: "movile_number must be a numeric string",
+    },
     country: optionalString,
   });
 };
@@ -97,5 +141,107 @@ export const validateCredentials = () =>
       in: ["body"],
       isString: true,
       isEmpty: false,
+    },
+  });
+
+export const validatePlayerSearchRequest = () =>
+  checkSchema({
+    page: {
+      in: ["query"],
+      default: { options: 1 },
+      isInt: {
+        options: { min: 1, max: 2 ** 32 },
+        errorMessage: "page must be greater than 0",
+      },
+      toInt: true,
+    },
+    items_per_page: {
+      in: ["query"],
+      default: { options: 20 },
+      isInt: {
+        options: { min: 1, max: 2 ** 32 },
+        errorMessage: "items_per_page must be greater than 1",
+      },
+      toInt: true,
+    },
+    search: {
+      in: ["query"],
+      isString: true,
+      optional: true,
+      trim: true,
+    },
+    sort_column: {
+      in: ["query"],
+      isString: true,
+      optional: true,
+      trim: true,
+      custom: { options: isKeyOfPlayer, errorMessage: "Invalid sort_column" },
+    },
+    sort_direction: {
+      in: ["query"],
+      isString: true,
+      optional: true,
+      trim: true,
+      custom: {
+        options: isSortDirection,
+        errorMessage: "sort_direction must be 'asc' or 'desc'",
+      },
+    },
+  });
+
+export const validatePlayerUpdateRequest = () =>
+  checkSchema({
+    email: {
+      in: ["body"],
+      isEmail: true,
+      optional: true,
+      isEmpty: false,
+      trim: true,
+      custom: {
+        options: async (value, { req }) => {
+          const player = await PlayersDAO.getByEmail(value);
+          if (player && player.id !== req.params!.id)
+            throw new Error("Email already in use");
+        },
+        errorMessage: "Ese email ya está en uso",
+      },
+    },
+    movile_number: {
+      in: ["body"],
+      isString: true,
+      isNumeric: true,
+      optional: true,
+      trim: true,
+      isEmpty: false,
+      isLength: {
+        options: { max: 20 },
+        errorMessage: "movile_number is too long",
+      },
+      errorMessage: "movile_number must be a numeric string",
+    },
+    first_name: {
+      in: ["body"],
+      isString: true,
+      optional: true,
+      trim: true,
+      isEmpty: false,
+    },
+    last_name: {
+      in: ["body"],
+      isString: true,
+      optional: true,
+      trim: true,
+      isEmpty: false,
+    },
+    status: {
+      in: ["body"],
+      isString: true,
+      optional: true,
+      trim: true,
+      isEmpty: false,
+      custom: {
+        options: isPlayerStatus,
+        errorMessage: "invalid status",
+      },
     },
   });

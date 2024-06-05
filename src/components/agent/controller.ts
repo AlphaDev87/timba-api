@@ -1,8 +1,11 @@
 import { OK } from "http-status";
+import { PlayerServices } from "../players/services";
 import { AgentServices } from "./services";
 import { Credentials } from "@/types/request/players";
 import { apiResponse } from "@/helpers/apiResponse";
 import { AgentBankAccount } from "@/types/response/agent";
+import { PlayersDAO } from "@/db/players";
+import { NotFoundException } from "@/helpers/error";
 
 export class AgentController {
   static async login(req: Req, res: Res, next: NextFn) {
@@ -142,6 +145,22 @@ export class AgentController {
       const response = await AgentServices.updateSupportNumbers(data);
 
       res.status(OK).send(apiResponse(response));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async resetPlayerPassword(req: Req, res: Res, next: NextFn) {
+    try {
+      const playerServices = new PlayerServices();
+      const { new_password, user_id } = req.body;
+      const user = await PlayersDAO._getById(user_id);
+
+      if (!user) throw new NotFoundException();
+
+      await playerServices.resetPassword(user, new_password);
+
+      res.status(OK).send();
     } catch (error) {
       next(error);
     }

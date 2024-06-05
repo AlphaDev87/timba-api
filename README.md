@@ -21,50 +21,53 @@ Comes with:
 ## Contenidos
 
 ### Jugadores
-+ [Ver Jugador](#ver-jugador)
++ [Listar Jugadores](#listar-jugadores-)
++ [Ver Jugador](#ver-jugador-)
 + [Crear Jugador](#crear-jugador)
++ [Editar Jugador](#editar-jugador-)
 + [Login de Jugador](#login-jugador)
 
 #### Cuentas Bancarias
-+ [Ver Cuentas Bancarias](#ver-cuentas-bancarias-🔒)
-+ [Crear Cuenta Bancaria](#crear-cuenta-bancaria-🔒)
-+ [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-🔒)
-+ [Eliminar Cuenta Bancaria](#eliminar-cuenta-bancaria-🔒)
++ [Ver Cuentas Bancarias](#ver-cuentas-bancarias-)
++ [Crear Cuenta Bancaria](#crear-cuenta-bancaria-)
++ [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-)
++ [Eliminar Cuenta Bancaria](#eliminar-cuenta-bancaria-)
 
 ### Transferencias
-+ [Cargar Fichas](#cargar-fichas-🔒)
-+ [Retirar Premios](#retirar-premios-🔒)
-+ [Ver Depósitos Pendientes](#ver-depósitos-pendientes-🔒)
-+ [Confirmar Depósito Pendiente](#confirmar-depósito-pendiente-🔒)
-+ [Eliminar Depósito Pendiente](#eliminar-depósito-pendiente-🔒)
-+ [Ver Cuenta Bancaria de Alquimia](#ver-cuenta-alquimia-🔒)
++ [Cargar Fichas](#cargar-fichas-)
++ [Retirar Premios](#retirar-premios-)
++ [Ver Depósitos Pendientes](#ver-depósitos-pendientes-)
++ [Confirmar Depósito Pendiente](#confirmar-depósito-pendiente-)
++ [Eliminar Depósito Pendiente](#eliminar-depósito-pendiente-)
++ [Ver Cuenta Bancaria de Alquimia](#ver-cuenta-alquimia-)
 
 ### Agente
 + [Login de Agente](#login-agente)
-+ [Ver Pagos](#ver-pagos-🔒)
-+ [Marcar Pago Como Completado](#marcar-pago-como-completado-🔒)
-+ [Ver Depósitos](#ver-depósitos-🔒)
-+ [Ver QR](#ver-qr-🔒)
-+ [Ver Cuenta Bancaria](#ver-cuenta-bancaria-🔒)
-+ [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-🔒)
-+ [Ver Balance Casino](#ver-balance-casino-🔒)
-+ [Ver Balance Alquimia](#ver-balance-alquimia-🔒)
-+ [Liberar Fichas Pendientes](#liberar-fichas-pendientes-🔒)
-+ [Indicar Que El Agente Esta De Guardia](#setear-guardia-🔒)
-+ [Ver Estado De Guardia](#ver-guardia-🔒)
-+ [Ver Números de Soporte](#ver-números-de-soporte-🔒)
-+ [Actualizar Números de Soporte](#actualizar-números-de-soporte-🔒)
++ [Ver Pagos](#ver-pagos-)
++ [Marcar Pago Como Completado](#marcar-pago-como-completado-)
++ [Ver Depósitos](#ver-depósitos-)
++ [Ver QR](#ver-qr-)
++ [Ver Cuenta Bancaria](#ver-cuenta-bancaria-)
++ [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-)
++ [Ver Balance Casino](#ver-balance-casino-)
++ [Ver Balance Alquimia](#ver-balance-alquimia-)
++ [Liberar Fichas Pendientes](#liberar-fichas-pendientes-)
++ [Indicar Que El Agente Esta De Guardia](#setear-guardia-)
++ [Ver Estado De Guardia](#ver-guardia-)
++ [Ver Números de Soporte](#ver-números-de-soporte-)
++ [Actualizar Números de Soporte](#actualizar-números-de-soporte-)
++ [Cambiar Contraseña de Jugador](#cambiar-contraseña-de-jugador-)
 
 ### Bot
-+ [Ver QR](#ver-qr-🔒)
-+ [Ver bots](#ver-qr-🔒)
++ [Ver QR](#ver-qr-)
++ [Ver bots](#ver-qr-)
 
 ### Auth
 + [Refrescar Token](#refrescar-token)
-+ [Logout](#logout-🔒)
++ [Logout](#logout-)
 + [Olvidé mi contraseña](#olvide-mi-contraseña)
 + [Reestablecer contraseña](#reestablecer-contraseña)
-+ [Cambiar contraseña]()
++ [Cambiar contraseña](#cambiar-contraseña-)
 
 ### Analytics
 + [Listar](#listar-analytics)
@@ -78,9 +81,18 @@ Comes with:
 Jugadores
 ---------
 
+### Listar Jugadores 🔒
+
+|Endpoint:| `/players`|
+---|---|
+Método      | `GET`
+Query string| [`PlayersListQueryString`](#playerslistquerystring)
+Devuelve    | [`PlayerListResponse`](#playerlistresponse)
+Requiere rol| agent
+
 ### Ver Jugador 🔒
 
-|Endpoint:| `/players/`|
+|Endpoint:| `/players/:id`|
 ---|---|
 Método      | `GET`
 Devuelve    | [`Player & { bank_accounts: BankAccount[] }`](#player)
@@ -93,6 +105,15 @@ Requiere rol| player
 Método      | `POST`
 Body (json) | [`PlayerRequest`](#playerrequest)
 Devuelve    | [`LoginResponse`](#loginresponse)
+
+### Editar Jugador 🔒
+
+|Endpoint:| `/players/:id`|
+---|---|
+Método      | `POST`
+Body (json) | [`PlayerUpdateRequest`](#playerupdaterequest)
+Devuelve    | [`Player`](#player)
+Requiere rol| agent
 
 ### Login Jugador
 
@@ -229,7 +250,7 @@ Reestablecer contraseña usando el token generado en [`/auth/forgot-password`](#
 |Endpoint| `/auth/restore-password`|
 ---|---|
 Método      |`POST`
-Body (json) |[`RestorePasswordRequest`](#restore-password-request)
+Body (json) |[`RestorePasswordRequest`](#restorepasswordrequest)
 Devuelve    |OK 200
 
 ### Cambiar Contraseña 🔒
@@ -237,7 +258,7 @@ Devuelve    |OK 200
 |Endpoint| `/auth/reset-password`|
 ---|---|
 Método      |`POST`
-Body (json) |[`ResetPasswordRequest`](#reset-password-request)
+Body (json) |[`ResetPasswordRequest`](#resetpasswordrequest)
 Devuelve    |OK 200
 Requiere rol| player
 
@@ -352,7 +373,17 @@ Requiere rol| agent
 |Endpoint| `/agent/support`|
 ---|---|
 Método      |`POST`
-Devuelve    |[`SupportRequest`](#supportrequest)
+Body (json) |[`SupportRequest`](#supportrequest)
+Devuelve    |200 OK
+Requiere rol| agent
+
+### Cambiar Contraseña de Jugador 🔒
+
+|Endpoint| `/agent/reset-player-password`|
+---|---|
+Método      |`POST`
+Body (json) |[`PlayerPasswordResetRequest`](#playerpasswordresetrequest)
+Devuelve    |200 OK
 Requiere rol| agent
 
 Bot
@@ -417,6 +448,23 @@ Requiere rol| agent
 }
 ```
 
+### PlayersListQueryString
+```typescript
+  page=1
+  items_per_page=20
+  search=<string>
+  sort_column=<string>
+  sort_direction='asc' | 'desc'
+```
+
+### PlayerListResponse
+```typescript
+{
+  players: Player[]
+  totalPlayers: number
+}
+```
+
 ### LoginResponse
 ```typescript
 {
@@ -440,6 +488,16 @@ Requiere rol| agent
   country: string?
 }
 ``` 
+
+### PlayerUpdateRequest
+```typescript
+{
+  email?: string
+  movile_number?: string
+  first_name?: string
+  last_name?: string
+}
+```
 
 ### BankAccountRequest
 ```typescript
@@ -618,6 +676,15 @@ Estado de transferencia de fichas
 }
 ```
 
+
+### PlayerPasswordResetRequest
+```typescript
+{
+  new_password: string
+  user_id: string
+}
+```
+
 ### Analytics
 ```typescript
 {
@@ -629,6 +696,7 @@ Estado de transferencia de fichas
   updated_at: datetime    // 2024-01-29T18:14:41.534Z
 }
 ```
+
 ### AnalyticsRequest
 ```typescript
 {
@@ -797,9 +865,3 @@ Datos que necesitamos saber:
 
 ### URL token
 [x] Either user a [criptographically secure random number](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html#secure-random-number-generation) or JWT
-
-Transferir platita
-mismo endpoint que arriba
-canal SPEI
-ASP (medio de pago 4)
-cuenta destino
