@@ -69,6 +69,11 @@ Comes with:
 + [Reestablecer contraseña](#reestablecer-contraseña)
 + [Cambiar contraseña](#cambiar-contraseña-)
 
+### Analytics
++ [Listar](#listar-analytics)
++ [Ver](#ver-analytics)
++ [Crear](#crear-analytics)
+
 ### [Interfaces](#interfaces-1)
 
 ### [Despliegue](#despliegue-1)
@@ -395,6 +400,34 @@ Requiere rol| agent
 > Omitir el parametro `:name` para que devuelva un array con los nombres de los bots.
 > Cualquier caracter que no esté en el rango [a-b] es eliminado del parametro `:name`. Ademas `:name` debe tener entre 1 y 10 caracteres.
 
+Analytics
+---------
+
+### Listar Analytics
+
+|Endpoint| `/analytics/`|
+---|---|
+Método      |`GET`
+Devuelve    |[`Analytics[]`](#analytics-2)
+Requiere rol| agent
+
+### Ver Analytics
+
+|Endpoint| `/analytics/:id`|
+---|---|
+Método      |`GET`
+Devuelve    |[`Analytics`](#analytics-2)
+Requiere rol| agent
+
+### Crear Analytics
+
+|Endpoint| `/analytics/`|
+---|---|
+Método      |`POST`
+Body (json) | [`AnalyticsRequest`](#analyticsrequest)
+Devuelve    |`Analytics`
+Requiere rol| agent
+
 ## Interfaces
 
 ### Player
@@ -643,11 +676,33 @@ Estado de transferencia de fichas
 }
 ```
 
+
 ### PlayerPasswordResetRequest
 ```typescript
 {
   new_password: string
   user_id: string
+}
+```
+
+### Analytics
+```typescript
+{
+  id: string
+  source: string
+  event: string
+  data?: object
+  created_at: datetime    // 2024-01-29T18:14:41.534Z
+  updated_at: datetime    // 2024-01-29T18:14:41.534Z
+}
+```
+
+### AnalyticsRequest
+```typescript
+{
+  source: string
+  event: string
+  data?: object
 }
 ```
 
