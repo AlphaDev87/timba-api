@@ -11,9 +11,8 @@ export class AgentController {
   static async login(req: Req, res: Res, next: NextFn) {
     try {
       const credentials: Credentials = req.body;
-      const user_agent = req.headers["user-agent"];
 
-      const token = await AgentServices.login(credentials, user_agent);
+      const token = await AgentServices.login(credentials);
 
       res.status(OK).json(apiResponse({ access: token }));
     } catch (error) {

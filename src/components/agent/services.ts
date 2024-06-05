@@ -28,10 +28,7 @@ import { UserRootUpdatableProps } from "@/types/request/agent";
 import { AlquimiaTransferService } from "@/services/alquimia-transfer.service";
 
 export class AgentServices {
-  static async login(
-    credentials: Credentials,
-    user_agent?: string,
-  ): Promise<TokenPair> {
+  static async login(credentials: Credentials): Promise<TokenPair> {
     const { username, password } = credentials;
     const agent = await PlayersDAO.getByUsername(username);
     if (!agent) throw new NotFoundException();
@@ -44,8 +41,8 @@ export class AgentServices {
       throw new CustomError(ERR.INVALID_CREDENTIALS);
 
     const authServices = new AuthServices();
-    authServices.invalidateTokensByUserAgent(agent.id, user_agent);
-    const { tokens } = await authServices.tokens(agent.id, user_agent);
+    // authServices.invalidateTokensByUserAgent(agent.id, user_agent);
+    const { tokens } = await authServices.tokens(agent.id);
     return tokens;
   }
 

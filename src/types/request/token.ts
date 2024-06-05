@@ -5,7 +5,6 @@ export interface TokenUpdatableProps {
 
 export interface CreateTokenDetails {
   player_id: string;
-  user_agent?: string;
 }
 
 export interface TokenLookUpBy {
