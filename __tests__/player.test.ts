@@ -259,7 +259,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
     it.each`
       field               | value    | message
       ${"page"}           | ${"-1"}  | ${"page must be greater than 0"}
-      ${"items_per_page"} | ${"0"}   | ${"items_per_page must be greater than 1"}
+      ${"items_per_page"} | ${"l"}   | ${"items_per_page must be greater than 0"}
       ${"sort_column"}    | ${"foo"} | ${"Invalid sort_column"}
       ${"sort_direction"} | ${"baz"} | ${"sort_direction must be 'asc' or 'desc'"}
     `("Shloud return 400", async ({ field, value, message }) => {
@@ -286,9 +286,8 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
         .set("Authorization", `Bearer ${playerAccessToken}`);
 
       expect(response.status).toBe(OK);
-      expect(response.body.data.players).toBeInstanceOf(Array);
-      expect(response.body.data.totalPlayers).toBeGreaterThanOrEqual(0);
-      expect(Object.keys(response.body.data.players[0])).toEqual([
+      expect(response.body.data).toBeInstanceOf(Array);
+      expect(Object.keys(response.body.data[0])).toEqual([
         "id",
         "panel_id",
         "username",
@@ -303,7 +302,10 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
         "status",
         "created_at",
         "updated_at",
+        "BankAccounts",
+        "roles",
       ]);
+      expect(response.body.data[0].password).toBe("********");
     });
 
     it.each`

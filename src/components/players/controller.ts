@@ -56,6 +56,7 @@ export class PlayersController {
       const player = await playersServices.show<Player>(playerId);
 
       if (player) {
+        player[0] = hidePassword(player[0]);
         res.status(OK).json(apiResponse(player));
       } else {
         res

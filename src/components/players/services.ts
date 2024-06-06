@@ -3,9 +3,8 @@ import { AuthServices } from "../auth/services";
 import { PlayersDAO } from "@/db/players";
 import {
   Credentials,
-  PlayerOrderBy,
   PlayerRequest,
-  PlayerUpdateRequest
+  PlayerUpdateRequest,
 } from "@/types/request/players";
 import { LoginResponse, PlainPlayerResponse } from "@/types/response/players";
 import { compare, hash } from "@/utils/crypt";
@@ -187,15 +186,6 @@ export class PlayerServices extends ResourceService {
     } catch (e) {
       logtailLogger.warn(e, "Error sending email");
     }
-  }
-
-  async update(player_id: string, request: PlayerUpdateRequest) {
-    const player = await PlayersDAO.update(player_id, request);
-
-    if (player.status === PLAYER_STATUS.BANNED)
-      await TokenDAO.update({ player_id }, { invalid: true });
-
-    return hidePassword(player);
   }
 
   async update(player_id: string, request: PlayerUpdateRequest) {
