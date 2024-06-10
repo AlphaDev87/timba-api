@@ -777,10 +777,8 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - [Bot Whatsapp](https://bot-whatsapp.netlify.app/) ✅
   + [Diagrama Flujo](https://www.figma.com/file/rtxhrNqQxdEdYzOfPl1mRc/Whatsapp-Bot?type=whiteboard&node-id=0%3A1&t=5ACojRhp99vrh24S-1)
 - Usar endpoint /auth/logout en frontend
-- Replace user_agent with [user context](https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html#token-sidejacking) to prevent JWT sidejacking 
 - Refactor calls to \*DAO.authorize\* to use same format as `PaymentsDAO.authorizeRelease()`
 
-- Aceptar guiones en Analytics.event
 - Visualizar analytics
 - Ambientes staging y prod en agent-timba y bot-timba
 - Ver version y stage en agent-timba
