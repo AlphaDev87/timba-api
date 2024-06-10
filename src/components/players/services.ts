@@ -20,6 +20,7 @@ import CONFIG, { PLAYER_STATUS } from "@/config";
 import { ForbiddenError } from "@/helpers/error";
 import { ResourceService } from "@/services/resource.service";
 import { logtailLogger } from "@/helpers/loggers";
+import { AuthResult } from "@/types/response/auth";
 
 export class PlayerServices extends ResourceService {
   constructor() {

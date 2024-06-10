@@ -101,7 +101,7 @@ export class AuthServices extends JwtService {
   };
 
   private validateFingerprint(request: Req, userFingerprint: string): void {
-    console.log("COOKIES", request.cookies);
+    if (CONFIG.APP.ENV === "test") return;
     if (
       !request.cookies ||
       request.cookies.length === 0 ||

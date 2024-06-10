@@ -7,7 +7,6 @@ import { Whatsapp } from "@/notification/whatsapp";
 import { PlayerServices } from "@/components/players/services";
 import { AuthServices } from "@/components/auth/services";
 
-const USER_AGENT = "jest_test";
 let agent: SuperAgentTest;
 let prisma: PrismaClient;
 let playerId: string;
@@ -147,7 +146,6 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/players/${playerId}`)
         .set("Authorization", `Bearer ${agentAccessToken}`)
-        .set("User-Agent", USER_AGENT)
         .send({
           first_name: "Jest",
           last_name: "Test",
@@ -162,7 +160,6 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/players/${playerId}`)
         .set("Authorization", `Bearer ${agentAccessToken}`)
-        .set("User-Agent", USER_AGENT)
         .send({
           unknown_field: "Jest",
         });
@@ -175,7 +172,6 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/players/${playerId}`)
         .set("Authorization", `Bearer ${agentAccessToken}`)
-        .set("User-Agent", USER_AGENT)
         .send({
           email: agentEmail,
         });
@@ -232,8 +228,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
     it("Should return list of players", async () => {
       const response = await agent
         .get(`/app/${CONFIG.APP.VER}/players`)
-        .set("Authorization", `Bearer ${agentAccessToken}`)
-        .set("User-Agent", USER_AGENT);
+        .set("Authorization", `Bearer ${agentAccessToken}`);
 
       expect(response.status).toBe(OK);
       expect(response.body.data.players).toBeInstanceOf(Array);
@@ -265,9 +260,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
     `("Shloud return 400", async ({ field, value, message }) => {
       const response = await agent
         .get(`/app/${CONFIG.APP.VER}/players?${field}=${value}`)
-        .set("Authorization", `Bearer ${agentAccessToken}`)
-        .set("User-Agent", USER_AGENT);
-
+        .set("Authorization", `Bearer ${agentAccessToken}`);
       expect(response.status).toBe(BAD_REQUEST);
       expect(response.body.data[0].msg).toBe(message);
     });
@@ -316,8 +309,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
     `("Shloud return 400", async ({ field, value, message }) => {
       const response = await agent
         .get(`/app/${CONFIG.APP.VER}/players?${field}=${value}`)
-        .set("Authorization", `Bearer ${agentAccessToken}`)
-        .set("User-Agent", USER_AGENT);
+        .set("Authorization", `Bearer ${agentAccessToken}`);
 
       expect(response.status).toBe(BAD_REQUEST);
       expect(response.body.data[0].msg).toBe(message);
@@ -382,7 +374,7 @@ async function setUp() {
   if (!agentUser) throw new Error("No agent found");
   agentEmail = agentUser.email;
   const authServices = new AuthServices();
-  const { tokens } = await authServices.tokens(agentUser.id, USER_AGENT);
+  const { tokens } = await authServices.tokens(agentUser.id);
   agentAccessToken = tokens.access;
 }
 

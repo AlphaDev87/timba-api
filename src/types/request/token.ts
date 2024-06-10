@@ -12,5 +12,4 @@ export interface TokenLookUpBy {
   invalid?: boolean;
   next?: string;
   player_id?: string;
-  user_agent?: string;
 }

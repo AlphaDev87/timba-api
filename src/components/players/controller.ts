@@ -124,19 +124,4 @@ export class PlayersController {
       next(error);
     }
   };
-
-  static update = async (req: Req, res: Res, next: NextFn) => {
-    try {
-      const playersServices = new PlayerServices();
-
-      const playerId = req.params.id;
-      const request: PlayerRequest = req.body;
-
-      const player = await playersServices.update(playerId, request);
-
-      res.status(OK).json(apiResponse(player));
-    } catch (error) {
-      next(error);
-    }
-  };
 }
