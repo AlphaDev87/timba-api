@@ -39,6 +39,7 @@ export class PlayersController {
   /**
    * Show single player
    */
+
   static show = async (
     req: Req,
     res: Response<any, Record<string, any>>,
@@ -55,6 +56,7 @@ export class PlayersController {
       const player = await playersServices.show<Player>(playerId);
 
       if (player) {
+        player[0] = hidePassword(player[0]);
         res.status(OK).json(apiResponse(player));
       } else {
         res
@@ -103,6 +105,21 @@ export class PlayersController {
         .setHeader("Set-Cookie", fingerprintCookie)
         .status(OK)
         .json(apiResponse(loginResponse));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  static update = async (req: Req, res: Res, next: NextFn) => {
+    try {
+      const playersServices = new PlayerServices();
+
+      const playerId = req.params.id;
+      const request: PlayerRequest = req.body;
+
+      const player = await playersServices.update(playerId, request);
+
+      res.status(OK).json(apiResponse(player));
     } catch (error) {
       next(error);
     }

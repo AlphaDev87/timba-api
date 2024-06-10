@@ -259,6 +259,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
     it.each`
       field               | value    | message
       ${"page"}           | ${"-1"}  | ${"page must be greater than 0"}
+      ${"items_per_page"} | ${"l"}   | ${"items_per_page must be greater than 0"}
       ${"sort_column"}    | ${"foo"} | ${"Invalid sort_column"}
       ${"sort_direction"} | ${"baz"} | ${"sort_direction must be 'asc' or 'desc'"}
     `("Shloud return 400", async ({ field, value, message }) => {
@@ -273,6 +274,65 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
 
     it("Should return 401", async () => {
       const response = await agent.get(`/app/${CONFIG.APP.VER}/players`);
+
+      expect(response.status).toBe(UNAUTHORIZED);
+    });
+  });
+
+  describe("GET: /players/:id", () => {
+    it("Should return player info", async () => {
+      const response = await agent
+        .get(`/app/${CONFIG.APP.VER}/players/${playerId}`)
+        .set("Authorization", `Bearer ${playerAccessToken}`);
+
+      expect(response.status).toBe(OK);
+      expect(response.body.data).toBeInstanceOf(Array);
+      expect(Object.keys(response.body.data[0])).toEqual([
+        "id",
+        "panel_id",
+        "username",
+        "password",
+        "email",
+        "first_name",
+        "last_name",
+        "date_of_birth",
+        "movile_number",
+        "country",
+        "balance_currency",
+        "status",
+        "created_at",
+        "updated_at",
+        "BankAccounts",
+        "roles",
+      ]);
+      expect(response.body.data[0].password).toBe("********");
+    });
+
+    it.each`
+      field               | value    | message
+      ${"page"}           | ${"-1"}  | ${"page must be greater than 0"}
+      ${"sort_column"}    | ${"foo"} | ${"Invalid sort_column"}
+      ${"sort_direction"} | ${"baz"} | ${"sort_direction must be 'asc' or 'desc'"}
+    `("Shloud return 400", async ({ field, value, message }) => {
+      const response = await agent
+        .get(`/app/${CONFIG.APP.VER}/players?${field}=${value}`)
+        .set("Authorization", `Bearer ${agentAccessToken}`)
+        .set("User-Agent", USER_AGENT);
+
+      expect(response.status).toBe(BAD_REQUEST);
+      expect(response.body.data[0].msg).toBe(message);
+    });
+
+    it("Should return 401", async () => {
+      const response = await agent.get(
+        `/app/${CONFIG.APP.VER}/players/${playerId}`,
+      );
+
+      expect(response.status).toBe(UNAUTHORIZED);
+    });
+
+    it("Should return 403", async () => {
+      const response = await agent.get(`/app/${CONFIG.APP.VER}/players/abcd`);
 
       expect(response.status).toBe(UNAUTHORIZED);
     });
