@@ -62,12 +62,5 @@ depositsRouter.get(
   throwIfBadRequest,
   DepositController.index,
 );
-// depositsRouter.post(
-//   "/deposit/:id",
-//   validateDepositUpdate(),
-//   checkExact(),
-//   throwIfBadRequest,
-//   DepositController.create,
-// );
 
 export default depositsRouter;
