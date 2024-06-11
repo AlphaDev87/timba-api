@@ -494,8 +494,8 @@ Requiere rol| agent
 ### PlayerListResponse
 ```typescript
 {
-  players: Player[]
-  totalPlayers: number
+  result: Player[]
+  total: number
 }
 ```
 

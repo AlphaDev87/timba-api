@@ -2,6 +2,8 @@
 
 ### Changed
 - Paginate `/analytics`
+- Add Player to GET `/deposit/:id` response
+- Normalize output of resource listing endpoints to `{ result, total }`
 
 ## [1.0.0] - 2024-05-29
 

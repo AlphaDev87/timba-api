@@ -27,10 +27,10 @@ export class PlayersController {
         search,
         orderBy,
       );
-      const safePlayers = players.map((p) => hidePassword(p));
-      const totalPlayers = await PlayersDAO.count;
+      const result = players.map((p) => hidePassword(p));
+      const total = await PlayersDAO.count;
 
-      res.status(OK).json(apiResponse({ players: safePlayers, totalPlayers }));
+      res.status(OK).json(apiResponse({ result, total }));
     } catch (error) {
       next(error);
     }

@@ -29,6 +29,7 @@ export class AnalyticsDAO {
             OR: [
               { source: { contains: search } },
               { event: { contains: search } },
+              { data: { string_contains: search } },
             ],
           },
         },
