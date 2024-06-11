@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { SuperAgentTest } from "supertest";
-import { CREATED } from "http-status";
+import { BAD_REQUEST, CREATED } from "http-status";
 import { initAgent } from "./helpers";
 import CONFIG from "@/config";
 
@@ -63,7 +63,7 @@ describe("[UNIT] => ANALYTICS ROUTER", () => {
       const response = await agent.get(`/app/${CONFIG.APP.VER}/analytics`);
 
       expect(response.status).toBe(200);
-      expect(Object.keys(response.body.data[0])).toEqual([
+      expect(Object.keys(response.body.data.result[0])).toEqual([
         "id",
         "source",
         "event",
@@ -71,6 +71,20 @@ describe("[UNIT] => ANALYTICS ROUTER", () => {
         "created_at",
         "updated_at",
       ]);
+    });
+
+    it.each`
+      field               | value    | message
+      ${"page"}           | ${"-1"}  | ${"page must be greater than 0"}
+      ${"sort_column"}    | ${"foo"} | ${"Invalid sort_column"}
+      ${"sort_direction"} | ${"baz"} | ${"sort_direction must be 'asc' or 'desc'"}
+    `("Shloud return 400", async ({ field, value, message }) => {
+      const response = await agent.get(
+        `/app/${CONFIG.APP.VER}/analytics?${field}=${value}`,
+      );
+
+      expect(response.status).toBe(BAD_REQUEST);
+      expect(response.body.data[0].msg).toBe(message);
     });
   });
 

@@ -781,7 +781,6 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 
 - Visualizar analytics
 - Ambientes staging y prod en agent-timba y bot-timba
-- Ver version y stage en agent-timba
 
 ### Fichas insuficientes
 

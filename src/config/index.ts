@@ -111,8 +111,9 @@ const CONFIG = {
     },
     ENVIRONMENTS: {
       TEST: "test",
-      DEV: "dev",
+      DEV: "development",
       PRODUCTION: "production",
+      STAGING: "staging",
     },
     PLAYER_WELCOME_MESSAGE: process.env.PLAYER_WELCOME_MESSAGE || "",
   },
