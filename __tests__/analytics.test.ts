@@ -26,7 +26,6 @@ describe("[UNIT] => ANALYTICS ROUTER", () => {
         .post(`/app/${CONFIG.APP.VER}/analytics`)
         .send(analyticsRequest);
 
-      console.log(response.body);
       expect(response.status).toBe(CREATED);
       expect(Object.keys(response.body.data)).toEqual([
         "id",
