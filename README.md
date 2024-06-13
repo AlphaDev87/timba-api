@@ -797,10 +797,6 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Usar endpoint /auth/logout en frontend
 - Refactor calls to \*DAO.authorize\* to use same format as `PaymentsDAO.authorizeRelease()`
 
-- Visualizar analytics
-  + Contar por evento: onSupportClick, onGoClick, onPageLoad
-  + agrupar por source
-  + agregar JSON.stringify(data)
 - Ambientes staging y prod en agent-timba y bot-timba
 
 ### Fichas insuficientes
