@@ -779,9 +779,9 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Usar endpoint /auth/logout en frontend
 - Refactor calls to \*DAO.authorize\* to use same format as `PaymentsDAO.authorizeRelease()`
 
-- Visualizar analytics
-- Ambientes staging y prod en agent-timba y bot-timba
-- Ver version y stage en agent-timba
+- Ambientes staging y prod en, bot-timba y alquimia
+- Cambiar start-staging por start:production en timba-api scripts
+- Boletear todo lo relacionado al bot de este repo
 
 ### Fichas insuficientes
 
