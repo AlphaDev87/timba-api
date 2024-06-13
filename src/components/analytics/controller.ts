@@ -47,4 +47,15 @@ export class AnalyticsController {
       next(e);
     }
   }
+
+  static async summary(_req: Req, res: Res, next: NextFn) {
+    try {
+      const analyticsServices = new AnalyticsServices();
+      const summary = await analyticsServices.summary();
+
+      res.status(OK).send(apiResponse(summary));
+    } catch (e) {
+      next(e);
+    }
+  }
 }

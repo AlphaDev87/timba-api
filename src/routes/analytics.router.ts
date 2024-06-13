@@ -20,6 +20,7 @@ analyticsRouter.get(
   throwIfBadRequest,
   AnalyticsController.index,
 );
+analyticsRouter.get("/summary", AnalyticsController.summary);
 analyticsRouter.get(
   "/:id",
   validateId(),

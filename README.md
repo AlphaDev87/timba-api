@@ -78,6 +78,7 @@ Comes with:
 + [Listar](#listar-analytics)
 + [Ver](#ver-analytics)
 + [Crear](#crear-analytics)
++ [Resumen](#resumen-de-analytics)
 
 ### [Interfaces](#interfaces-1)
 
@@ -462,6 +463,14 @@ Body (json) | [`AnalyticsRequest`](#analyticsrequest)
 Devuelve    |`Analytics`
 Requiere rol| agent
 
+### Resumen de Analytics
+
+|Endpoint| `/analytics/summary`|
+---|---|
+Método      |`POST`
+Devuelve | [`AnalyticsSummary[]`]()
+
+
 ## Interfaces
 
 ### Player
@@ -746,6 +755,15 @@ Estado de transferencia de fichas
 }
 ```
 
+### AnalyticsSummary
+```typescript
+{
+  _count: { event: number };
+  source: string;
+  event: string;
+}
+```
+
 ## Load Testing
 
 ### Ddosify
@@ -780,6 +798,9 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Refactor calls to \*DAO.authorize\* to use same format as `PaymentsDAO.authorizeRelease()`
 
 - Visualizar analytics
+  + Contar por evento: onSupportClick, onGoClick, onPageLoad
+  + agrupar por source
+  + agregar JSON.stringify(data)
 - Ambientes staging y prod en agent-timba y bot-timba
 
 ### Fichas insuficientes

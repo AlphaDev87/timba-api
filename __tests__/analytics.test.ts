@@ -87,6 +87,22 @@ describe("[UNIT] => ANALYTICS ROUTER", () => {
     });
   });
 
+  describe("GET: /summary", () => {
+    it("should return a summary of analytics", async () => {
+      const response = await agent.get(
+        `/app/${CONFIG.APP.VER}/analytics/summary`,
+      );
+
+      expect(response.status).toBe(200);
+      expect(Object.keys(response.body.data[0])).toEqual([
+        "_count",
+        "source",
+        "event",
+      ]);
+      expect(Object.keys(response.body.data[0]._count)).toEqual(["event"]);
+    });
+  });
+
   describe("GET: /:id", () => {
     it("should retrieve object by id", async () => {
       const response = await agent.get(
