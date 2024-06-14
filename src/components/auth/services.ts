@@ -111,12 +111,16 @@ export class AuthServices extends JwtService {
       request.cookies.length === 0 ||
       !(CONFIG.AUTH.FINGERPRINT_COOKIE in request.cookies)
     )
+      // TODO
+      // use UnauthorizedError
       throw new CustomError(ERR.FINGERPRINT_COOKIE_NOT_FOUND);
 
     const cookie = request.cookies[CONFIG.AUTH.FINGERPRINT_COOKIE];
     const hash = createHash("sha256").update(cookie).digest("hex");
 
     if (hash !== userFingerprint)
+      // TODO
+      // use UnauthorizedError
       throw new CustomError(ERR.INVALID_FINGERPRINT);
   }
 

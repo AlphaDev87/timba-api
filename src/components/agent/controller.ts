@@ -12,9 +12,14 @@ export class AgentController {
     try {
       const credentials: Credentials = req.body;
 
-      const token = await AgentServices.login(credentials);
+      const { tokens, fingerprintCookie } = await AgentServices.login(
+        credentials,
+      );
 
-      res.status(OK).json(apiResponse({ access: token }));
+      res
+        .setHeader("Set-Cookie", fingerprintCookie)
+        .status(OK)
+        .json(apiResponse({ access: tokens }));
     } catch (error) {
       next(error);
     }

@@ -141,10 +141,4 @@ export enum PLAYER_STATUS {
   BANNED = "BLOQUEADO",
 }
 
-export enum ANALYTICS_EVENTS {
-  ON_SUPPORT_CLICK = "onSupportClick",
-  ON_GO_CLICK = "onGoClick",
-  ON_PAGE_LOAD = "onPageLoad",
-}
-
 export default CONFIG;

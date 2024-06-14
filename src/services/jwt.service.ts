@@ -112,7 +112,8 @@ export class JwtService {
       CONFIG.AUTH.FINGERPRINT_COOKIE +
       "=" +
       userFingerprint +
-      "; SameSite=Strict; HttpOnly; Secure";
+      "; SameSite=Strict; HttpOnly; Secure; " +
+      `Path=/app/${CONFIG.APP.VER}`;
     this.fingerprintCookie = fingerprintCookie;
     this.userFingerprintSha256 = createHash("sha256")
       .update(userFingerprint)
