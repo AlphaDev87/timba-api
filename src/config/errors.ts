@@ -93,7 +93,7 @@ export const ERR: { [key: string]: ErrorData } = {
     description: "Deposito ya existe",
   },
   FINGERPRINT_COOKIE_NOT_FOUND: {
-    status: 400,
+    status: 401,
     code: "cookie_not_found",
     description: "Fingerprint cookie ausente",
   },
