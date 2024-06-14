@@ -1,3 +1,8 @@
+## [1.0.0] - 2024-06-13
+
+### Added
+- GET `/analytics/summary`
+
 ## [1.0.0] - 2024-06-11
 
 ### Changed
