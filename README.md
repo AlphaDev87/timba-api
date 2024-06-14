@@ -467,7 +467,7 @@ Requiere rol| agent
 
 |Endpoint| `/analytics/summary`|
 ---|---|
-Método      |`POST`
+Método      |`GET`
 Devuelve | [`AnalyticsSummary[]`]()
 
 
