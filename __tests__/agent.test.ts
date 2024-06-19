@@ -626,7 +626,6 @@ describe("[UNIT] => AGENT ROUTER", () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/agent/reset-player-password`)
         .set("Authorization", `Bearer ${access}`)
-
         .send({
           new_password: "1234",
           user_id: player.id,
@@ -640,7 +639,6 @@ describe("[UNIT] => AGENT ROUTER", () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/agent/reset-player-password`)
         .set("Authorization", `Bearer ${access}`)
-
         .send({
           new_password: "1234",
           user_id: player.id,
@@ -655,7 +653,6 @@ describe("[UNIT] => AGENT ROUTER", () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/agent/reset-player-password`)
         .set("Authorization", `Bearer ${access}`)
-
         .send({
           new_password: "1234",
           user_id: userWithAgentRole.id,

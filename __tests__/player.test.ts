@@ -7,6 +7,7 @@ import { Whatsapp } from "@/notification/whatsapp";
 import { PlayerServices } from "@/components/players/services";
 import { AuthServices } from "@/components/auth/services";
 
+const USER_AGENT = "jest_test";
 let agent: SuperAgentTest;
 let prisma: PrismaClient;
 let playerId: string;
