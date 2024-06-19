@@ -301,6 +301,7 @@ Requiere rol| agent
 |Endpoint| `/transactions/deposit/:id`|
 ---|---|
 Método      |`GET`
+Query string| [`ResourceListQueryString`](#ResourceListQueryString)
 Devuelve    |[`Deposit[]`](#deposit)
 Requiere rol| agent
 

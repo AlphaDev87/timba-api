@@ -4,6 +4,8 @@ import { isKeyOfNestedObject } from "../players/validators";
 
 const isDashedAlphaNumeric = (value: string) => !/[^a-zA-Z0-9\-_]/.test(value);
 
+const isDashedAlphaNumeric = (value: string) => !/[^a-zA-Z0-9\-_]/.test(value);
+
 export const validateId = () =>
   checkSchema({
     id: {
