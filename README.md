@@ -912,7 +912,6 @@ $ ddosify -t 'http://host.docker.internal:8080/app/v1/endpoint \
 - Refactor calls to \*DAO.authorize\* to use same format as `PaymentsDAO.authorizeRelease()`
 
 - Ambientes staging y prod en, bot-timba y alquimia
-- Cambiar start-staging por start:production en timba-api scripts
 - Generar allowed origin dinamicamente en producción para incluir localhost
 - Caracter invisible en metricas bot
 

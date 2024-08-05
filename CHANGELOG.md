@@ -1,3 +1,9 @@
+## [1.0.0] - 2024-07-31
+
+### Changed
+- Renamed `prisma:generate:dev` to `prisma:generate:development`
+- Renamed `start` to `start:development` for consistency
+
 ## [1.0.0] - 2024-07-26
 
 ### Added
