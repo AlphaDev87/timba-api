@@ -3,6 +3,7 @@ import {
   randomFillSync,
   createCipheriv,
   createDecipheriv,
+  createHash,
 } from "crypto";
 import bcrypt from "bcrypt";
 import CONFIG from "@/config";
@@ -13,11 +14,22 @@ import { CustomError } from "@/helpers/error/CustomError";
  * @description Create a bcrypt hash for a string.
  * @param {string} value
  * @returns {Promise<any>}
+ * @limitations Only hashes strings up to 72 bytes long
  */
 export const hash = async (value: string): Promise<string> => {
   const saltRounds = parseInt(CONFIG.AUTH.SALT_ROUNDS, 10);
 
   return bcrypt.hash(value, saltRounds);
+};
+
+/**
+ * Hash a string using node's crypto.
+ * @returns hex-encoded string.
+ */
+export const cryptoHash = (string: string): string => {
+  const hash = createHash("sha256");
+  hash.update(string);
+  return hash.digest("hex");
 };
 
 /**
