@@ -35,6 +35,10 @@ export class BanxicoService {
 
   /**
    * @returns cookie value or undefined if not found
+   * Posibles respuestas del banco:
+   * 1. Lo sentimos, por el momento no es posible generar el CEP. Con la información proporcionada se identificó el siguiente pago: <tabla con datos del deposito>
+   *
+   * 2.
    */
   private async prepareCepDownload(
     deposit: Deposit,
@@ -46,6 +50,7 @@ export class BanxicoService {
         validateStatus: () => true,
         responseType: "text",
       });
+
       if (
         response.status !== 200 ||
         (response.data as string).includes("Operación no encontrada")
@@ -199,7 +204,7 @@ export class BanxicoService {
     const bankAccount = await AgentConfigDAO.getBankAccount();
     if (!bankAccount) throw new CustomError(ERR.AGENT_BANK_ACCOUNT_UNSET);
 
-    const day = deposit.date.getDate(),
+    const day = deposit.date.getDate().toString().padStart(2, "0"),
       month = (deposit.date.getMonth() + 1).toString().padStart(2, "0"),
       year = deposit.date.getFullYear(),
       date = `${day}-${month}-${year}`,
@@ -213,7 +218,7 @@ export class BanxicoService {
     data.append("cuenta", `${bankAccount.clabe}`);
     data.append("receptorParticipante", "0");
     data.append("monto", `${deposit.amount}`);
-    data.append("captcha", "c");
+    data.append("captcha", "");
     data.append("tipoConsulta", queryType);
 
     return data;
