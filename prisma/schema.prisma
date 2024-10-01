@@ -270,3 +270,9 @@ model BotHistory {
 
   @@map("BOT_HISTORY")
 }
+
+model DepositNotifications {
+  hash String @id @db.VarChar(64)
+
+  @@map("DEPOSIT_NOTIFICATIONS")
+}
