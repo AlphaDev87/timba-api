@@ -8,7 +8,9 @@ export class BotServices {
   private static BASE_URL = CONFIG.INTERNAL.BOT_API_BASE_URL;
 
   static showNames(): string[] {
-    const paths = CONFIG.BOT.QR_PATHS.trim().split("\n");
+    const paths = CONFIG.BOT.QR_PATHS.trim()
+      .split(",")
+      .map((path) => path.trim());
     const names = paths.map(
       (path) => path.split("/").pop()?.split(".")[0] ?? "",
     );
