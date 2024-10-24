@@ -10,11 +10,15 @@ import CONFIG from "./config";
 import { AuthServices } from "./components/auth/services";
 import { exposeHeaders } from "./middlewares/exposeHeaders";
 import { corsOptions } from "./middlewares/corsOptions";
+import frontRouter from "./routes/front.router";
 import * as errorHandler from "@/middlewares/errorHandler";
 import mainRouter from "@/routes";
 
 export const createApp = (): express.Application => {
   const app = express();
+
+  // Serve static assets (casino frontend)
+  app.use(express.static(CONFIG.STATIC.TIMBA_PATH!));
 
   app.use(cors(corsOptions));
   app.use(exposeHeaders);
@@ -34,6 +38,7 @@ export const createApp = (): express.Application => {
 
   // API Routes (/app/v1/....)
   app.use(cookieParser());
+  app.use("/home", frontRouter);
   app.use(`/app/${CONFIG.APP.VER}`, mainRouter);
 
   // Error Middleware
