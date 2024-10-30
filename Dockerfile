@@ -1,16 +1,19 @@
 FROM node:22-alpine AS base
 
-# Install dependencies only when needed
-FROM base AS deps
+# Update packages on base image (alpine comes with vulnerable version of
+# libssl: libssl@3.3.2-r0)
+RUN apk update && apk upgrade
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
+
+# Dependencies
+FROM base AS deps
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* ./
+COPY package.json yarn.lock ./
 RUN yarn --frozen-lockfile
 
-# Rebuild the source code only when needed
+# Builder
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -18,8 +21,10 @@ COPY . .
 
 RUN npx prisma generate
 RUN yarn build
+RUN rm -r node_modules
+RUN yarn --frozen-lockfile --production
 
-# Production image, copy all the files and run next
+# Runner
 FROM base AS runner
 WORKDIR /app
 
