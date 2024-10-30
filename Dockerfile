@@ -33,20 +33,10 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
 
-# Set the correct permission for prerender cache
-# RUN mkdir .next
-# RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-# COPY --from=builder --chown=appuser:nodejs /app/.next/standalone ./
-# COPY --from=builder --chown=appuser:nodejs /app/.next/static ./.next/static
-
 USER appuser
 
 EXPOSE 3000
 
 ENV PORT=3000
 
-# ENV HOSTNAME="0.0.0.0"
 CMD ["yarn", "start:prod"]
