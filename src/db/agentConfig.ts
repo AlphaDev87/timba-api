@@ -18,7 +18,7 @@ export class AgentConfigDAO {
 
   static async update(data: RootUpdatableProps) {
     const config = await this.getConfig();
-    if (!config) throw new CustomError(ERR.AGENT_CONFIG_UNSET);
+    if (!config) throw new CustomError(ERR.AGENT_UNSET);
     return await prisma.agentConfig.update({ where: { id: config.id }, data });
   }
 }

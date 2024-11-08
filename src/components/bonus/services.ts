@@ -87,7 +87,7 @@ export class BonusServices extends ResourceService {
     deposit_amount: number,
     bonus_id?: string,
   ): Promise<Bonus | undefined> {
-    if (!bonus_id) return;
+    if (!bonus_id || deposit_amount <= 0) return;
     const bonus = await BonusDAO._getById(bonus_id);
     if (!bonus) throw new NotFoundException("Bonus not found");
 

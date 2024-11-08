@@ -77,6 +77,10 @@ export class DepositController {
     try {
       const deposit = await depositServices.update(player, deposit_id, request);
       deposit.Player = hidePassword(deposit.Player);
+      const bonus = await bonusServices.load(
+        deposit.amount,
+        deposit.Player.Bonus?.id,
+      );
 
       if (
         deposit.CoinTransfer?.status === COIN_TRANSFER_STATUS.COMPLETED ||
@@ -84,16 +88,13 @@ export class DepositController {
       )
         return res
           .status(OK)
-          .json(apiResponse({ deposit, coinTransfer: deposit.CoinTransfer }));
+          .json(
+            apiResponse({ deposit, bonus, coinTransfer: deposit.CoinTransfer }),
+          );
 
       const coinTransfer = await useTransaction((tx) =>
         coinTransferServices.agentToPlayer(deposit!.coin_transfer_id, tx),
       ).catch(() => undefined);
-
-      const bonus = await bonusServices.load(
-        deposit.amount,
-        deposit.Player.Bonus?.id,
-      );
 
       return res.status(OK).json(apiResponse({ deposit, bonus, coinTransfer }));
     } catch (e) {

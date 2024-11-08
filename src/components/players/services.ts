@@ -154,7 +154,7 @@ export class PlayerServices extends ResourceService {
   private async updatePlayerPassword(
     credentials: Credentials,
     id: number,
-    email: string,
+    email?: string,
   ) {
     return PlayersDAO.upsert(
       credentials.username,
@@ -163,7 +163,7 @@ export class PlayerServices extends ResourceService {
         username: credentials.username,
         password: await hash(credentials.password),
         panel_id: id,
-        email,
+        email: email || `${credentials.username}@example.com`,
         roles: [CONFIG.ROLES.PLAYER],
       },
     );

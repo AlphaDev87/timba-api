@@ -36,69 +36,68 @@ Comes with:
 <details>
   <summary>Cuentas Bancarias</summary>
   
-  + [Ver Cuentas Bancarias](#ver-cuentas-bancarias-)
+  + [Ver Cuentas Bancarias](#ver-cuentas-bancarias-) ✅
   + [Crear Cuenta Bancaria](#crear-cuenta-bancaria-) ✅
-  + [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-)
-  + [Eliminar Cuenta Bancaria](#eliminar-cuenta-bancaria-)
+  + [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-) ❌
+  + [Eliminar Cuenta Bancaria](#eliminar-cuenta-bancaria-) ❌
 </details>
 
 <details>
   <summary>Depositos (jugador ➡ plataforma)</summary>
 
   + [Cargar Fichas](#cargar-fichas-) (instanciar depósito) ✅
-  + [Ver Depósitos Pendientes](#ver-depósitos-pendientes-)
-  + [Ver Depósito](#ver-depósito-)
-  + [Listar Depósitos](#listar-depósitos-)
-  + [Cambiar Estado del Depósito](#cambiar-estado-del-depósito-)
-  + [Ver Cuenta Bancaria de Alquimia](#ver-cuenta-alquimia-)
+  + [Ver Depósitos Pendientes](#ver-depósitos-pendientes-) ✅
+  + [Ver Depósito](#ver-depósito-) ✅
+  + [Listar Depósitos](#listar-depósitos-) ✅
+  + [Cambiar Estado del Depósito](#cambiar-estado-del-depósito-) ✅
+  + [Ver Cuenta Bancaria de Alquimia](#ver-cuenta-alquimia-) ✅
 </details>
 
 <details>
   <summary>Pagos (plataforma ➡ jugador)</summary>
 
   + [Retirar Premios](#retirar-premios-) (instanciar pago) ✅
-  + [Listar Pagos](#listar-pagos-)
+  + [Listar Pagos](#listar-pagos-) ✅
 </details>
 
 <details>
   <summary>Agente</summary>
 
-  + [Login de Agente](#login-agente)
-  + [Marcar Pago Como Completado](#marcar-pago-como-completado-)
-  + [Liberar Pago](#liberar-pago-)
-  + [Ver QR](#ver-qr-)
-  + [Ver Cuenta Bancaria](#ver-cuenta-bancaria-)
-  + [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-)
-  + [Ver Balance Casino](#ver-balance-casino-)
-  + [Ver Balance Alquimia](#ver-balance-alquimia-)
-  + [Indicar Que El Agente Esta De Guardia](#setear-guardia-)
-  + [Ver Estado De Guardia](#ver-guardia-)
-  + [Ver Números de Soporte](#ver-números-de-soporte-)
-  + [Actualizar Números de Soporte](#actualizar-números-de-soporte-)
-  + [Cambiar Contraseña de Jugador](#cambiar-contraseña-de-jugador-)
+  + [Login de Agente](#login-agente) ✅
+  + [Marcar Pago Como Completado](#marcar-pago-como-completado-) ✅
+  + [Liberar Pago](#liberar-pago-) ✅
+  + [Ver Cuenta Bancaria](#ver-cuenta-bancaria-) ✅
+  + [Actualizar Cuenta Bancaria](#actualizar-cuenta-bancaria-) ✅
+  + [Ver Balance Casino](#ver-balance-casino-) ✅
+  + [Ver Balance Alquimia](#ver-balance-alquimia-) ✅
+  + [Indicar Que El Agente Esta De Guardia](#setear-guardia-) ❌
+  + [Ver Estado De Guardia](#ver-guardia-) ❌
+  + [Ver Números de Soporte](#ver-números-de-soporte-) ✅
+  + [Actualizar Números de Soporte](#actualizar-números-de-soporte-) ✅
+  + [Cambiar Contraseña de Jugador](#cambiar-contraseña-de-jugador-) ✅
 </details>
 
 <details>
   <summary>Bot</summary>
 
-  + [Ver QR](#ver-qr-)
-  + [Ver bots](#ver-qr-)
-  + [Blacklist](#blacklist-)
-  + [Ver Blacklist](#ver-blacklist-)
-  + [Encender / Apagar](#encender--apagar-)
-  + [Ver Estado](#ver-estado-)
+  + [Ver QR](#ver-qr-) ✅
+  + [Ver bots](#ver-qr-) ✅
+  + [Blacklist](#blacklist-) ✅
+  + [Ver Blacklist](#ver-blacklist-) ✅
+  + [Encender / Apagar](#encender--apagar-) ✅
+  + [Ver Estado](#ver-estado-) ✅
 </details>
 
 <details>
 <summary>Bot History</summary>
 
-  + [Listar Bot History](#listar-bot-history)
+  + [Listar Bot History](#listar-bot-history) ✅
 </details>
 
 <details>
   <summary>Auth</summary>
 
-  + [Refrescar Token](#refrescar-token)
+  + [Refrescar Token](#refrescar-token) ❌
   + [Logout](#logout-) ✅
   + [Olvidé mi contraseña](#olvide-mi-contraseña)
   + [Reestablecer contraseña](#reestablecer-contraseña)
@@ -108,34 +107,34 @@ Comes with:
 <details>
   <summary>Analytics</summary>
 
-  + [Listar](#listar-analytics)
-  + [Ver](#ver-analytics)
-  + [Crear](#crear-analytics)
-  + [Resumen](#resumen-de-analytics)
+  + [Listar](#listar-analytics) ✅
+  + [Ver](#ver-analytics) ❌
+  + [Crear](#crear-analytics) ✅
+  + [Resumen](#resumen-de-analytics) ✅
 </details>
 
 <details>
   <summary>Bonus</summary>
 
-  + [Listar Bonos](#listar-bonos-)
-  + [Ver Bono](#ver-bono-)
-  + [Crear Bono](#crear-bono-)
-  + [Canjear Bono](#canjear-bono-)
+  + [Listar Bonos](#listar-bonos-)❓
+  + [Ver Bono](#ver-bono-) ❌
+  + [Crear Bono](#crear-bono-) ✅
+  + [Canjear Bono](#canjear-bono-) ✅
 </details>
 
 <details>
   <summary>Transferencias de Fichas</summary>
 
-  + [Liberar Pendientes](#liberar-fichas-pendientes-)
-  + [Ver Total de Transferencias Pendientes](#ver-total-de-transferencias-pendientes-)
+  + [Liberar Pendientes](#liberar-fichas-pendientes-) ✅
+  + [Ver Total de Transferencias Pendientes](#ver-total-de-transferencias-pendientes-) ✅
 </details>
 
 <details>
   <summary>Cajeros</summary>
 
-  + [Listar Jugadores de Cajero](#listar-jugadores-de-cajero-)
-  + [Ver Jugador de Cajero](#ver-jugador-de-cajero-)
-  + [Ver Reporte General](#ver-reporte-general-)
+  + [Listar Jugadores de Cajero](#listar-jugadores-de-cajero-) ✅
+  + [Ver Jugador de Cajero](#ver-jugador-de-cajero-) ✅
+  + [Ver Reporte General](#ver-reporte-general-) ✅
   + [Ver Balance de Cajero](#ver-balance-de-cajero-)
   + [Cobrar Ganancias](#cobrar-ganancias-)
   + [Actualizar Alias](#actualizar-alias-)
