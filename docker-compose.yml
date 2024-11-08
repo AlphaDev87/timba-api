@@ -13,6 +13,19 @@ services:
     ports:
       - 3307:3306
 
+  db-timba-front:
+    image: mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: timba2024root
+      MARIADB_USER: timba
+      MARIADB_PASSWORD: timba2024
+      MARIADB_DATABASE: timba-dev
+    volumes:
+      - ./mariadb-data2:/var/lib/mysql
+    ports:
+      - 3309:3306
+
   adminer:
     image: adminer
     restart: unless-stopped
