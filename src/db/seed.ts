@@ -6,6 +6,8 @@ import { CasinoTokenService } from "@/services/casino-token.service";
 
 const prisma = new PrismaClient();
 
+const INTERACTIVE = false;
+
 async function ensureRolesExist() {
   const roles = Object.values(CONFIG.ROLES);
   const dbRoles = await prisma.role.findMany();
@@ -24,25 +26,81 @@ async function ensureRolesExist() {
   console.log("\nRoles OK 👍\n");
 }
 
+function requestCasinoCredentials() {
+  let casinoUsername = process.env.CASINO_PANEL_USER;
+  let casinoPassword = process.env.CASINO_PANEL_PASS;
+
+  if (!INTERACTIVE && (!casinoUsername || !casinoPassword)) {
+    console.error(
+      "Credenciales del casino no encontradas. " +
+        "Asegurate de setear CASINO_PANEL_USER y CASINO_PANEL_PASS en .env",
+    );
+    process.exit(1);
+  }
+
+  if (INTERACTIVE) {
+    do {
+      casinoUsername = readlineSync.question(
+        `Nombre de usuario del agente en el casino [${casinoUsername}]:`,
+        {
+          defaultInput: casinoUsername,
+        },
+      );
+    } while (!casinoUsername);
+    do {
+      casinoPassword = readlineSync.question(
+        `Contraseña del agente en el casino: [${casinoPassword}]:`,
+        {
+          defaultInput: casinoPassword,
+          hideEchoBack: true,
+        },
+      );
+    } while (!casinoPassword);
+  }
+  return { casinoUsername, casinoPassword };
+}
+
+function requestLocalCredentials() {
+  let localUsername = process.env.AGENT_PANEL_USERNAME;
+  let localPassword = process.env.AGENT_PANEL_PASSWORD;
+
+  if (!INTERACTIVE && (!localUsername || !localPassword)) {
+    console.error(
+      "Credenciales del agente no encontradas. " +
+        "Asegurate de setear AGENT_PANEL_USERNAME y AGENT_PANEL_PASSWORD en .env",
+    );
+    process.exit(1);
+  }
+
+  if (INTERACTIVE) {
+    do {
+      localUsername = readlineSync.question(
+        `Usuario del agente en panel propio [${localUsername}]:`,
+        {
+          defaultInput: localUsername,
+        },
+      );
+    } while (!localUsername);
+    do {
+      localPassword = readlineSync.question(
+        `Contraseña del agente en el panel propio: [${localPassword}]:`,
+        {
+          defaultInput: localPassword,
+          hideEchoBack: true,
+        },
+      );
+    } while (!localPassword);
+  }
+  return { localUsername, localPassword };
+}
+
 async function createUserRoot() {
-  const casinoUsername = readlineSync.question(
-    `Nombre de usuario del agente en el casino [${CONFIG.AUTH.CASINO_PANEL_USER}]:`,
-    {
-      defaultInput: `${CONFIG.AUTH.CASINO_PANEL_USER}`,
-    },
-  );
-  const casinoPassword = readlineSync.question(
-    `Contraseña del agente en el casino: [${CONFIG.AUTH.CASINO_PANEL_PASS}]:`,
-    {
-      defaultInput: `${CONFIG.AUTH.CASINO_PANEL_PASS}`,
-      hideEchoBack: true,
-    },
-  );
+  const { casinoUsername, casinoPassword } = requestCasinoCredentials();
 
   return await prisma.cashier.create({
     data: {
-      username: casinoUsername,
-      password: encrypt(casinoPassword),
+      username: casinoUsername!,
+      password: encrypt(casinoPassword!),
       access: "",
       refresh: "",
       panel_id: -1,
@@ -52,27 +110,22 @@ async function createUserRoot() {
 }
 
 async function updateUserRoot(userRoot: Cashier) {
-  const casinoUsername = readlineSync.question(
-    `Nombre de usuario del agente en el casino [${CONFIG.AUTH.CASINO_PANEL_USER}]:`,
-    {
-      defaultInput: `${CONFIG.AUTH.CASINO_PANEL_USER}`,
-    },
-  );
-  const casinoPassword = readlineSync.question(
-    `Contraseña del agente en el casino: [${CONFIG.AUTH.CASINO_PANEL_PASS}]:`,
-    {
-      defaultInput: `${CONFIG.AUTH.CASINO_PANEL_PASS}`,
-      hideEchoBack: true,
-    },
-  );
+  const { casinoUsername, casinoPassword } = requestCasinoCredentials();
 
   return await prisma.cashier.update({
     where: { id: userRoot.id },
     data: {
       username: casinoUsername,
-      password: encrypt(casinoPassword),
+      password: encrypt(casinoPassword!),
     },
   });
+}
+
+function requestUserConsent(message: string): boolean {
+  const consent = readlineSync.question(`${message} [Y/n]`, {
+    defaultInput: "y",
+  });
+  return consent.toLowerCase() === "y";
 }
 
 async function upsertUserRoot(): Promise<Cashier> {
@@ -84,13 +137,9 @@ async function upsertUserRoot(): Promise<Cashier> {
   if (!userRoot) {
     userRoot = await createUserRoot();
   } else {
-    const update = readlineSync.question(
-      "User root ya existe, actualizar? [Y/n]",
-      {
-        defaultInput: "y",
-      },
-    );
-    if (update.toLowerCase() === "y") userRoot = await updateUserRoot(userRoot);
+    const update =
+      !INTERACTIVE || requestUserConsent("User root ya existe, actualizar?");
+    if (update) userRoot = await updateUserRoot(userRoot);
   }
 
   const casinoTokenService = new CasinoTokenService(userRoot);
@@ -101,23 +150,12 @@ async function upsertUserRoot(): Promise<Cashier> {
 }
 
 async function createAgent(userRoot: Cashier) {
-  const localUsername = readlineSync.question(
-    "Usuario del agente en panel propio [cmex-admin]: ",
-    {
-      defaultInput: "cmex-admin",
-    },
-  );
-  const localPassword = readlineSync.question(
-    "Contraseña del agente en panel propio: ",
-    {
-      hideEchoBack: true,
-    },
-  );
+  const { localUsername, localPassword } = requestLocalCredentials();
 
-  await prisma.player.create({
+  const agent = await prisma.player.create({
     data: {
-      username: localUsername,
-      password: await hash(localPassword),
+      username: localUsername!,
+      password: await hash(localPassword!),
       panel_id: userRoot.panel_id!,
       roles: {
         connectOrCreate: {
@@ -129,27 +167,18 @@ async function createAgent(userRoot: Cashier) {
       cashier_id: userRoot.id,
     },
   });
+
+  await prisma.agentConfig.create({ data: { player_id: agent.id } });
 }
 
 async function updateAgent(agent: Player, userRoot: Cashier) {
-  const localUsername = readlineSync.question(
-    "Usuario del agente en panel propio [cmex-admin]: ",
-    {
-      defaultInput: "cmex-admin",
-    },
-  );
-  const localPassword = readlineSync.question(
-    "Contraseña del agente en panel propio: ",
-    {
-      hideEchoBack: true,
-    },
-  );
+  const { localUsername, localPassword } = requestLocalCredentials();
 
   await prisma.player.update({
     where: { id: agent.id },
     data: {
       username: localUsername,
-      password: await hash(localPassword),
+      password: await hash(localPassword!),
       panel_id: userRoot.panel_id!,
       cashier_id: userRoot.id,
     },
@@ -168,13 +197,10 @@ async function upsertAgent(userRoot: Cashier) {
       where: { id: agent.id },
       data: { cashier_id: userRoot.id },
     });
-    const update = readlineSync.question(
-      "Las credenciales del agente ya existen, actualizar? [Y/n]",
-      {
-        defaultInput: "y",
-      },
-    );
-    if (update.toLowerCase() === "y") await updateAgent(agent, userRoot);
+    const update =
+      !INTERACTIVE ||
+      requestUserConsent("Las credenciales del agente ya existen, actualizar?");
+    if (update) await updateAgent(agent, userRoot);
   }
 
   console.log("\nAgente OK 👍\n");

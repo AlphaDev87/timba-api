@@ -11,7 +11,7 @@ import {
 } from "@/types/response/agent";
 import { TokenPair } from "@/types/response/jwt";
 import { HttpService } from "@/services/http.service";
-import { NotFoundException, UnauthorizedError } from "@/helpers/error";
+import { UnauthorizedError } from "@/helpers/error";
 import { PlayersDAO } from "@/db/players";
 import CONFIG, { PAYMENT_STATUS } from "@/config";
 import { ERR } from "@/config/errors";
@@ -31,7 +31,7 @@ export class AgentServices {
   ): Promise<{ tokens: TokenPair }> {
     const { username, password } = credentials;
     const agent = await PlayersDAO.getByUsername(username);
-    if (!agent) throw new NotFoundException();
+    if (!agent) throw new CustomError(ERR.INVALID_CREDENTIALS);
 
     if (!agent.roles.some((r) => r.name === CONFIG.ROLES.AGENT))
       throw new UnauthorizedError("Solo agentes");

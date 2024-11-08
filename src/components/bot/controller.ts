@@ -14,8 +14,10 @@ export class BotController {
         const bots = BotServices.showNames();
         res.status(OK).json(apiResponse(bots));
       } else {
-        const paths = CONFIG.BOT.QR_PATHS.trim().split("\n");
-        const path = paths.find((path) => path.includes(name));
+        const paths = CONFIG.BOT.QR_PATHS.trim()
+          .split(",")
+          .map((path) => path.trim());
+        const path = paths.find((path) => path.includes(`${name}.qr.png`));
         if (!path || !existsSync(path)) {
           throw new NotFoundException(`${name}.qr.png not found`);
         }
