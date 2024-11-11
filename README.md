@@ -31,6 +31,7 @@ Comes with:
   + [Login de Jugador](#login-jugador) ✅
   + [Consultar Balance](#consultar-balance-) ✅
   + [Consultar Bono](#consultar-bono-) ✅
+  + [Ver Números de Soporte](#ver-números-de-soporte)
 </details>
 
 <details>
@@ -210,6 +211,12 @@ Devuelve    | [`Bonus[]`](#bonus-1)
 
 > **❗Nota**: devuelve un array.
 
+### Ver Números de soporte
+
+|Endpoint| `/players/support`|
+---|---|
+Método      |`GET`
+Devuelve    |[`SupportResponse`](#supportresponse)
 
 Cuentas Bancarias
 -----------------
