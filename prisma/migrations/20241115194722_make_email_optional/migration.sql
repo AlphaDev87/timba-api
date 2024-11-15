@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `PLAYERS` MODIFY `email` VARCHAR(50) NULL;
