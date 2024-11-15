@@ -2,6 +2,17 @@ import { PrismaClient, Player } from "@prisma/client";
 import { OK, UNAUTHORIZED, FORBIDDEN, BAD_REQUEST } from "http-status";
 import { SuperAgentTest } from "supertest";
 import { initAgent } from "./helpers";
+import {
+  mockSwitch,
+  prepareBotSwitchTest,
+  prepareGetBotSwitchTest,
+} from "./mocks/bot/switch";
+import {
+  mockBlacklist,
+  mockGetBlacklist,
+  prepareBotBlacklist,
+  prepareShowBlacklist,
+} from "./mocks/bot/blacklist";
 import CONFIG, { BLACKLIST_METHOD, GLOBAL_SWITCH_STATE } from "@/config";
 import { AuthServices } from "@/components/auth/services";
 
@@ -58,6 +69,8 @@ describe("[UNIT] => BOT ROUTER", () => {
   });
 
   describe("POST: /bot/switch", () => {
+    beforeAll(prepareBotSwitchTest);
+
     it("Should turn bot on", async () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/bot/switch`)
@@ -67,6 +80,7 @@ describe("[UNIT] => BOT ROUTER", () => {
         });
 
       expect(response.status).toBe(OK);
+      expect(mockSwitch).toHaveBeenCalledTimes(1);
       expect(response.body.data).toBeUndefined();
     });
 
@@ -79,6 +93,7 @@ describe("[UNIT] => BOT ROUTER", () => {
         });
 
       expect(response.status).toBe(OK);
+      expect(mockSwitch).toHaveBeenCalledTimes(2);
       expect(response.body.data).toBeUndefined();
     });
 
@@ -117,6 +132,8 @@ describe("[UNIT] => BOT ROUTER", () => {
   });
 
   describe("GET: /bot/switch", () => {
+    beforeAll(prepareGetBotSwitchTest);
+
     it("Should return switch state", async () => {
       const response = await agent
         .get(`/app/${CONFIG.APP.VER}/bot/switch`)
@@ -144,6 +161,8 @@ describe("[UNIT] => BOT ROUTER", () => {
   });
 
   describe("POST: /bot/blacklist", () => {
+    beforeAll(prepareBotBlacklist);
+
     it("Should add number to blacklist", async () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/bot/blacklist`)
@@ -154,6 +173,7 @@ describe("[UNIT] => BOT ROUTER", () => {
         });
 
       expect(response.status).toBe(OK);
+      expect(mockBlacklist).toHaveBeenCalledTimes(1);
       expect(response.body.data).toBeUndefined();
     });
 
@@ -167,6 +187,7 @@ describe("[UNIT] => BOT ROUTER", () => {
         });
 
       expect(response.status).toBe(OK);
+      expect(mockBlacklist).toHaveBeenCalledTimes(2);
       expect(response.body.data).toBeUndefined();
     });
 
@@ -183,12 +204,15 @@ describe("[UNIT] => BOT ROUTER", () => {
   });
 
   describe("GET: /bot/blacklist", () => {
+    beforeAll(prepareShowBlacklist);
+
     it("Should return blacklist", async () => {
       const response = await agent
         .get(`/app/${CONFIG.APP.VER}/bot/blacklist`)
         .set("Authorization", `Bearer ${agentAccessToken}`);
 
       expect(response.status).toBe(OK);
+      expect(mockGetBlacklist).toHaveReturnedTimes(1);
       expect(response.body.data.length).toBeGreaterThanOrEqual(0);
     });
 

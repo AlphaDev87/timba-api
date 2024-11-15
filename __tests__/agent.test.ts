@@ -77,7 +77,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
       expect(response.body.data).toBe("Solo agentes");
     });
 
-    it("Should return 404", async () => {
+    it("Should return 400", async () => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/agent/login`)
         .send({
@@ -85,7 +85,7 @@ describe("[UNIT] => AGENT ROUTER", () => {
           password: "1234",
         });
 
-      expect(response.status).toBe(NOT_FOUND);
+      expect(response.status).toBe(BAD_REQUEST);
     });
   });
 

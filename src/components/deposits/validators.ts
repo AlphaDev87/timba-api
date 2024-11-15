@@ -52,7 +52,12 @@ export const validateDepositRequest = () =>
       in: ["body"],
       isEmpty: false,
       isISO8601: true,
-      customSanitizer: { options: (val) => new Date(val).toISOString() },
+      customSanitizer: {
+        options: (val) => {
+          if (!val) return;
+          return new Date(val).toISOString();
+        },
+      },
       errorMessage: "invalid date",
     },
     sending_bank: {
