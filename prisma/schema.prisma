@@ -44,7 +44,7 @@ model Player {
   panel_id            Int                  @unique
   username            String               @unique @db.VarChar(100)
   password            String               @db.Text
-  email               String               @unique @db.VarChar(50)
+  email               String?              @unique @db.VarChar(50)
   first_name          String?              @db.VarChar(50)
   last_name           String?              @db.VarChar(50)
   date_of_birth       DateTime?

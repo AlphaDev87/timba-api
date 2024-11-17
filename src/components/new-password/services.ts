@@ -38,6 +38,7 @@ export class NewPasswordServices {
   }
 
   private async emailToken(player: Player, token: string) {
+    if (!player.email) return;
     const mail = new Mail();
     const subject = "Resetear contraseña";
     const body =
