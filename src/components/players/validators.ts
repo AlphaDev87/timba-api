@@ -120,8 +120,8 @@ export const validatePlayerRequest = () => {
     },
     email: {
       in: ["body"],
+      optional: true,
       isEmail: true,
-      isEmpty: false,
       trim: true,
       custom: { options: checkEmailNotInUse },
       errorMessage: "email is required",

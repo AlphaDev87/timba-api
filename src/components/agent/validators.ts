@@ -54,12 +54,12 @@ export const validateSupportRequest = () =>
   checkSchema({
     bot_phone: {
       in: ["body"],
-      isString: true,
       optional: true,
+      isString: true,
       trim: true,
       custom: {
         options: (value: string) =>
-          value.length > 0 ? value.length > 10 && !isNaN(Number(value)) : true,
+          value.length > 0 ? value.length >= 10 && !isNaN(Number(value)) : true,
       },
       errorMessage:
         "bot_phone must be a numeric string between 10 and 20 characters long",
@@ -69,11 +69,11 @@ export const validateSupportRequest = () =>
     },
     human_phone: {
       in: ["body"],
-      isString: true,
       optional: true,
+      isString: true,
       custom: {
         options: (value: string) =>
-          value.length > 0 ? value.length > 10 && !isNaN(Number(value)) : true,
+          value.length > 0 ? value.length >= 10 && !isNaN(Number(value)) : true,
       },
       trim: true,
       errorMessage:

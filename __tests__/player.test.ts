@@ -127,7 +127,6 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
       field         | message
       ${"username"} | ${"username is required"}
       ${"password"} | ${"password is required"}
-      ${"email"}    | ${"email is required"}
     `(
       "Should return 400 Bad Request (mandatory fields missing)",
       async ({ field, message }) => {
