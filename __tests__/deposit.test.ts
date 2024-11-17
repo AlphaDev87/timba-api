@@ -44,7 +44,7 @@ describe("[UNIT] => DEPOSIT", () => {
 
       expect(response.status).toBe(OK);
       expect(response.body.data.deposit).toBeDefined();
-      expect(mockNotifDepositStatus).toHaveBeenCalledTimes(2);
+      expect(mockNotifDepositStatus).toHaveBeenCalledTimes(3);
 
       deposits[0] = response.body.data.deposit;
     });

@@ -200,6 +200,7 @@ export class PlayerServices extends ResourceService {
   }
 
   private async emailPasswordResetConfirmation(user: Player) {
+    if (!user.email) return;
     try {
       const subject = "Contraseña reestablecida";
       const body = "Tu contraseña ha sido reestablecida.";

@@ -97,7 +97,7 @@ describe("[UNIT] => CASHIER ROUTER", () => {
     });
   });
 
-  describe.only("GET: /cashier/:id/player/:player_id/general-report", () => {
+  describe("GET: /cashier/:id/player/:player_id/general-report", () => {
     beforeAll(() => prepareGeneralReportTest());
     afterAll(jest.clearAllMocks);
 

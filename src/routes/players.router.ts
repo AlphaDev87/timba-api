@@ -11,6 +11,7 @@ import {
 } from "@/components/players/validators";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
 import { requireAgentRole } from "@/middlewares/auth";
+import { AgentController } from "@/components/agent";
 const playersRouter = Router();
 
 playersRouter.post(
@@ -27,6 +28,7 @@ playersRouter.post(
   throwIfBadRequest,
   PlayersController.login,
 );
+playersRouter.get("/support", AgentController.getSupportNumbers);
 playersRouter.use(
   passport.authenticate("jwt", { session: false, failWithError: true }),
 );

@@ -20,7 +20,6 @@ export class BotHistoryController {
       );
 
       const { count } = (await BotHistoryDAO.count())[0];
-      console.log("TOTAL", count);
 
       res.status(OK).json(apiResponse({ result, total: Number(count) }));
     } catch (e) {
