@@ -121,9 +121,26 @@ export const validatePlayerRequest = () => {
     email: {
       in: ["body"],
       optional: true,
-      isEmail: true,
       trim: true,
-      custom: { options: checkEmailNotInUse },
+      custom: {
+        options: async (value) => {
+          // Si el email es vacío, lo aceptamos como válido
+          if (value === "") return true;
+
+          // Validamos el formato del email
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            throw new Error("Invalid email format");
+          }
+
+          // Verificamos que el email no esté en uso
+          await checkEmailNotInUse(value);
+
+          return true;
+        },
+      },
+      customSanitizer: {
+        options: (value) => (value === "" ? null : value),
+      },
       errorMessage: "email is required",
     },
     first_name: optionalString,
@@ -266,29 +283,49 @@ export const validatePlayerUpdateRequest = () =>
   checkSchema({
     email: {
       in: ["body"],
-      isEmail: true,
       optional: true,
-      isEmpty: false,
       trim: true,
       custom: {
-        options: async (value, { req }) => {
-          const player = await PlayersDAO.getByEmail(value);
-          if (player && player.id !== req.params!.id)
-            throw new Error("Email already in use");
+        options: async (value) => {
+          // Si el email es vacío, lo aceptamos como válido
+          if (value === "") return true;
+
+          // Validamos el formato del email
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            throw new Error("Invalid email format");
+          }
+
+          // Verificamos que el email no esté en uso
+          await checkEmailNotInUse(value);
+
+          return true;
         },
-        errorMessage: "Ese email ya está en uso",
       },
+      customSanitizer: {
+        options: (value) => (value === "" ? null : value),
+      },
+      errorMessage: "email is required",
     },
     movile_number: {
       in: ["body"],
       isString: true,
-      isNumeric: true,
       optional: true,
       trim: true,
-      isEmpty: false,
       isLength: {
         options: { max: 20 },
         errorMessage: "movile_number is too long",
+      },
+      customSanitizer: {
+        options: (value) => (value === "" ? null : value), // Transforma valores vacíos a null
+      },
+      custom: {
+        options: (value) => {
+          if (value === null) return true; // Ignorar validación si es null
+          if (!/^\d+$/.test(value)) {
+            throw new Error("movile_number must be a numeric string");
+          }
+          return true;
+        },
       },
       errorMessage: "movile_number must be a numeric string",
     },
