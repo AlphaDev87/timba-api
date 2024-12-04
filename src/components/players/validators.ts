@@ -164,8 +164,8 @@ export const validatePlayerRequest = () => {
       trim: true,
       isEmpty: false,
       isLength: {
-        options: { max: 20 },
-        errorMessage: "movile_number is too long",
+        options: { max: 100 },
+        errorMessage: "El número de teléfono es demasiado largo",
       },
       errorMessage: "movile_number must be a numeric string",
     },
