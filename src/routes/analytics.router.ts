@@ -7,7 +7,7 @@ import {
   validateAnalyticsRequest,
   validateId,
 } from "@/components/analytics/validators";
-import { validateResourceSearchRequest } from "@/components/players/validators";
+import { validateResourceSearchRequest } from "@/components/analytics/validators";
 
 const analyticsRouter = Router();
 
@@ -20,7 +20,7 @@ analyticsRouter.get(
   throwIfBadRequest,
   AnalyticsController.index,
 );
-analyticsRouter.get("/summary", AnalyticsController.summary);
+analyticsRouter.post("/summary", AnalyticsController.summary);
 analyticsRouter.get(
   "/:id",
   validateId(),
