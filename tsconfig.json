@@ -3,7 +3,6 @@
     /* Basic Options */
     "incremental": true,
     "target": "ESNext",
-    // "module": "ESNext",
     "module": "CommonJS",
     "outDir": "dist",
     "pretty": true,
