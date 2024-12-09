@@ -20,6 +20,7 @@ import { validateResourceSearchRequest } from "@/components/players/validators";
 
 const depositsRouter = Router();
 
+depositsRouter.get("/deposit/sse", DepositController.sse);
 depositsRouter.use(
   passport.authenticate("jwt", { session: false, failWithError: true }),
 );

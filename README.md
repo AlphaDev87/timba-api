@@ -52,6 +52,7 @@ Comes with:
   + [Listar Depósitos](#listar-depósitos-) ✅
   + [Cambiar Estado del Depósito](#cambiar-estado-del-depósito-) ✅
   + [Ver Cuenta Bancaria de Alquimia](#ver-cuenta-alquimia-) ✅
+  + [Server Sent Events](#server-sent-events)
 </details>
 
 <details>
@@ -308,6 +309,14 @@ Requiere rol| player
 Método      |`GET`
 Devuelve    |[`RootBankAccount`](#rootbankaccount)
 Requiere rol| player
+
+### Server Sent Events
+
+|Endpoint| `/transactions/deposit/sse`|
+---|---|
+Método      |`GET`
+Devuelve    |200 OK cuando la conexión se establece con éxito
+Eventos     |[`DepositEvent`](#depositevent) \| [`CoinTransferEvent`](#cointransferevent)
 
 Auth
 ----
@@ -1161,6 +1170,20 @@ enum {
   status: 502,
   code: "bad_gateway",
   description: "No se pudo transferir las fichas.",
+}
+```
+
+### DepositEvent
+```typescript
+{
+  [depositId]: DEPOSIT_STATUS
+}
+```
+
+### CoinTransferEvent
+```typescript
+{
+  [coinTransferId]: number    // Player balance after
 }
 ```
 

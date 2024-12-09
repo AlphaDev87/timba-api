@@ -10,6 +10,7 @@ import {
 } from "http-status";
 import { initAgent } from "./helpers";
 import {
+  mockDispatchDepositEvent,
   mockNotifDepositStatus,
   prepareDepositTest,
 } from "./mocks/deposit/create";
@@ -45,6 +46,7 @@ describe("[UNIT] => DEPOSIT", () => {
       expect(response.status).toBe(OK);
       expect(response.body.data.deposit).toBeDefined();
       expect(mockNotifDepositStatus).toHaveBeenCalledTimes(3);
+      expect(mockDispatchDepositEvent).toHaveBeenCalledTimes(1);
 
       deposits[0] = response.body.data.deposit;
     });

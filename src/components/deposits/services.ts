@@ -1,4 +1,5 @@
 import { Bonus, Deposit, Player, PrismaClient, Role } from "@prisma/client";
+import { DepositSSE } from "./sse";
 import CONFIG, { COIN_TRANSFER_STATUS, DEPOSIT_STATUS } from "@/config";
 import { DepositsDAO } from "@/db/deposits";
 import {
@@ -85,12 +86,17 @@ export class DepositServices extends ResourceService {
     deposit: Deposit,
   ): Promise<Deposit & { Player: Player & { Bonus: Bonus | null } }> {
     const amount = await this.verifyThroughBanxico(deposit);
+    let result;
 
-    this.notifyDepositVerification(deposit, amount);
+    if (amount) {
+      result = await this.markAsVerified(deposit, amount);
+    } else {
+      result = await this.markAsUnverified(deposit);
+    }
 
-    if (amount) return await this.markAsVerified(deposit, amount);
+    this.notifyDepositVerification(result);
 
-    return await this.markAsUnverified(deposit);
+    return result;
   }
 
   /**
@@ -135,7 +141,7 @@ export class DepositServices extends ResourceService {
 
   /**
    * Verify receipt of Player's deposit through Banxico.
-   * @returns verified deposit amount
+   * @returns number (verified deposit amount) | undefined if not verified
    */
   public async verifyThroughBanxico(
     deposit: Deposit,
@@ -176,8 +182,22 @@ export class DepositServices extends ResourceService {
     );
   }
 
-  private notifyDepositVerification(deposit: Deposit, amount?: number) {
-    const result = amount ? "*verificado*" : "*no verificado*";
+  private dispatchSSE(deposit: Deposit) {
+    const { DEPOSIT_EVENT, eventTarget } = DepositSSE;
+    const customEvent = new CustomEvent(DEPOSIT_EVENT, {
+      detail: { [deposit.id]: deposit.status },
+    });
+    eventTarget.dispatchEvent(customEvent);
+  }
+
+  private notifyDepositVerification(deposit: Deposit) {
+    this.dispatchSSE(deposit);
+
+    const result =
+      deposit.status === DEPOSIT_STATUS.VERIFIED
+        ? "*verificado*"
+        : "*no verificado*";
+
     return Telegram.arturito(
       `Depósito Nº ${deposit.tracking_number} ${result}`,
     );

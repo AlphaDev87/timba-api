@@ -3,6 +3,7 @@ import { Deposit, Player } from "@prisma/client";
 import { BonusServices } from "../bonus/services";
 import { CoinTransferServices } from "../coin-transfers/services";
 import { DepositServices } from "./services";
+import { DepositSSE } from "./sse";
 import { DepositsDAO } from "@/db/deposits";
 import { apiResponse } from "@/helpers/apiResponse";
 import {
@@ -14,6 +15,14 @@ import { hidePassword } from "@/utils/auth";
 import { COIN_TRANSFER_STATUS, DEPOSIT_STATUS } from "@/config";
 import { DepositResult } from "@/types/response/transfers";
 import { useTransaction } from "@/helpers/useTransaction";
+
+export type DepositEvent = {
+  depositId: string;
+};
+
+export type CoinTransferEvent = {
+  coinTransferId: string;
+};
 
 export class DepositController {
   static readonly index = async (req: Req, res: Res, next: NextFn) => {
@@ -159,6 +168,59 @@ export class DepositController {
     try {
       const deposits = await DepositServices.showPending(player.id);
       res.status(OK).json(apiResponse(deposits));
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  /**
+   * Send deposit-related events
+   */
+  static readonly sse = async (_req: Req, res: Res, next: NextFn) => {
+    const { eventTarget, DEPOSIT_EVENT, COIN_TRANSFER_EVENT } = DepositSSE;
+
+    function sendEvent(
+      e: CustomEvent<DepositEvent | CoinTransferEvent>,
+      type: string,
+    ) {
+      const { detail } = e;
+
+      res.write(`event: ${type}\n`);
+      res.write(`data: ${JSON.stringify(detail)}\n\n`);
+    }
+
+    const depositListener: EventListener = (e) =>
+      sendEvent(e as CustomEvent<DepositEvent>, DEPOSIT_EVENT);
+
+    const coinTransferListener: EventListener = (e) =>
+      sendEvent(e as CustomEvent<CoinTransferEvent>, COIN_TRANSFER_EVENT);
+
+    try {
+      eventTarget.addEventListener(DEPOSIT_EVENT, depositListener);
+      eventTarget.addEventListener(COIN_TRANSFER_EVENT, coinTransferListener);
+
+      res.on("close", () => {
+        eventTarget.removeEventListener(DEPOSIT_EVENT, depositListener);
+        eventTarget.removeEventListener(
+          COIN_TRANSFER_EVENT,
+          coinTransferListener,
+        );
+        res.end();
+      });
+
+      // Keep alive ping every 4'
+      setInterval(() => {
+        res.write(": ping\n\n");
+      }, 24000);
+
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "X-Accel-Buffering": "no",
+      });
+      res.write("id: hola\n");
+      res.write("event: test_event\n");
+      res.write("data: test_data\n\n");
     } catch (err) {
       next(err);
     }
