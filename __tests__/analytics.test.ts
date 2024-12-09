@@ -9,9 +9,9 @@ let prisma: PrismaClient;
 const analyticsRequest = {
   source: "test",
   event: "test",
-  data: JSON.stringify({
+  data: {
     test: "test",
-  }),
+  },
 };
 let analyticsId: string;
 
@@ -45,8 +45,8 @@ describe("[UNIT] => ANALYTICS ROUTER", () => {
       ${"source"} | ${"%"} | ${"invalid source"}
       ${"event"}  | ${""}  | ${"event is required"}
       ${"event"}  | ${"%"} | ${"invalid event"}
-      ${"data"}   | ${1}   | ${"Invalid value"}
-      ${"data"}   | ${"1"} | ${"Invalid value"}
+      ${"data"}   | ${1}   | ${"data must be a valid object"}
+      ${"data"}   | ${"1"} | ${"data must be a valid object"}
     `("Should return 400 bad_request", async ({ field, value, message }) => {
       const response = await agent
         .post(`/app/${CONFIG.APP.VER}/analytics`)
@@ -64,11 +64,11 @@ describe("[UNIT] => ANALYTICS ROUTER", () => {
       expect(response.status).toBe(200);
       expect(Object.keys(response.body.data.result[0])).toEqual([
         "id",
-        "source",
         "event",
         "data",
         "created_at",
         "updated_at",
+        "source",
       ]);
     });
 
@@ -87,19 +87,18 @@ describe("[UNIT] => ANALYTICS ROUTER", () => {
     });
   });
 
-  describe("GET: /summary", () => {
+  describe("POST: /summary", () => {
     it("should return a summary of analytics", async () => {
-      const response = await agent.get(
-        `/app/${CONFIG.APP.VER}/analytics/summary`,
-      );
+      const response = await agent
+        .post(`/app/${CONFIG.APP.VER}/analytics/summary`)
+        .send({ window: "month" });
 
       expect(response.status).toBe(200);
-      expect(Object.keys(response.body.data[0])).toEqual([
-        "_count",
-        "source",
-        "event",
+      expect(Object.keys(response.body.data)).toEqual([
+        "eventCount",
+        "netwin",
+        "balance",
       ]);
-      expect(Object.keys(response.body.data[0]._count)).toEqual(["event"]);
     });
   });
 
