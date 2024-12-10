@@ -16,8 +16,6 @@ import { hidePassword } from "@/utils/auth";
 import { COIN_TRANSFER_STATUS, DEPOSIT_STATUS } from "@/config";
 import { DepositResult } from "@/types/response/transfers";
 import { useTransaction } from "@/helpers/useTransaction";
-// import { DepositEvent, CoinTransferEvent } from "@/types/response/sse";
-// import { prisma } from "@/prisma";
 
 export class DepositController {
   static readonly index = async (req: Req, res: Res, next: NextFn) => {

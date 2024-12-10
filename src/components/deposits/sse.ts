@@ -16,9 +16,9 @@ export class DepositSSE {
   }
 
   constructor(
-    private res: Res,
-    private userId: string,
-    private isAgent: boolean,
+    private readonly res: Res,
+    private readonly userId: string,
+    private readonly isAgent: boolean,
   ) {
     this.eventTarget.addEventListener(this.DEPOSIT_EVENT, this.depositListener);
     this.eventTarget.addEventListener(
