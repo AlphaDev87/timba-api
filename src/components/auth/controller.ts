@@ -29,4 +29,17 @@ export class AuthController {
       next(error);
     }
   }
+
+  static async getSseToken(req: Req, res: Res, next: NextFn) {
+    try {
+      const authServices = new AuthServices();
+      const user_id = req.user!.id;
+
+      const token = authServices.getSseToken(user_id);
+
+      res.status(OK).send(apiResponse(token));
+    } catch (error) {
+      next(error);
+    }
+  }
 }

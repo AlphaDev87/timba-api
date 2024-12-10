@@ -56,5 +56,6 @@ authRouter.post(
   throwIfBadRequest,
   NewPasswordController.store,
 );
+authRouter.get("/sse-token", AuthController.getSseToken);
 
 export default authRouter;

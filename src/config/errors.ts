@@ -1,6 +1,4 @@
-import { ErrorData } from "@/types/response/error";
-
-export const ERR: { [key: string]: ErrorData } = {
+export const ERR = {
   USER_ALREADY_EXISTS: {
     status: 400,
     code: "ya_existe",
@@ -50,6 +48,21 @@ export const ERR: { [key: string]: ErrorData } = {
     status: 500,
     code: "env",
     description: "No se encontro la clave de agente en .env",
+  },
+  ACCESS_TOKEN_EXPIRE_NOT_SET: {
+    status: 500,
+    code: "env",
+    description: "No se encontro ACCESS_TOKEN_EXPIRE en .env",
+  },
+  REFRESH_TOKEN_EXPIRE_NOT_SET: {
+    status: 500,
+    code: "env",
+    description: "No se encontro REFRESH_TOKEN_EXPIRE en .env",
+  },
+  SSE_TOKEN_EXPIRE_NOT_SET: {
+    status: 500,
+    code: "env",
+    description: "No se encontro SSE_TOKEN_EXPIRE en .env",
   },
   AGENT_UNSET: {
     status: 500,

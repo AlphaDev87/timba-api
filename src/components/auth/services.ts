@@ -144,4 +144,8 @@ export class AuthServices extends JwtService {
       throw error;
     }
   }
+
+  getSseToken(user_id: string) {
+    return this.generateSSEToken(this.cypherPass, user_id);
+  }
 }
