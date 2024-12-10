@@ -145,7 +145,15 @@ export class AuthServices extends JwtService {
     }
   }
 
-  getSseToken(user_id: string) {
+  getShortLivedSseToken(user_id: string) {
+    return this.generateShortSSEToken(this.cypherPass, user_id);
+  }
+
+  getLongLivedSseToken(user_id: string) {
     return this.generateSSEToken(this.cypherPass, user_id);
+  }
+
+  verifyToken(token: string): Promise<string | JWTPayload | undefined> {
+    return super.verifyToken(token, this.cypherPass);
   }
 }

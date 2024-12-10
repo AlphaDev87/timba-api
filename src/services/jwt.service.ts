@@ -123,7 +123,14 @@ export class JwtService {
   }
 
   /**
-   * Generate SSE access token
+   * Generate SSE short-lived access token
+   */
+  generateShortSSEToken(pass: string, sub: string) {
+    return this.generateToken(pass, sub, "sse", "1m");
+  }
+
+  /**
+   * Generate SSE long-lived access token
    */
   generateSSEToken(pass: string, sub: string) {
     const SSE_TOKEN_EXPIRE = this.sseTokenExpire;

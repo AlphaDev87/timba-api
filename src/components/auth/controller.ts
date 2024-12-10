@@ -35,7 +35,7 @@ export class AuthController {
       const authServices = new AuthServices();
       const user_id = req.user!.id;
 
-      const token = authServices.getSseToken(user_id);
+      const token = authServices.getShortLivedSseToken(user_id);
 
       res.status(OK).send(apiResponse(token));
     } catch (error) {
