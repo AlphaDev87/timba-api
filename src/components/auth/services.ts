@@ -9,6 +9,8 @@ import { PlayersDAO } from "@/db/players";
 import { ERR } from "@/config/errors";
 import { CustomError } from "@/helpers/error/CustomError";
 import { UnauthorizedError } from "@/helpers/error";
+import { SSEAuthentication } from "@/types/response/sse";
+import { prisma } from "@/prisma";
 
 export class AuthServices extends JwtService {
   private get cypherPass(): string {
@@ -43,7 +45,7 @@ export class AuthServices extends JwtService {
     if (!this.verifyTokenExpiration(refresh))
       throw new CustomError(ERR.TOKEN_EXPIRED);
 
-    const payload = await this.verifyToken(refresh, this.cypherPass);
+    const payload = await this.verifyToken(refresh);
     if (!payload || typeof payload === "string")
       throw new CustomError(ERR.TOKEN_INVALID);
 
@@ -145,15 +147,54 @@ export class AuthServices extends JwtService {
     }
   }
 
-  getShortLivedSseToken(user_id: string) {
+  getShortLivedSseToken(user_id: string): string {
     return this.generateShortSSEToken(this.cypherPass, user_id);
   }
 
-  getLongLivedSseToken(user_id: string) {
+  getLongLivedSseToken(user_id: string): string {
     return this.generateSSEToken(this.cypherPass, user_id);
   }
 
   verifyToken(token: string): Promise<string | JWTPayload | undefined> {
     return super.verifyToken(token, this.cypherPass);
+  }
+
+  /**
+   * @param slt short-lived token
+   * @param llt long-lived token
+   */
+  async authenticateSSE(slt: string, llt?: string): Promise<SSEAuthentication> {
+    if (!slt && !llt) throw new UnauthorizedError("No autorizado");
+    let userId: string;
+    let jwt: string | undefined = undefined;
+
+    const authService = new AuthServices();
+    const sltPayload = await authService
+      .verifyToken(slt)
+      .catch(() => undefined);
+
+    if (sltPayload) {
+      userId = (sltPayload as JWTPayload).sub;
+      jwt = authService.getLongLivedSseToken(userId);
+    } else if (!llt) {
+      throw new UnauthorizedError("No autorizado");
+    } else {
+      const lltPayload = await authService.verifyToken(llt).catch(() => {
+        throw new UnauthorizedError("Token inválido");
+      });
+
+      if (!lltPayload) throw new UnauthorizedError("Token inválido");
+      userId = (lltPayload as JWTPayload).sub;
+    }
+
+    const user = await prisma.player.findUnique({
+      where: { id: userId },
+      include: { roles: true },
+    });
+    const isAgent = user!.roles.some(
+      (role) => role.name === CONFIG.ROLES.AGENT,
+    );
+
+    return { userId, isAgent, jwt };
   }
 }

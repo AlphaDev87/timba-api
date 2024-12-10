@@ -99,7 +99,7 @@ export class CoinTransferServices {
     });
 
     const coinTransferResult = await this.transfer(transferDetails);
-    this.dispatchSSE(coinTransfer, coinTransferResult);
+    this.dispatchSSE(coinTransfer, coinTransferResult, parent!.Player.id);
     this.handleTransferError(coinTransferResult);
 
     return await tx.coinTransfer.update({
@@ -254,13 +254,18 @@ export class CoinTransferServices {
       throw new CustomError(ERR.COIN_TRANSFER_UNSUCCESSFUL);
   }
 
-  private dispatchSSE(coinTransfer: CoinTransfer, result: CoinTransferResult) {
+  private dispatchSSE(
+    coinTransfer: CoinTransfer,
+    result: CoinTransferResult,
+    userId: string,
+  ) {
     if (!result.ok) return;
 
     const { COIN_TRANSFER_EVENT, eventTarget } = DepositSSE;
     const customEvent = new CustomEvent(COIN_TRANSFER_EVENT, {
       detail: {
         [coinTransfer.id]: result.player_balance,
+        userId,
       },
     });
 

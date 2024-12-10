@@ -185,7 +185,7 @@ export class DepositServices extends ResourceService {
   private dispatchSSE(deposit: Deposit) {
     const { DEPOSIT_EVENT, eventTarget } = DepositSSE;
     const customEvent = new CustomEvent(DEPOSIT_EVENT, {
-      detail: { [deposit.id]: deposit.status },
+      detail: { [deposit.id]: deposit.status, userId: deposit.player_id },
     });
     eventTarget.dispatchEvent(customEvent);
   }

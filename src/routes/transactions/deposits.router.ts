@@ -14,13 +14,20 @@ import {
   validateDepositIndex,
   validateDepositRequest,
   validateDepositSetStatusRequest,
+  ValidateDepositSseRequest,
 } from "@/components/deposits/validators";
 import { DepositController } from "@/components/deposits/controller";
 import { validateResourceSearchRequest } from "@/components/players/validators";
 
 const depositsRouter = Router();
 
-depositsRouter.get("/deposit/sse", DepositController.sse);
+depositsRouter.get(
+  "/deposit/sse",
+  ValidateDepositSseRequest(),
+  checkExact(),
+  throwIfBadRequest,
+  DepositController.sse,
+);
 depositsRouter.use(
   passport.authenticate("jwt", { session: false, failWithError: true }),
 );

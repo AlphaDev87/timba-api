@@ -2,6 +2,7 @@ import { OK } from "http-status";
 import { Deposit, Player } from "@prisma/client";
 import { BonusServices } from "../bonus/services";
 import { CoinTransferServices } from "../coin-transfers/services";
+import { AuthServices } from "../auth/services";
 import { DepositServices } from "./services";
 import { DepositSSE } from "./sse";
 import { DepositsDAO } from "@/db/deposits";
@@ -15,14 +16,8 @@ import { hidePassword } from "@/utils/auth";
 import { COIN_TRANSFER_STATUS, DEPOSIT_STATUS } from "@/config";
 import { DepositResult } from "@/types/response/transfers";
 import { useTransaction } from "@/helpers/useTransaction";
-
-export type DepositEvent = {
-  depositId: string;
-};
-
-export type CoinTransferEvent = {
-  coinTransferId: string;
-};
+// import { DepositEvent, CoinTransferEvent } from "@/types/response/sse";
+// import { prisma } from "@/prisma";
 
 export class DepositController {
   static readonly index = async (req: Req, res: Res, next: NextFn) => {
@@ -176,35 +171,19 @@ export class DepositController {
   /**
    * Send deposit-related events
    */
-  static readonly sse = async (_req: Req, res: Res, next: NextFn) => {
-    const { eventTarget, DEPOSIT_EVENT, COIN_TRANSFER_EVENT } = DepositSSE;
-
-    function sendEvent(
-      e: CustomEvent<DepositEvent | CoinTransferEvent>,
-      type: string,
-    ) {
-      const { detail } = e;
-
-      res.write(`event: ${type}\n`);
-      res.write(`data: ${JSON.stringify(detail)}\n\n`);
-    }
-
-    const depositListener: EventListener = (e) =>
-      sendEvent(e as CustomEvent<DepositEvent>, DEPOSIT_EVENT);
-
-    const coinTransferListener: EventListener = (e) =>
-      sendEvent(e as CustomEvent<CoinTransferEvent>, COIN_TRANSFER_EVENT);
-
+  static readonly sse = async (req: Req, res: Res, next: NextFn) => {
+    const authServices = new AuthServices();
     try {
-      eventTarget.addEventListener(DEPOSIT_EVENT, depositListener);
-      eventTarget.addEventListener(COIN_TRANSFER_EVENT, coinTransferListener);
+      const slt = req.query.token as string;
+      const llt = req.header("Last-Event-ID");
+      const { userId, isAgent, jwt } = await authServices.authenticateSSE(
+        slt,
+        llt,
+      );
+      const depositSSE = new DepositSSE(res, userId, isAgent);
 
       res.on("close", () => {
-        eventTarget.removeEventListener(DEPOSIT_EVENT, depositListener);
-        eventTarget.removeEventListener(
-          COIN_TRANSFER_EVENT,
-          coinTransferListener,
-        );
+        depositSSE.dismantle();
         res.end();
       });
 
@@ -218,9 +197,12 @@ export class DepositController {
         "Cache-Control": "no-cache",
         "X-Accel-Buffering": "no",
       });
-      res.write("id: hola\n");
-      res.write("event: test_event\n");
-      res.write("data: test_data\n\n");
+
+      if (jwt) {
+        res.write(`id: ${jwt}\n`);
+        res.write("event: token\n");
+        res.write("data:\n\n");
+      }
     } catch (err) {
       next(err);
     }
