@@ -3,6 +3,7 @@ import { CoinTransferServices } from "@/components/coin-transfers/services";
 import { COIN_TRANSFER_STATUS } from "@/config";
 import { PlayerServices } from "@/components/players/services";
 import { Telegram } from "@/notification/telegram";
+import { DepositSSE } from "@/components/deposits/sse";
 
 const mockCoinTransferResult: CoinTransfer = {
   id: "foo",
@@ -13,6 +14,7 @@ const mockCoinTransferResult: CoinTransfer = {
 };
 export const mockAgentToPlayer = jest.fn(async () => mockCoinTransferResult);
 export const mockNotifPaymentStatus = jest.fn();
+export const mockDispatchCoinTransferEvent = jest.fn();
 
 export function prepareCashoutTest() {
   jest
@@ -22,4 +24,7 @@ export function prepareCashoutTest() {
   jest.spyOn(PlayerServices.prototype, "getBalance").mockResolvedValueOnce(0);
 
   jest.spyOn(Telegram, "arturito").mockImplementation(mockNotifPaymentStatus);
+  jest
+    .spyOn(DepositSSE.eventTarget, "dispatchEvent")
+    .mockImplementation(mockDispatchCoinTransferEvent);
 }

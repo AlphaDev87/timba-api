@@ -21,7 +21,7 @@ beforeAll(initialize);
 afterAll(cleanUp);
 
 describe("[UNIT] => CASHOUT", () => {
-  describe.only("POST: /transactions/cashout", () => {
+  describe("POST: /transactions/cashout", () => {
     beforeAll(() => {
       prepareCashoutTest();
     });

@@ -251,7 +251,7 @@ describe("[UNIT] => PLAYERS ROUTER", () => {
         });
 
       expect(response.status).toBe(BAD_REQUEST);
-      expect(response.body.data[0].msg).toBe("Ese email ya está en uso");
+      expect(response.body.data[0].msg).toBe("Usuario con ese email ya existe");
     });
   });
 

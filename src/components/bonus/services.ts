@@ -1,7 +1,7 @@
-import { Bonus, Player, PrismaClient } from "@prisma/client";
+import { Bonus, Deposit, Player, PrismaClient } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { CoinTransferServices } from "../coin-transfers/services";
-import { BONUS_STATUS } from "@/config";
+import { BONUS_STATUS, DEPOSIT_STATUS } from "@/config";
 import { BonusDAO } from "@/db/bonus";
 import { ResourceService } from "@/services/resource.service";
 import { BonusSettings } from "@/types/request/bonus";
@@ -83,15 +83,12 @@ export class BonusServices extends ResourceService {
    * Set bonus' amount according to bonus percentage and Deposit amount.
    * Only if bonus is in ASSIGNED status
    */
-  async load(
-    deposit_amount: number,
-    bonus_id?: string,
-  ): Promise<Bonus | undefined> {
-    if (!bonus_id || deposit_amount <= 0) return;
+  async load(deposit: Deposit, bonus_id?: string): Promise<Bonus | undefined> {
+    if (!bonus_id || deposit.status !== DEPOSIT_STATUS.VERIFIED) return;
     const bonus = await BonusDAO._getById(bonus_id);
     if (!bonus) throw new NotFoundException("Bonus not found");
 
-    const amount = (bonus.percentage / 100) * deposit_amount;
+    const amount = (bonus.percentage / 100) * deposit.amount;
 
     if (bonus.status === BONUS_STATUS.ASSIGNED)
       return await BonusDAO.update(bonus_id, {

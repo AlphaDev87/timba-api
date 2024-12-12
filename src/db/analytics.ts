@@ -94,7 +94,7 @@ export class AnalyticsDAO {
 
       // Construcción completa de la consulta
       const query = `
-        SELECT * FROM analytics
+        SELECT * FROM ANALYTICS
         ${whereSql}
         ${orderSql}
         LIMIT ${itemsPerPage} OFFSET ${page * itemsPerPage};
