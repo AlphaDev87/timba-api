@@ -48,6 +48,7 @@ authRouter.post(
   throwIfBadRequest,
   AuthController.logout,
 );
+authRouter.get("/sse-token", AuthController.getSseToken);
 authRouter.use(requireUserRole);
 authRouter.post(
   "/reset-password",
@@ -56,6 +57,5 @@ authRouter.post(
   throwIfBadRequest,
   NewPasswordController.store,
 );
-authRouter.get("/sse-token", AuthController.getSseToken);
 
 export default authRouter;
