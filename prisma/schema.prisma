@@ -262,7 +262,7 @@ model BotHistory {
   ref          String
   keyword      String?
   answer       String   @db.Text
-  refSerialize String
+  refSerialize String?
   from         String
   options      Json
   created_at   DateTime @default(now())
