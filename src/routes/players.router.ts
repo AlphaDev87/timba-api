@@ -5,6 +5,7 @@ import { PlayersController } from "@/components/players";
 import {
   isKeyOfPlayer,
   validateCredentials,
+  validateDepositRequest,
   validatePlayerRequest,
   validatePlayerUpdateRequest,
   validateResourceSearchRequest,
@@ -13,7 +14,6 @@ import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
 import { apiKeyAuthentication, requireAgentRole } from "@/middlewares/auth";
 import { AgentController } from "@/components/agent";
 import { DepositController } from "@/components/deposits/controller";
-import { validateDepositRequest } from "@/components/deposits/validators";
 import { depositRateLimiter } from "@/middlewares/rate-limiters/deposit";
 const playersRouter = Router();
 

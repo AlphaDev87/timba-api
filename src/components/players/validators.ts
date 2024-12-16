@@ -9,6 +9,7 @@ import { PlayersDAO } from "@/db/players";
 import CONFIG, { PLAYER_STATUS } from "@/config";
 import { mockPlayer } from "@/config/mockPlayer";
 import { CashierDAO } from "@/db/cashier";
+import { bankCodes } from "@/config/bank-codes";
 
 const isDate: CustomValidator = (value: string, { req }) => {
   if (value.length === 0) return true;
@@ -359,3 +360,53 @@ export const validatePlayerUpdateRequest = () =>
 export type KeyIsKeyOfTValidator = {
   (key: string): boolean;
 };
+
+export const validateDepositRequest = () =>
+  checkSchema({
+    tracking_number: {
+      in: ["body"],
+      optional: true,
+      isString: true,
+      // errorMessage: "tracking_number is required",
+    },
+    amount: {
+      in: ["body"],
+      optional: true,
+      isNumeric: true,
+      custom: {
+        options: (val) => !isNaN(Number(val)),
+        errorMessage: "amount debe ser un numero",
+      },
+      customSanitizer: { options: (val) => Number(val) },
+      errorMessage: "invalid amount",
+    },
+    date: {
+      in: ["body"],
+      optional: true,
+      isISO8601: true,
+      customSanitizer: {
+        options: (val) => {
+          if (!val) return;
+          return new Date(val).toISOString();
+        },
+      },
+      errorMessage: "invalid date",
+    },
+    sending_bank: {
+      in: ["body"],
+      optional: true,
+      isNumeric: true,
+      trim: true,
+      custom: {
+        options: (val) => bankCodes.includes(val) || val === "-1",
+        errorMessage: "invalid sending_bank",
+      },
+      // errorMessage: "sending_bank is required",
+    },
+    image_uri: {
+      in: ["body"],
+      isString: true,
+      isEmpty: false,
+      trim: true,
+    },
+  });

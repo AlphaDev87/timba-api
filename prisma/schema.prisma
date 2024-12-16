@@ -110,13 +110,14 @@ model Deposit {
   currency         String       @default("MXN")
   dirty            Boolean      @default(true)
   status           String
-  tracking_number  String       @unique
-  amount           Float
-  date             DateTime
-  sending_bank     String
+  tracking_number  String?      @unique
+  amount           Float?
+  date             DateTime?
+  sending_bank     String?
   cep_ok           Boolean      @default(false)
   coin_transfer_id String       @unique
   CoinTransfer     CoinTransfer @relation(fields: [coin_transfer_id], references: [id], onDelete: Cascade)
+  image_uri        String?      @unique
   created_at       DateTime     @default(now())
   updated_at       DateTime     @updatedAt
 

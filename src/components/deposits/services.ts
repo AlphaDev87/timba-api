@@ -103,7 +103,7 @@ export class DepositServices extends ResourceService {
 
     try {
       const alqDeposit = await this.alquimiaDepositLookup(
-        deposit.tracking_number,
+        deposit.tracking_number!,
       );
 
       if (alqDeposit) return alqDeposit.valor_real;

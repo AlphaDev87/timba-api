@@ -78,7 +78,7 @@ export class DepositController {
       const deposit = await depositServices.update(user, deposit_id, request);
       deposit.Player = hidePassword(deposit.Player);
       const bonus = await bonusServices.load(
-        deposit.amount,
+        deposit.amount!,
         deposit.Player.Bonus?.id,
       );
 
@@ -104,6 +104,7 @@ export class DepositController {
   };
 
   private static readonly create = async (req: Req, res: Res, next: NextFn) => {
+    console.log("=========== REQUEST BODY ===========", req.body);
     const request: DepositRequest = req.body;
     const player = req.player ?? req.user!;
 
@@ -124,7 +125,7 @@ export class DepositController {
       ).catch(() => undefined);
 
       const bonus = await bonusServices.load(
-        deposit.amount,
+        deposit.amount!,
         deposit.Player.Bonus?.id,
       );
 

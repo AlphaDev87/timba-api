@@ -182,6 +182,7 @@ export class DepositsDAO {
   }
 
   static async authorizeCreation(request: DepositRequest) {
+    if (!request.tracking_number) return;
     try {
       const deposit = await prisma.deposit.findUnique({
         where: { tracking_number: request.tracking_number },
