@@ -5,13 +5,16 @@ import { PlayersController } from "@/components/players";
 import {
   isKeyOfPlayer,
   validateCredentials,
+  validateDepositRequest,
   validatePlayerRequest,
   validatePlayerUpdateRequest,
   validateResourceSearchRequest,
 } from "@/components/players/validators";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
-import { requireAgentRole } from "@/middlewares/auth";
+import { apiKeyAuthentication, requireAgentRole } from "@/middlewares/auth";
 import { AgentController } from "@/components/agent";
+import { DepositController } from "@/components/deposits/controller";
+import { depositRateLimiter } from "@/middlewares/rate-limiters/deposit";
 const playersRouter = Router();
 
 playersRouter.post(
@@ -29,6 +32,15 @@ playersRouter.post(
   PlayersController.login,
 );
 playersRouter.get("/support", AgentController.getSupportNumbers);
+playersRouter.post(
+  "/:player_id/deposit/:deposit_id?",
+  apiKeyAuthentication,
+  validateDepositRequest(),
+  checkExact(),
+  throwIfBadRequest,
+  depositRateLimiter,
+  DepositController.upsert,
+);
 playersRouter.use(
   passport.authenticate("jwt", { session: false, failWithError: true }),
 );
