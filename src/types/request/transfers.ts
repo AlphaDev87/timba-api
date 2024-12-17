@@ -18,6 +18,7 @@ export type DepositRequest = {
   date: string; // ISO-8601
   sending_bank: string;
   amount: number;
+  image_uri?: string;
 };
 export type CreateDepositProps = DepositRequest & {
   player_id: string;

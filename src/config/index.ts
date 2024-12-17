@@ -52,6 +52,7 @@ const CONFIG = {
     FINGERPRINT_COOKIE: "__Secure-Fgp",
     CASINO_PANEL_USER: process.env.CASINO_PANEL_USER,
     CASINO_PANEL_PASS: process.env.CASINO_PANEL_PASS,
+    BOT_API_KEY: process.env.BOT_API_KEY,
   },
   EXTERNAL: {
     API_KEY: process.env.API_KEY,

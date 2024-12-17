@@ -18,6 +18,7 @@ export const isKeyOfDeposit = (key: string): key is keyof Deposit => {
     sending_bank: "",
     cep_ok: false,
     coin_transfer_id: "",
+    image_uri: "",
     Player: mockPlayer,
     created_at: new Date(),
     updated_at: new Date(),

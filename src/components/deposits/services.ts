@@ -5,7 +5,7 @@ import {
   DepositRequest,
   SetDepositStatusRequest,
 } from "@/types/request/transfers";
-import { PlainPlayerResponse, RoledPlayer } from "@/types/response/players";
+import { RoledPlayer } from "@/types/response/players";
 import { HttpService } from "@/services/http.service";
 import { AlqMovementResponse } from "@/types/response/alquimia";
 import { ResourceService } from "@/services/resource.service";
@@ -22,7 +22,7 @@ export class DepositServices extends ResourceService {
   /**
    * Create and verify deposit.
    */
-  async create(player: PlainPlayerResponse, request: DepositRequest) {
+  async create(player: Player, request: DepositRequest) {
     await DepositsDAO.authorizeCreation(request);
 
     this.notifyDepositCreation(player, request);
@@ -103,7 +103,7 @@ export class DepositServices extends ResourceService {
 
     try {
       const alqDeposit = await this.alquimiaDepositLookup(
-        deposit.tracking_number,
+        deposit.tracking_number!,
       );
 
       if (alqDeposit) return alqDeposit.valor_real;
