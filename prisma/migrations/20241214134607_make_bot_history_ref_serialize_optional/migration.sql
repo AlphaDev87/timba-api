@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `BOT_HISTORY` MODIFY `refSerialize` VARCHAR(191) NULL;

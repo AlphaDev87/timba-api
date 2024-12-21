@@ -117,7 +117,7 @@ model Deposit {
   cep_ok           Boolean      @default(false)
   coin_transfer_id String       @unique
   CoinTransfer     CoinTransfer @relation(fields: [coin_transfer_id], references: [id], onDelete: Cascade)
-  image_uri        String?      @unique
+  image_uri        String?      @db.Text
   created_at       DateTime     @default(now())
   updated_at       DateTime     @updatedAt
 

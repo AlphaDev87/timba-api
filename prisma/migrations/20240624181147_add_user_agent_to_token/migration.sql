@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `TOKENS` ADD COLUMN `user_agent` VARCHAR(191) NULL;
