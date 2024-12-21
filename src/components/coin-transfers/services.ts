@@ -86,7 +86,7 @@ export class CoinTransferServices {
     const transferDetails = await this.generateTransferDetails(
       "deposit",
       parent!.Player.panel_id,
-      parent!.amount,
+      parent!.amount!,
       parent!.Player.balance_currency,
     );
 

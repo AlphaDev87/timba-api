@@ -9,6 +9,7 @@ import { PlayersDAO } from "@/db/players";
 import CONFIG, { PLAYER_STATUS } from "@/config";
 import { mockPlayer } from "@/config/mockPlayer";
 import { CashierDAO } from "@/db/cashier";
+import { bankCodes } from "@/config/bank-codes";
 
 const isDate: CustomValidator = (value: string, { req }) => {
   if (value.length === 0) return true;
@@ -121,9 +122,26 @@ export const validatePlayerRequest = () => {
     email: {
       in: ["body"],
       optional: true,
-      isEmail: true,
       trim: true,
-      custom: { options: checkEmailNotInUse },
+      custom: {
+        options: async (value) => {
+          // Si el email es vacío, lo aceptamos como válido
+          if (value === "") return true;
+
+          // Validamos el formato del email
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            throw new Error("Invalid email format");
+          }
+
+          // Verificamos que el email no esté en uso
+          await checkEmailNotInUse(value);
+
+          return true;
+        },
+      },
+      customSanitizer: {
+        options: (value) => (value === "" ? null : value),
+      },
       errorMessage: "email is required",
     },
     first_name: optionalString,
@@ -147,8 +165,8 @@ export const validatePlayerRequest = () => {
       trim: true,
       isEmpty: false,
       isLength: {
-        options: { max: 20 },
-        errorMessage: "movile_number is too long",
+        options: { max: 100 },
+        errorMessage: "El número de teléfono es demasiado largo",
       },
       errorMessage: "movile_number must be a numeric string",
     },
@@ -266,29 +284,49 @@ export const validatePlayerUpdateRequest = () =>
   checkSchema({
     email: {
       in: ["body"],
-      isEmail: true,
       optional: true,
-      isEmpty: false,
       trim: true,
       custom: {
-        options: async (value, { req }) => {
-          const player = await PlayersDAO.getByEmail(value);
-          if (player && player.id !== req.params!.id)
-            throw new Error("Email already in use");
+        options: async (value) => {
+          // Si el email es vacío, lo aceptamos como válido
+          if (value === "") return true;
+
+          // Validamos el formato del email
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            throw new Error("Invalid email format");
+          }
+
+          // Verificamos que el email no esté en uso
+          await checkEmailNotInUse(value);
+
+          return true;
         },
-        errorMessage: "Ese email ya está en uso",
       },
+      customSanitizer: {
+        options: (value) => (value === "" ? null : value),
+      },
+      errorMessage: "email is required",
     },
     movile_number: {
       in: ["body"],
       isString: true,
-      isNumeric: true,
       optional: true,
       trim: true,
-      isEmpty: false,
       isLength: {
         options: { max: 20 },
         errorMessage: "movile_number is too long",
+      },
+      customSanitizer: {
+        options: (value) => (value === "" ? null : value), // Transforma valores vacíos a null
+      },
+      custom: {
+        options: (value) => {
+          if (value === null) return true; // Ignorar validación si es null
+          if (!/^\d+$/.test(value)) {
+            throw new Error("movile_number must be a numeric string");
+          }
+          return true;
+        },
       },
       errorMessage: "movile_number must be a numeric string",
     },
@@ -322,3 +360,58 @@ export const validatePlayerUpdateRequest = () =>
 export type KeyIsKeyOfTValidator = {
   (key: string): boolean;
 };
+
+export const validateDepositRequest = () =>
+  checkSchema({
+    tracking_number: {
+      in: ["body"],
+      optional: true,
+      custom: {
+        options: (val) =>
+          val === null || val === undefined || typeof val === "string", // Permite null, undefined o cadena
+        errorMessage: "tracking_number debe ser una cadena o null",
+      },
+    },
+    amount: {
+      in: ["body"],
+      optional: true,
+      custom: {
+        options: (val) => val === null || !isNaN(Number(val)),
+        errorMessage: "amount debe ser un numero",
+      },
+      customSanitizer: {
+        options: (val) => (val === null ? null : Number(val)),
+      },
+      errorMessage: "invalid amount",
+    },
+    date: {
+      in: ["body"],
+      optional: true,
+      // isISO8601: true,
+      customSanitizer: {
+        options: (val) => {
+          if (!val) return new Date().toISOString();
+          return new Date(val).toISOString();
+        },
+      },
+      errorMessage: "invalid date",
+    },
+    sending_bank: {
+      in: ["body"],
+      optional: true,
+      // isNumeric: true,
+      trim: true,
+      custom: {
+        options: (val) =>
+          val === null || bankCodes.includes(val) || val === "-1",
+        errorMessage: "invalid sending_bank",
+      },
+      // errorMessage: "sending_bank is required",
+    },
+    image_uri: {
+      in: ["body"],
+      isString: true,
+      isEmpty: false,
+      trim: true,
+    },
+  });

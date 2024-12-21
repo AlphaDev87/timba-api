@@ -56,7 +56,7 @@ export class DepositController {
    * Create new deposit or verify existing
    */
   static readonly upsert = async (req: Req, res: Res, next: NextFn) => {
-    const deposit_id = req.params.id;
+    const deposit_id = req.params.deposit_id;
 
     if (deposit_id) {
       this.update(req, res, next);
@@ -66,21 +66,18 @@ export class DepositController {
   };
 
   private static readonly update = async (req: Req, res: Res, next: NextFn) => {
-    const deposit_id = req.params.id;
-    const request: Omit<DepositRequest, "player_id"> = req.body;
-    const player = req.user!;
+    const { deposit_id } = req.params;
+    const request: DepositRequest = req.body;
+    const user = req.user!;
 
     const depositServices = new DepositServices(),
       coinTransferServices = new CoinTransferServices(),
       bonusServices = new BonusServices();
 
     try {
-      const deposit = await depositServices.update(player, deposit_id, request);
+      const deposit = await depositServices.update(user, deposit_id, request);
       deposit.Player = hidePassword(deposit.Player);
-      const bonus = await bonusServices.load(
-        deposit.amount,
-        deposit.Player.Bonus?.id,
-      );
+      const bonus = await bonusServices.load(deposit, deposit.Player.Bonus?.id);
 
       if (
         deposit.CoinTransfer?.status === COIN_TRANSFER_STATUS.COMPLETED ||
@@ -104,8 +101,8 @@ export class DepositController {
   };
 
   private static readonly create = async (req: Req, res: Res, next: NextFn) => {
-    const request: Omit<DepositRequest, "player_id"> = req.body;
-    const player = req.user!;
+    const request: DepositRequest = req.body;
+    const player = req.player ?? req.user!;
 
     const depositServices = new DepositServices(),
       coinTransferServices = new CoinTransferServices(),
@@ -123,10 +120,7 @@ export class DepositController {
         coinTransferServices.agentToPlayer(deposit!.coin_transfer_id, tx),
       ).catch(() => undefined);
 
-      const bonus = await bonusServices.load(
-        deposit.amount,
-        deposit.Player.Bonus?.id,
-      );
+      const bonus = await bonusServices.load(deposit, deposit.Player.Bonus?.id);
 
       return res
         .status(OK)
