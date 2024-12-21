@@ -366,27 +366,31 @@ export const validateDepositRequest = () =>
     tracking_number: {
       in: ["body"],
       optional: true,
-      isString: true,
-      // errorMessage: "tracking_number is required",
+      custom: {
+        options: (val) =>
+          val === null || val === undefined || typeof val === "string", // Permite null, undefined o cadena
+        errorMessage: "tracking_number debe ser una cadena o null",
+      },
     },
     amount: {
       in: ["body"],
       optional: true,
-      isNumeric: true,
       custom: {
-        options: (val) => !isNaN(Number(val)),
+        options: (val) => val === null || !isNaN(Number(val)),
         errorMessage: "amount debe ser un numero",
       },
-      customSanitizer: { options: (val) => Number(val) },
+      customSanitizer: {
+        options: (val) => (val === null ? null : Number(val)),
+      },
       errorMessage: "invalid amount",
     },
     date: {
       in: ["body"],
       optional: true,
-      isISO8601: true,
+      // isISO8601: true,
       customSanitizer: {
         options: (val) => {
-          if (!val) return;
+          if (!val) return new Date().toISOString();
           return new Date(val).toISOString();
         },
       },
@@ -395,10 +399,11 @@ export const validateDepositRequest = () =>
     sending_bank: {
       in: ["body"],
       optional: true,
-      isNumeric: true,
+      // isNumeric: true,
       trim: true,
       custom: {
-        options: (val) => bankCodes.includes(val) || val === "-1",
+        options: (val) =>
+          val === null || bankCodes.includes(val) || val === "-1",
         errorMessage: "invalid sending_bank",
       },
       // errorMessage: "sending_bank is required",
