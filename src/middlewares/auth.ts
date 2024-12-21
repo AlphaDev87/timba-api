@@ -52,7 +52,7 @@ export async function apiKeyAuthentication(req: Req, _res: Res, next: NextFn) {
     });
   req.user = user;
 
-  const { player_id } = req.query;
+  const { player_id } = req.params;
   if (!player_id) return next();
 
   const player = await PlayersDAO.findFirst({

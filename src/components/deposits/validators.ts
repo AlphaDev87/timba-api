@@ -28,7 +28,7 @@ export const isKeyOfDeposit = (key: string): key is keyof Deposit => {
 
 export const validateDepositRequest = () =>
   checkSchema({
-    id: {
+    deposit_id: {
       in: ["params"],
       optional: true,
     },

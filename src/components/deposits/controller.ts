@@ -77,10 +77,7 @@ export class DepositController {
     try {
       const deposit = await depositServices.update(user, deposit_id, request);
       deposit.Player = hidePassword(deposit.Player);
-      const bonus = await bonusServices.load(
-        deposit.amount!,
-        deposit.Player.Bonus?.id,
-      );
+      const bonus = await bonusServices.load(deposit, deposit.Player.Bonus?.id);
 
       if (
         deposit.CoinTransfer?.status === COIN_TRANSFER_STATUS.COMPLETED ||
@@ -104,7 +101,6 @@ export class DepositController {
   };
 
   private static readonly create = async (req: Req, res: Res, next: NextFn) => {
-    console.log("=========== REQUEST BODY ===========", req.body);
     const request: DepositRequest = req.body;
     const player = req.player ?? req.user!;
 
@@ -124,10 +120,7 @@ export class DepositController {
         coinTransferServices.agentToPlayer(deposit!.coin_transfer_id, tx),
       ).catch(() => undefined);
 
-      const bonus = await bonusServices.load(
-        deposit.amount!,
-        deposit.Player.Bonus?.id,
-      );
+      const bonus = await bonusServices.load(deposit, deposit.Player.Bonus?.id);
 
       return res
         .status(OK)
