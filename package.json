@@ -121,5 +121,8 @@
   },
   "engines": {
     "node": ">= 16.0.0"
+  },
+  "resolutions": {
+    "@types/express": "4.17.21"
   }
 }

@@ -213,11 +213,19 @@ export class PlayersDAO {
     }
   };
 
-  static update = (playerId: string, update: PlayerUpdatableProps) => {
+  static update = async (playerId: string, update: PlayerUpdatableProps) => {
     try {
-      return prisma.player.update({
+      const currentPlayer = await prisma.player.findUnique({
         where: { id: playerId },
-        data: update,
+      });
+      if (!currentPlayer) {
+        throw new Error("Player not found");
+      }
+      const filteredUpdate = this.filterUnchangedFields(currentPlayer, update);
+
+      return await prisma.player.update({
+        where: { id: playerId },
+        data: filteredUpdate,
       });
     } catch (error) {
       throw error;
@@ -230,6 +238,16 @@ export class PlayersDAO {
     if (user.roles.some((role) => role.name === CONFIG.ROLES.AGENT)) return;
 
     if (user.id !== user_id) throw new ForbiddenError("No autorizado");
+  }
+  static filterUnchangedFields(
+    currentData: Record<string, any>,
+    updatedData: Record<string, any>,
+  ) {
+    return Object.fromEntries(
+      Object.entries(updatedData).filter(
+        ([key, value]) => currentData[key] !== value,
+      ),
+    );
   }
 
   static findFirst = prisma.player.findFirst;

@@ -132,7 +132,6 @@ export const validatePlayerRequest = () => {
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
             throw new Error("Invalid email format");
           }
-
           // Verificamos que el email no esté en uso
           await checkEmailNotInUse(value);
 
@@ -208,9 +207,14 @@ export const validatePlayerRequest = () => {
   });
 };
 
-async function checkEmailNotInUse(value: string): Promise<void> {
+async function checkEmailNotInUse(
+  value: string,
+  playerId?: string, // verifica que no sea el mail del mismo player cuando quiero actualizarlo
+): Promise<void> {
   const player = await PlayersDAO.getByEmail(value);
-  if (player) throw new Error("Usuario con ese email ya existe");
+  if (player && (!playerId || player.id !== playerId)) {
+    throw new Error("Usuario con ese email ya existe");
+  }
 }
 
 /**
@@ -287,7 +291,7 @@ export const validatePlayerUpdateRequest = () =>
       optional: true,
       trim: true,
       custom: {
-        options: async (value) => {
+        options: async (value, { req }) => {
           // Si el email es vacío, lo aceptamos como válido
           if (value === "") return true;
 
@@ -296,8 +300,9 @@ export const validatePlayerUpdateRequest = () =>
             throw new Error("Invalid email format");
           }
 
+          const playerId = req?.params?.id;
           // Verificamos que el email no esté en uso
-          await checkEmailNotInUse(value);
+          await checkEmailNotInUse(value, playerId);
 
           return true;
         },

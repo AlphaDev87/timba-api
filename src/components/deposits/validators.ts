@@ -72,6 +72,12 @@ export const validateDepositRequest = () =>
       },
       errorMessage: "sending_bank is required",
     },
+    image_uri: {
+      in: ["body"],
+      isString: true,
+      isEmpty: false,
+      trim: true,
+    },
   });
 
 export const validateDepositId = () =>

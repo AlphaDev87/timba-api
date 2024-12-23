@@ -76,7 +76,11 @@ export class DepositServices extends ResourceService {
     // @ts-ignore
     return await DepositsDAO.update({
       where: { id: deposit_id },
-      data: { ...request, dirty: false },
+      data: {
+        ...request,
+        dirty: false,
+        image_uri: request.status === "verified" ? "" : undefined,
+      },
       include: { Player: true },
     });
   }
@@ -183,14 +187,15 @@ export class DepositServices extends ResourceService {
     );
   }
 
-  private markAsVerified(deposit: Deposit, amount: number) {
+  private async markAsVerified(deposit: Deposit, amount: number) {
     const prisma = new PrismaClient();
-    return prisma.deposit.update({
+    return await prisma.deposit.update({
       where: { id: deposit.id },
       data: {
         status: DEPOSIT_STATUS.VERIFIED,
         amount,
         dirty: false,
+        image_uri: "",
       },
       include: { Player: { include: { Bonus: true } } },
     });
