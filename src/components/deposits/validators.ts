@@ -113,3 +113,12 @@ export const validateDepositSetStatusRequest = () =>
       errorMessage: "status is required",
     },
   });
+
+export const ValidateDepositSseRequest = () =>
+  checkSchema({
+    token: {
+      in: ["query"],
+      isString: true,
+      optional: false,
+    },
+  });
