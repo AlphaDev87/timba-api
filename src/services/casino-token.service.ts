@@ -74,9 +74,11 @@ export class CasinoTokenService extends JwtService implements ITokenRetreiver {
    */
   async refreshToken(): Promise<string | null> {
     const agent = await this.fetchAgentFromDb();
+
     if (!agent?.refresh) return null;
 
     const isValid = this.verifyTokenExpiration(agent.refresh);
+
     if (!isValid) return null;
     try {
       const refreshUrl = "/accounts/refresh/";
@@ -94,6 +96,7 @@ export class CasinoTokenService extends JwtService implements ITokenRetreiver {
           where: { id: this.agent.id },
           data: { access },
         });
+
         return access;
       }
       return null;

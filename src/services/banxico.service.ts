@@ -204,16 +204,16 @@ export class BanxicoService {
     const bankAccount = await AgentConfigDAO.getBankAccount();
     if (!bankAccount) throw new CustomError(ERR.AGENT_BANK_ACCOUNT_UNSET);
 
-    const day = deposit.date.getDate().toString().padStart(2, "0"),
-      month = (deposit.date.getMonth() + 1).toString().padStart(2, "0"),
-      year = deposit.date.getFullYear(),
+    const day = deposit.date!.getDate().toString().padStart(2, "0"),
+      month = (deposit.date!.getMonth() + 1).toString().padStart(2, "0"),
+      year = deposit.date!.getFullYear(),
       date = `${day}-${month}-${year}`,
       data = new URLSearchParams();
 
     data.append("tipoCriterio", "T");
     data.append("fecha", date);
-    data.append("criterio", deposit.tracking_number);
-    data.append("emisor", deposit.sending_bank);
+    data.append("criterio", deposit.tracking_number!);
+    data.append("emisor", deposit.sending_bank!);
     data.append("receptor", `${bankAccount.bankId}`);
     data.append("cuenta", `${bankAccount.clabe}`);
     data.append("receptorParticipante", "0");

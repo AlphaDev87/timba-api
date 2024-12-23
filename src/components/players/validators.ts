@@ -9,6 +9,7 @@ import { PlayersDAO } from "@/db/players";
 import CONFIG, { PLAYER_STATUS } from "@/config";
 import { mockPlayer } from "@/config/mockPlayer";
 import { CashierDAO } from "@/db/cashier";
+import { bankCodes } from "@/config/bank-codes";
 
 const isDate: CustomValidator = (value: string, { req }) => {
   if (value.length === 0) return true;
@@ -131,7 +132,6 @@ export const validatePlayerRequest = () => {
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
             throw new Error("Invalid email format");
           }
-
           // Verificamos que el email no esté en uso
           await checkEmailNotInUse(value);
 
@@ -207,9 +207,14 @@ export const validatePlayerRequest = () => {
   });
 };
 
-async function checkEmailNotInUse(value: string): Promise<void> {
+async function checkEmailNotInUse(
+  value: string,
+  playerId?: string, // verifica que no sea el mail del mismo player cuando quiero actualizarlo
+): Promise<void> {
   const player = await PlayersDAO.getByEmail(value);
-  if (player) throw new Error("Usuario con ese email ya existe");
+  if (player && (!playerId || player.id !== playerId)) {
+    throw new Error("Usuario con ese email ya existe");
+  }
 }
 
 /**
@@ -286,7 +291,7 @@ export const validatePlayerUpdateRequest = () =>
       optional: true,
       trim: true,
       custom: {
-        options: async (value) => {
+        options: async (value, { req }) => {
           // Si el email es vacío, lo aceptamos como válido
           if (value === "") return true;
 
@@ -295,8 +300,9 @@ export const validatePlayerUpdateRequest = () =>
             throw new Error("Invalid email format");
           }
 
+          const playerId = req?.params?.id;
           // Verificamos que el email no esté en uso
-          await checkEmailNotInUse(value);
+          await checkEmailNotInUse(value, playerId);
 
           return true;
         },
@@ -359,3 +365,58 @@ export const validatePlayerUpdateRequest = () =>
 export type KeyIsKeyOfTValidator = {
   (key: string): boolean;
 };
+
+export const validateDepositRequest = () =>
+  checkSchema({
+    tracking_number: {
+      in: ["body"],
+      optional: true,
+      custom: {
+        options: (val) =>
+          val === null || val === undefined || typeof val === "string", // Permite null, undefined o cadena
+        errorMessage: "tracking_number debe ser una cadena o null",
+      },
+    },
+    amount: {
+      in: ["body"],
+      optional: true,
+      custom: {
+        options: (val) => val === null || !isNaN(Number(val)),
+        errorMessage: "amount debe ser un numero",
+      },
+      customSanitizer: {
+        options: (val) => (val === null ? null : Number(val)),
+      },
+      errorMessage: "invalid amount",
+    },
+    date: {
+      in: ["body"],
+      optional: true,
+      // isISO8601: true,
+      customSanitizer: {
+        options: (val) => {
+          if (!val) return new Date().toISOString();
+          return new Date(val).toISOString();
+        },
+      },
+      errorMessage: "invalid date",
+    },
+    sending_bank: {
+      in: ["body"],
+      optional: true,
+      // isNumeric: true,
+      trim: true,
+      custom: {
+        options: (val) =>
+          val === null || bankCodes.includes(val) || val === "-1",
+        errorMessage: "invalid sending_bank",
+      },
+      // errorMessage: "sending_bank is required",
+    },
+    image_uri: {
+      in: ["body"],
+      isString: true,
+      isEmpty: false,
+      trim: true,
+    },
+  });

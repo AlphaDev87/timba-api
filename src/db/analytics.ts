@@ -99,7 +99,6 @@ export class AnalyticsDAO {
         ${orderSql}
         LIMIT ${itemsPerPage} OFFSET ${page * itemsPerPage};
       `;
-      console.log("[QUERY]", query);
 
       const results = await prisma.$queryRawUnsafe<Analytics[]>(query);
       const parsedResults = results.map((item) => ({

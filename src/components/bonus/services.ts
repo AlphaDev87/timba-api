@@ -88,7 +88,7 @@ export class BonusServices extends ResourceService {
     const bonus = await BonusDAO._getById(bonus_id);
     if (!bonus) throw new NotFoundException("Bonus not found");
 
-    const amount = (bonus.percentage / 100) * deposit.amount;
+    const amount = (bonus.percentage / 100) * (deposit.amount || 0);
 
     if (bonus.status === BONUS_STATUS.ASSIGNED)
       return await BonusDAO.update(bonus_id, {

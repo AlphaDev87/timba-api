@@ -12,6 +12,7 @@ import bonusRouter from "./bonus.router";
 import coinTransferRouter from "./coin-transfer.router";
 import cashierRouter from "./cashier.router";
 import botHistoryRouter from "./bot-history.router";
+import { AgentController } from "@/components/agent/controller";
 
 const mainRouter = Router();
 
@@ -28,5 +29,8 @@ mainRouter.use("/bonus", bonusRouter);
 mainRouter.use("/coin-transfer", coinTransferRouter);
 mainRouter.use("/cashier", cashierRouter);
 mainRouter.use("/bot-history", botHistoryRouter);
+const configRouter = Router();
+configRouter.get("/bank-details", AgentController.getBankAccount);
+mainRouter.use("/config/", configRouter);
 
 export default mainRouter;

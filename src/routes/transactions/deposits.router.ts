@@ -37,7 +37,7 @@ depositsRouter.get(
   DepositController.getPending,
 );
 depositsRouter.post(
-  "/deposit/:id?",
+  "/deposit/:deposit_id?",
   requireUserOrAgentRole,
   validateDepositRequest(),
   checkExact(),

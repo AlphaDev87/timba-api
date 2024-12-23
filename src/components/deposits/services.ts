@@ -6,7 +6,7 @@ import {
   DepositRequest,
   SetDepositStatusRequest,
 } from "@/types/request/transfers";
-import { PlainPlayerResponse, RoledPlayer } from "@/types/response/players";
+import { RoledPlayer } from "@/types/response/players";
 import { HttpService } from "@/services/http.service";
 import { AlqMovementResponse } from "@/types/response/alquimia";
 import { ResourceService } from "@/services/resource.service";
@@ -23,7 +23,7 @@ export class DepositServices extends ResourceService {
   /**
    * Create and verify deposit.
    */
-  async create(player: PlainPlayerResponse, request: DepositRequest) {
+  async create(player: Player, request: DepositRequest) {
     await DepositsDAO.authorizeCreation(request);
 
     this.notifyDepositCreation(player, request);
@@ -77,7 +77,11 @@ export class DepositServices extends ResourceService {
     // @ts-ignore
     return await DepositsDAO.update({
       where: { id: deposit_id },
-      data: { ...request, dirty: false },
+      data: {
+        ...request,
+        dirty: false,
+        image_uri: request.status === "verified" ? "" : undefined,
+      },
       include: { Player: true },
     });
   }
@@ -109,7 +113,7 @@ export class DepositServices extends ResourceService {
 
     try {
       const alqDeposit = await this.alquimiaDepositLookup(
-        deposit.tracking_number,
+        deposit.tracking_number!,
       );
 
       if (alqDeposit) return alqDeposit.valor_real;
@@ -203,14 +207,15 @@ export class DepositServices extends ResourceService {
     );
   }
 
-  private markAsVerified(deposit: Deposit, amount: number) {
+  private async markAsVerified(deposit: Deposit, amount: number) {
     const prisma = new PrismaClient();
-    return prisma.deposit.update({
+    return await prisma.deposit.update({
       where: { id: deposit.id },
       data: {
         status: DEPOSIT_STATUS.VERIFIED,
         amount,
         dirty: false,
+        image_uri: "",
       },
       include: { Player: { include: { Bonus: true } } },
     });
