@@ -74,9 +74,12 @@ export const validateDepositRequest = () =>
     },
     image_uri: {
       in: ["body"],
+      optional: true,
       isString: true,
-      isEmpty: false,
-      trim: true,
+      customSanitizer: {
+        options: (value) => (value === "" ? null : value),
+      },
+      errorMessage: "image_uri debe ser una cadena",
     },
   });
 
