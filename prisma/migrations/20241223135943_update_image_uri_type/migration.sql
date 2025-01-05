@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `DEPOSITS` MODIFY `image_uri` MEDIUMTEXT NULL;

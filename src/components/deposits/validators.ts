@@ -72,6 +72,15 @@ export const validateDepositRequest = () =>
       },
       errorMessage: "sending_bank is required",
     },
+    image_uri: {
+      in: ["body"],
+      optional: true,
+      isString: true,
+      customSanitizer: {
+        options: (value) => (value === "" ? null : value),
+      },
+      errorMessage: "image_uri debe ser una cadena",
+    },
   });
 
 export const validateDepositId = () =>
@@ -105,5 +114,14 @@ export const validateDepositSetStatusRequest = () =>
         errorMessage: "invalid status",
       },
       errorMessage: "status is required",
+    },
+  });
+
+export const ValidateDepositSseRequest = () =>
+  checkSchema({
+    token: {
+      in: ["query"],
+      isString: true,
+      optional: false,
     },
   });

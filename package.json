@@ -1,6 +1,6 @@
 {
   "name": "timba-api",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Timba Api Server",
   "private": true,
   "authors": "Alpha-Dev",
@@ -121,5 +121,8 @@
   },
   "engines": {
     "node": ">= 16.0.0"
+  },
+  "resolutions": {
+    "@types/express": "4.17.21"
   }
 }

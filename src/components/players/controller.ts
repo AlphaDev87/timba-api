@@ -61,7 +61,7 @@ export class PlayersController {
         player[0] = hidePassword(player[0]);
         // @ts-ignore
         delete player[0].Cashier;
-        res.status(OK).json(apiResponse(player));
+        res.status(OK).json(apiResponse(player[0]));
       } else {
         res
           .status(NOT_FOUND)

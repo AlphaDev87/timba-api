@@ -55,11 +55,15 @@ export const validateSupportRequest = () =>
     bot_phone: {
       in: ["body"],
       optional: true,
-      isString: true,
       trim: true,
       custom: {
-        options: (value: string) =>
-          value.length > 0 ? value.length >= 10 && !isNaN(Number(value)) : true,
+        options: (value: string | null) => {
+          if (value === null) return true; // Aceptar null
+          if (typeof value !== "string") return false; // Validar que sea string si no es null
+          if (value.length === 0) return true; // Campo opcional, permite vacío
+          const isNumeric = /^\d+$/.test(value); // Validar que solo contenga números
+          return value.length >= 10 && value.length <= 20 && isNumeric;
+        },
       },
       errorMessage:
         "bot_phone must be a numeric string between 10 and 20 characters long",
@@ -70,10 +74,14 @@ export const validateSupportRequest = () =>
     human_phone: {
       in: ["body"],
       optional: true,
-      isString: true,
       custom: {
-        options: (value: string) =>
-          value.length > 0 ? value.length >= 10 && !isNaN(Number(value)) : true,
+        options: (value: string | null) => {
+          if (value === null) return true; // Aceptar null
+          if (typeof value !== "string") return false; // Validar que sea string si no es null
+          if (value.length === 0) return true; // Campo opcional, permite vacío
+          const isNumeric = /^\d+$/.test(value); // Validar que solo contenga números
+          return value.length >= 10 && value.length <= 20 && isNumeric;
+        },
       },
       trim: true,
       errorMessage:
