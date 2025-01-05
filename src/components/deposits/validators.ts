@@ -74,9 +74,12 @@ export const validateDepositRequest = () =>
     },
     image_uri: {
       in: ["body"],
+      optional: true,
       isString: true,
-      isEmpty: false,
-      trim: true,
+      customSanitizer: {
+        options: (value) => (value === "" ? null : value),
+      },
+      errorMessage: "image_uri debe ser una cadena",
     },
   });
 
@@ -111,5 +114,14 @@ export const validateDepositSetStatusRequest = () =>
         errorMessage: "invalid status",
       },
       errorMessage: "status is required",
+    },
+  });
+
+export const ValidateDepositSseRequest = () =>
+  checkSchema({
+    token: {
+      in: ["query"],
+      isString: true,
+      optional: false,
     },
   });

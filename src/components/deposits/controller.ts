@@ -2,7 +2,9 @@ import { OK } from "http-status";
 import { Deposit, Player } from "@prisma/client";
 import { BonusServices } from "../bonus/services";
 import { CoinTransferServices } from "../coin-transfers/services";
+import { AuthServices } from "../auth/services";
 import { DepositServices } from "./services";
+import { DepositSSE } from "./sse";
 import { DepositsDAO } from "@/db/deposits";
 import { apiResponse } from "@/helpers/apiResponse";
 import {
@@ -159,6 +161,46 @@ export class DepositController {
     try {
       const deposits = await DepositServices.showPending(player.id);
       res.status(OK).json(apiResponse(deposits));
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  /**
+   * Send deposit-related events
+   */
+  static readonly sse = async (req: Req, res: Res, next: NextFn) => {
+    const authServices = new AuthServices();
+    try {
+      const slt = req.query.token as string;
+      const llt = req.header("Last-Event-ID");
+      const { userId, isAgent, jwt } = await authServices.authenticateSSE(
+        slt,
+        llt,
+      );
+      const depositSSE = new DepositSSE(res, userId, isAgent);
+
+      res.on("close", () => {
+        depositSSE.dismantle();
+        res.end();
+      });
+
+      // Keep alive ping every 4'
+      setInterval(() => {
+        res.write(": ping\n\n");
+      }, 24000);
+
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "X-Accel-Buffering": "no",
+      });
+
+      if (jwt) {
+        res.write(`id: ${jwt}\n`);
+        res.write("event: token\n");
+        res.write("data:\n\n");
+      }
     } catch (err) {
       next(err);
     }

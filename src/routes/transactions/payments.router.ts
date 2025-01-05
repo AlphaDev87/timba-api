@@ -12,11 +12,9 @@ import { validateResourceSearchRequest } from "@/components/players/validators";
 
 const paymentsRouter = Router();
 
-paymentsRouter.use(
-  passport.authenticate("jwt", { session: false, failWithError: true }),
-);
 paymentsRouter.post(
   "/cashout",
+  passport.authenticate("jwt", { session: false, failWithError: true }),
   requireUserRole,
   validateCashoutRequest(),
   checkExact(),
@@ -26,6 +24,7 @@ paymentsRouter.post(
 
 paymentsRouter.get(
   "/payment",
+  passport.authenticate("jwt", { session: false, failWithError: true }),
   requireAgentRole,
   validateResourceSearchRequest(isKeyOfPayment),
   checkExact(),
