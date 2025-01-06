@@ -98,7 +98,7 @@ CREATE TABLE `DEPOSITS` (
     `sending_bank` VARCHAR(191) NULL,
     `cep_ok` BOOLEAN NOT NULL DEFAULT false,
     `coin_transfer_id` VARCHAR(191) NOT NULL,
-    `image_uri` TEXT NULL,
+    `image_uri` MEDIUMTEXT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
