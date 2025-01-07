@@ -41,6 +41,40 @@ export class AnalyticsServices extends ResourceService {
     return formattedResult;
   }
 
+  async eventList() {
+    const prisma = new PrismaClient();
+
+    const groupedData = await prisma.analytics.groupBy({
+      by: ["source", "event"], // Agrupamos por source y event
+    });
+
+    // Transformar el resultado en el formato deseado
+    type EventListItem = { source: string; events: string[] };
+
+    const eventList: EventListItem[] = groupedData.reduce<EventListItem[]>(
+      (acc, record) => {
+        const existingSource = acc.find(
+          (item) => item.source === record.source,
+        );
+
+        if (existingSource) {
+          // Si el source ya existe, añadimos el evento único
+          if (!existingSource.events.includes(record.event)) {
+            existingSource.events.push(record.event);
+          }
+        } else {
+          // Si no existe, añadimos un nuevo source con su evento
+          acc.push({ source: record.source, events: [record.event] });
+        }
+
+        return acc;
+      },
+      [],
+    );
+
+    return eventList;
+  }
+
   getDateRange(timeWindow: "day" | "week" | "month"): {
     startDate: Date;
     endDate: Date;
