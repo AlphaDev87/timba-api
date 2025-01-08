@@ -2,7 +2,9 @@ import { OK } from "http-status";
 import { Deposit, Player } from "@prisma/client";
 import { BonusServices } from "../bonus/services";
 import { CoinTransferServices } from "../coin-transfers/services";
+import { AuthServices } from "../auth/services";
 import { DepositServices } from "./services";
+import { DepositSSE } from "./sse";
 import { DepositsDAO } from "@/db/deposits";
 import { apiResponse } from "@/helpers/apiResponse";
 import {
@@ -56,7 +58,7 @@ export class DepositController {
    * Create new deposit or verify existing
    */
   static readonly upsert = async (req: Req, res: Res, next: NextFn) => {
-    const deposit_id = req.params.id;
+    const deposit_id = req.params.deposit_id;
 
     if (deposit_id) {
       this.update(req, res, next);
@@ -66,21 +68,18 @@ export class DepositController {
   };
 
   private static readonly update = async (req: Req, res: Res, next: NextFn) => {
-    const deposit_id = req.params.id;
-    const request: Omit<DepositRequest, "player_id"> = req.body;
-    const player = req.user!;
+    const { deposit_id } = req.params;
+    const request: DepositRequest = req.body;
+    const user = req.user!;
 
     const depositServices = new DepositServices(),
       coinTransferServices = new CoinTransferServices(),
       bonusServices = new BonusServices();
 
     try {
-      const deposit = await depositServices.update(player, deposit_id, request);
+      const deposit = await depositServices.update(user, deposit_id, request);
       deposit.Player = hidePassword(deposit.Player);
-      const bonus = await bonusServices.load(
-        deposit.amount,
-        deposit.Player.Bonus?.id,
-      );
+      const bonus = await bonusServices.load(deposit, deposit.Player.Bonus?.id);
 
       if (
         deposit.CoinTransfer?.status === COIN_TRANSFER_STATUS.COMPLETED ||
@@ -104,8 +103,8 @@ export class DepositController {
   };
 
   private static readonly create = async (req: Req, res: Res, next: NextFn) => {
-    const request: Omit<DepositRequest, "player_id"> = req.body;
-    const player = req.user!;
+    const request: DepositRequest = req.body;
+    const player = req.player ?? req.user!;
 
     const depositServices = new DepositServices(),
       coinTransferServices = new CoinTransferServices(),
@@ -123,10 +122,7 @@ export class DepositController {
         coinTransferServices.agentToPlayer(deposit!.coin_transfer_id, tx),
       ).catch(() => undefined);
 
-      const bonus = await bonusServices.load(
-        deposit.amount,
-        deposit.Player.Bonus?.id,
-      );
+      const bonus = await bonusServices.load(deposit, deposit.Player.Bonus?.id);
 
       return res
         .status(OK)
@@ -165,6 +161,46 @@ export class DepositController {
     try {
       const deposits = await DepositServices.showPending(player.id);
       res.status(OK).json(apiResponse(deposits));
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  /**
+   * Send deposit-related events
+   */
+  static readonly sse = async (req: Req, res: Res, next: NextFn) => {
+    const authServices = new AuthServices();
+    try {
+      const slt = req.query.token as string;
+      const llt = req.header("Last-Event-ID");
+      const { userId, isAgent, jwt } = await authServices.authenticateSSE(
+        slt,
+        llt,
+      );
+      const depositSSE = new DepositSSE(res, userId, isAgent);
+
+      res.on("close", () => {
+        depositSSE.dismantle();
+        res.end();
+      });
+
+      // Keep alive ping every 4'
+      setInterval(() => {
+        res.write(": ping\n\n");
+      }, 24000);
+
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "X-Accel-Buffering": "no",
+      });
+
+      if (jwt) {
+        res.write(`id: ${jwt}\n`);
+        res.write("event: token\n");
+        res.write("data:\n\n");
+      }
     } catch (err) {
       next(err);
     }

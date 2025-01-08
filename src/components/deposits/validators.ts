@@ -18,6 +18,7 @@ export const isKeyOfDeposit = (key: string): key is keyof Deposit => {
     sending_bank: "",
     cep_ok: false,
     coin_transfer_id: "",
+    image_uri: "",
     Player: mockPlayer,
     created_at: new Date(),
     updated_at: new Date(),
@@ -27,7 +28,7 @@ export const isKeyOfDeposit = (key: string): key is keyof Deposit => {
 
 export const validateDepositRequest = () =>
   checkSchema({
-    id: {
+    deposit_id: {
       in: ["params"],
       optional: true,
     },
@@ -71,6 +72,15 @@ export const validateDepositRequest = () =>
       },
       errorMessage: "sending_bank is required",
     },
+    image_uri: {
+      in: ["body"],
+      optional: true,
+      isString: true,
+      customSanitizer: {
+        options: (value) => (value === "" ? null : value),
+      },
+      errorMessage: "image_uri debe ser una cadena",
+    },
   });
 
 export const validateDepositId = () =>
@@ -104,5 +114,14 @@ export const validateDepositSetStatusRequest = () =>
         errorMessage: "invalid status",
       },
       errorMessage: "status is required",
+    },
+  });
+
+export const ValidateDepositSseRequest = () =>
+  checkSchema({
+    token: {
+      in: ["query"],
+      isString: true,
+      optional: false,
     },
   });

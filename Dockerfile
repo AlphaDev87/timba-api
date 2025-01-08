@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:22-alpine3.20 AS base
 
 # Update packages on base image (alpine comes with vulnerable version of
 # libssl: libssl@3.3.2-r0)
@@ -36,7 +36,7 @@ RUN adduser --system --uid 1001 appuser
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder --chown=appuser:nodejs /app/node_modules ./node_modules
 
 USER appuser
 

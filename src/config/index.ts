@@ -39,8 +39,9 @@ const CONFIG = {
   },
   AUTH: {
     SALT_ROUNDS: process.env.SALT_ROUNDS || "11",
-    ACCESS_TOKEN_EXPIRE: process.env.ACCESS_TOKEN_DURATION || "10m",
+    ACCESS_TOKEN_EXPIRE: process.env.ACCESS_TOKEN_DURATION || "1h",
     REFRESH_TOKEN_EXPIRE: process.env.REFRESH_TOKEN_DURATION || "8h",
+    SSE_TOKEN_EXPIRE: process.env.REFRESH_TOKEN_DURATION || "8h",
     ACCESS_TOKEN_SALT: process.env.ACCESS_TOKEN_SALT,
     REFRESH_TOKEN_SALT: process.env.REFRESH_TOKEN_SALT,
     WEB_PUSH_PUBLIC_KEY: process.env.WEB_PUSH_PUBLIC_KEY,
@@ -52,6 +53,7 @@ const CONFIG = {
     FINGERPRINT_COOKIE: "__Secure-Fgp",
     CASINO_PANEL_USER: process.env.CASINO_PANEL_USER,
     CASINO_PANEL_PASS: process.env.CASINO_PANEL_PASS,
+    BOT_API_KEY: process.env.BOT_API_KEY,
   },
   EXTERNAL: {
     API_KEY: process.env.API_KEY,

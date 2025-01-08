@@ -11,7 +11,7 @@ import { DefaultArgs } from "@prisma/client/runtime/library";
 
 declare global {
   type TodoType = any;
-  type Req = Request;
+  type Req = Request & { player?: Player };
   type Res = Response;
   type NextFn = NextFunction;
   type SortDirection = "asc" | "desc";

@@ -1,4 +1,5 @@
 import { CoinTransfer } from "@prisma/client";
+import { DepositSSE } from "../deposits/sse";
 import CONFIG, {
   BONUS_STATUS,
   COIN_TRANSFER_STATUS,
@@ -86,7 +87,7 @@ export class CoinTransferServices {
     const transferDetails = await this.generateTransferDetails(
       "deposit",
       parent!.Player.panel_id,
-      parent!.amount,
+      parent!.amount!,
       parent!.Player.balance_currency,
     );
 
@@ -98,6 +99,11 @@ export class CoinTransferServices {
     });
 
     const coinTransferResult = await this.transfer(transferDetails);
+
+    if (coinTransferResult.ok) {
+      coinTransfer.status = COIN_TRANSFER_STATUS.COMPLETED;
+    }
+    this.dispatchSSE(coinTransfer, coinTransferResult, parent!.Player.id);
     this.handleTransferError(coinTransferResult);
 
     return await tx.coinTransfer.update({
@@ -250,5 +256,26 @@ export class CoinTransferServices {
 
     if (!coinTransferResult.ok)
       throw new CustomError(ERR.COIN_TRANSFER_UNSUCCESSFUL);
+  }
+
+  private dispatchSSE(
+    coinTransfer: CoinTransfer,
+    result: CoinTransferResult,
+    userId: string,
+  ) {
+    if (!result.ok) return;
+
+    const { COIN_TRANSFER_EVENT, eventTarget } = DepositSSE;
+    const customEvent = new CustomEvent(COIN_TRANSFER_EVENT, {
+      detail: {
+        eventType: COIN_TRANSFER_EVENT,
+        coinTransferId: coinTransfer.id,
+        status: coinTransfer.status,
+        balanceAfter: result.player_balance,
+        userId,
+      },
+    });
+
+    eventTarget.dispatchEvent(customEvent);
   }
 }

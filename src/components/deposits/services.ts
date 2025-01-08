@@ -1,11 +1,12 @@
 import { Bonus, Deposit, Player, PrismaClient, Role } from "@prisma/client";
+import { DepositSSE } from "./sse";
 import CONFIG, { COIN_TRANSFER_STATUS, DEPOSIT_STATUS } from "@/config";
 import { DepositsDAO } from "@/db/deposits";
 import {
   DepositRequest,
   SetDepositStatusRequest,
 } from "@/types/request/transfers";
-import { PlainPlayerResponse, RoledPlayer } from "@/types/response/players";
+import { RoledPlayer } from "@/types/response/players";
 import { HttpService } from "@/services/http.service";
 import { AlqMovementResponse } from "@/types/response/alquimia";
 import { ResourceService } from "@/services/resource.service";
@@ -22,7 +23,7 @@ export class DepositServices extends ResourceService {
   /**
    * Create and verify deposit.
    */
-  async create(player: PlainPlayerResponse, request: DepositRequest) {
+  async create(player: Player, request: DepositRequest) {
     await DepositsDAO.authorizeCreation(request);
 
     this.notifyDepositCreation(player, request);
@@ -76,7 +77,11 @@ export class DepositServices extends ResourceService {
     // @ts-ignore
     return await DepositsDAO.update({
       where: { id: deposit_id },
-      data: { ...request, dirty: false },
+      data: {
+        ...request,
+        dirty: false,
+        image_uri: request.status === "verified" ? "" : undefined,
+      },
       include: { Player: true },
     });
   }
@@ -85,12 +90,17 @@ export class DepositServices extends ResourceService {
     deposit: Deposit,
   ): Promise<Deposit & { Player: Player & { Bonus: Bonus | null } }> {
     const amount = await this.verifyThroughBanxico(deposit);
+    let result;
 
-    this.notifyDepositVerification(deposit, amount);
+    if (amount) {
+      result = await this.markAsVerified(deposit, amount);
+    } else {
+      result = await this.markAsUnverified(deposit);
+    }
 
-    if (amount) return await this.markAsVerified(deposit, amount);
+    this.notifyDepositVerification(result);
 
-    return await this.markAsUnverified(deposit);
+    return result;
   }
 
   /**
@@ -103,7 +113,7 @@ export class DepositServices extends ResourceService {
 
     try {
       const alqDeposit = await this.alquimiaDepositLookup(
-        deposit.tracking_number,
+        deposit.tracking_number!,
       );
 
       if (alqDeposit) return alqDeposit.valor_real;
@@ -135,7 +145,7 @@ export class DepositServices extends ResourceService {
 
   /**
    * Verify receipt of Player's deposit through Banxico.
-   * @returns verified deposit amount
+   * @returns number (verified deposit amount) | undefined if not verified
    */
   public async verifyThroughBanxico(
     deposit: Deposit,
@@ -176,21 +186,41 @@ export class DepositServices extends ResourceService {
     );
   }
 
-  private notifyDepositVerification(deposit: Deposit, amount?: number) {
-    const result = amount ? "*verificado*" : "*no verificado*";
+  private dispatchSSE(deposit: Deposit) {
+    const { DEPOSIT_EVENT, eventTarget } = DepositSSE;
+    const customEvent = new CustomEvent(DEPOSIT_EVENT, {
+      detail: {
+        eventType: DEPOSIT_EVENT,
+        depositId: deposit.id,
+        status: deposit.status,
+        userId: deposit.player_id,
+      },
+    });
+    eventTarget.dispatchEvent(customEvent);
+  }
+
+  private notifyDepositVerification(deposit: Deposit) {
+    this.dispatchSSE(deposit);
+
+    const result =
+      deposit.status === DEPOSIT_STATUS.VERIFIED
+        ? "*verificado*"
+        : "*no verificado*";
+
     return Telegram.arturito(
       `Depósito Nº ${deposit.tracking_number} ${result}`,
     );
   }
 
-  private markAsVerified(deposit: Deposit, amount: number) {
+  private async markAsVerified(deposit: Deposit, amount: number) {
     const prisma = new PrismaClient();
-    return prisma.deposit.update({
+    return await prisma.deposit.update({
       where: { id: deposit.id },
       data: {
         status: DEPOSIT_STATUS.VERIFIED,
         amount,
         dirty: false,
+        image_uri: "",
       },
       include: { Player: { include: { Bonus: true } } },
     });
