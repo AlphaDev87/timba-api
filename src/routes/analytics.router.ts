@@ -3,13 +3,13 @@ import { checkExact } from "express-validator";
 import passport from "passport";
 import { AnalyticsController } from "@/components/analytics/controller";
 import { throwIfBadRequest } from "@/middlewares/requestErrorHandler";
+import { requireAgentRole } from "@/middlewares/auth";
 import {
   isKeyOfAnalytics,
   validateAnalyticsRequest,
   validateId,
 } from "@/components/analytics/validators";
 import { validateResourceSearchRequest } from "@/components/analytics/validators";
-import { requireAgentRole } from "@/middlewares/auth";
 
 const analyticsRouter = Router();
 
@@ -22,11 +22,6 @@ analyticsRouter.get(
   throwIfBadRequest,
   AnalyticsController.index,
 );
-analyticsRouter.use(
-  passport.authenticate("jwt", { session: false, failWithError: true }),
-);
-analyticsRouter.use(requireAgentRole);
-analyticsRouter.post("/summary", AnalyticsController.summary);
 analyticsRouter.get(
   "/:id",
   validateId(),
@@ -41,5 +36,10 @@ analyticsRouter.post(
   throwIfBadRequest,
   AnalyticsController.create,
 );
+analyticsRouter.use(
+  passport.authenticate("jwt", { session: false, failWithError: true }),
+);
+analyticsRouter.use(requireAgentRole);
+analyticsRouter.post("/summary", AnalyticsController.summary);
 
 export default analyticsRouter;
